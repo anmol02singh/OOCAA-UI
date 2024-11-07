@@ -9,7 +9,14 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3000](http://localhost:3001) to view it in your browser.
+
+***Make sure you add your own .env file and add the following:
+
+API_URL=http://localhost:3000
+PORT=3001
+
+Our API is running on 3000 so our UI can't, which is why I defined the port to be 3001.***
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
