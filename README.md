@@ -13,8 +13,8 @@ Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
 
 ***Make sure you add your own .env file and add the following:
 
-API_URL=http://localhost:3000
-PORT=3001
+- API_URL=http://localhost:3000
+- PORT=3001
 
 Our API is running on 3000 so our UI can't, which is why I defined the port to be 3001.***
 
