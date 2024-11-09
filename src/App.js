@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Navbar from "./components/Navbar";
-import UserSignUp from "./pages/UserSignUp";
+import Home from "./pages/Home.tsx";
+import About from "./pages/About.tsx";
+import Contact from "./pages/Contact.tsx";
+import Navbar from "./components/Navbar.tsx";
+import UserSignUp from "./pages/UserSignUp.tsx";
 
 function App() {
   return (
