@@ -12,18 +12,26 @@ const UserSignUp = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "black",
+        backgroundColor: "#0D1B2A",
+        backgroundImage:
+          "radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)",
+        backgroundSize: "20px 20px",
       }}
     >
       <Box
         sx={{
-          p: 2,
-          border: "1px dashed grey",
+          p: 3,
+          border: "1px solid #59D0EE",
+          boxShadow: "0px 4px 8px rgba(89, 208, 238, 0.6)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           width: "50%",
           maxWidth: "400px",
+          backgroundColor: "#112240",
+          color: "#FFFFFF",
+          borderRadius: "8px",
+          backdropFilter: "blur(4px)",
         }}
       >
         <Box
@@ -41,7 +49,7 @@ const UserSignUp = () => {
           direction="column"
           container
           sx={{ alignContent: "center" }}
-          spacing={5}
+          spacing={3}
         >
           <Grid2 container sx={{ justifyContent: "center" }} mb={0}>
             <Typography variant="h3" color="#59D0EE">
@@ -72,6 +80,9 @@ const UserSignUp = () => {
                 "& .MuiInputLabel-root.Mui-focused": {
                   color: "#59D0EE",
                 },
+                input: {
+                  color: "#FFFFFF",
+                },
               }}
             />
           </Grid2>
@@ -98,6 +109,9 @@ const UserSignUp = () => {
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
                   color: "#59D0EE",
+                },
+                input: {
+                  color: "#FFFFFF",
                 },
               }}
             />
@@ -126,11 +140,19 @@ const UserSignUp = () => {
                 "& .MuiInputLabel-root.Mui-focused": {
                   color: "#59D0EE",
                 },
+                input: {
+                  color: "#FFFFFF",
+                },
               }}
             />
           </Grid2>
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
-            <Button variant="contained">Sign up</Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#59D0EE", color: "#0D1B2A" }}
+            >
+              Sign up
+            </Button>
           </Grid2>
         </Grid2>
       </Box>
