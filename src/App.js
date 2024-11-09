@@ -6,7 +6,7 @@ import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserSignUp from "./pages/UserSignUp.tsx";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <div>
@@ -20,6 +20,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;
