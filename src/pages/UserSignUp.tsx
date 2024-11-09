@@ -54,7 +54,15 @@ const UserSignUp = () => {
           spacing={3}
         >
           <Grid2 container sx={{ justifyContent: "center" }} mb={0}>
-            <Typography variant="h3" color="#59D0EE">
+            <Typography
+              variant="h3"
+              sx={{
+                color: "transparent",
+                fontWeight: "bold",
+                fontSize: "3rem",
+                WebkitTextStroke: "2px #59D0EE",
+              }}
+            >
               OOCAA
             </Typography>
           </Grid2>
