@@ -5,19 +5,18 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserSignUp from "./pages/UserSignUp.tsx";
+import { Box } from "@mui/material";
 
 const App = () => {
   return (
     <Router>
-      <div>
-        {/* <Navbar /> */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/signup" element={<UserSignUp />} />
-        </Routes>
-      </div>
+      {/* <Navbar /> */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/signup" element={<UserSignUp />} />
+      </Routes>
     </Router>
   );
 };
