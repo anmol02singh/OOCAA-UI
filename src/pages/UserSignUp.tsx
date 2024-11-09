@@ -2,6 +2,8 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
+import logo from "../images/logo.png";
+
 const UserSignUp = () => {
   return (
     <Box
@@ -9,7 +11,8 @@ const UserSignUp = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh", // Full viewport height
+        minHeight: "100vh",
+        backgroundColor: "black",
       }}
     >
       <Box
@@ -20,18 +23,17 @@ const UserSignUp = () => {
           flexDirection: "column",
           alignItems: "center",
           width: "50%",
-          maxWidth: "400px", // Optional: limits width for responsiveness
+          maxWidth: "400px",
         }}
       >
-        {/* Add the image here */}
         <Box
           component="img"
-          src="/path/to/your/image.png" // Replace with the path to your image
+          src={logo}
           alt="Logo"
           sx={{
-            width: "100px", // Set the image width as needed
+            width: "100px",
             height: "auto",
-            mb: 2, // Optional: adds some space below the image
+            mb: 2,
           }}
         />
 
@@ -42,10 +44,36 @@ const UserSignUp = () => {
           spacing={5}
         >
           <Grid2 container sx={{ justifyContent: "center" }} mb={0}>
-            <Typography variant="h3">OOCAA</Typography>
+            <Typography variant="h3" color="#59D0EE">
+              OOCAA
+            </Typography>
           </Grid2>
           <Grid2>
-            <TextField id="name" label="Name" variant="outlined" fullWidth />
+            <TextField
+              id="name"
+              label="Name"
+              variant="outlined"
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#59D0EE",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#59D0EE",
+                },
+              }}
+            />
           </Grid2>
           <Grid2>
             <TextField
@@ -53,6 +81,25 @@ const UserSignUp = () => {
               label="User Name"
               variant="outlined"
               fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#59D0EE",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#59D0EE",
+                },
+              }}
             />
           </Grid2>
           <Grid2>
@@ -61,6 +108,25 @@ const UserSignUp = () => {
               label="Password"
               variant="outlined"
               fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#59D0EE",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#59D0EE",
+                },
+              }}
             />
           </Grid2>
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
