@@ -66,6 +66,7 @@ const UserSignUp = () => {
               OOCAA
             </Typography>
           </Grid2>
+
           <Grid2>
             <TextField
               id="name"
@@ -96,6 +97,7 @@ const UserSignUp = () => {
               }}
             />
           </Grid2>
+
           <Grid2>
             <TextField
               id="username"
@@ -126,6 +128,7 @@ const UserSignUp = () => {
               }}
             />
           </Grid2>
+
           <Grid2>
             <TextField
               id="password"
@@ -156,6 +159,7 @@ const UserSignUp = () => {
               }}
             />
           </Grid2>
+
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
