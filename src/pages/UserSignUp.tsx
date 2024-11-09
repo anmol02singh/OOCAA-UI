@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
 import logo from "../images/logo.png";
+import spacebg from "../images/space_bg.jpg";
 
 const UserSignUp = () => {
   return (
@@ -11,24 +12,25 @@ const UserSignUp = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#0D1B2A",
-        backgroundImage:
-          "radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)",
-        backgroundSize: "20px 20px",
+        height: "100vh",
+        width: "100vw",
+        backgroundImage: `url(${spacebg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        overflow: "hidden",
       }}
     >
       <Box
         sx={{
           p: 3,
           border: "1px solid #59D0EE",
-          boxShadow: "0px 4px 8px rgba(89, 208, 238, 0.6)",
+          boxShadow: "0px 4px 30px rgba(89, 208, 238, 0.9)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           width: "50%",
           maxWidth: "400px",
-          backgroundColor: "#112240",
+          backgroundColor: "#0A1E3D",
           color: "#FFFFFF",
           borderRadius: "8px",
           backdropFilter: "blur(4px)",
@@ -149,7 +151,7 @@ const UserSignUp = () => {
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "#59D0EE", color: "#0D1B2A" }}
+              sx={{ backgroundColor: "#59D0EE", color: "#0A1E3D" }}
             >
               Sign up
             </Button>
