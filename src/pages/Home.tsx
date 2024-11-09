@@ -3,7 +3,7 @@ import { fetchAllCDMData } from "../API/cdm";
 import space from "../assets/space-ship-space.svg";
 import "../styles/shipStyle.css";
 
-function Home() {
+const Home = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -30,6 +30,6 @@ function Home() {
       </ul>
     </div>
   );
-}
+};
 
 export default Home;

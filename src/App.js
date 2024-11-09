@@ -5,7 +5,7 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <div>
@@ -18,6 +18,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;
