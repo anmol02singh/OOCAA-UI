@@ -1,21 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import routes from '../routes';
 
 function Navbar() {
+    const navigate = useNavigate();
     return (
         <nav>
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
-                <li>
-                    <Link to="/about">About</Link>
-                </li>
-                <li>
-                    <Link to="/contact">Contact</Link>
-                </li>
-            </ul>
-        </nav>
+        <button onClick={() => navigate(routes.home)}>Home</button>
+        <button onClick={() => navigate(routes.about)}>About</button>
+        <button onClick={() => navigate(routes.contact)}>Contact</button>
+    </nav>
     );
 }
 
