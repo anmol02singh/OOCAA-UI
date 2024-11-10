@@ -1,20 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import routes from '../routes';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 function Navbar() {
+    const navigate = useNavigate();
     return (
         <nav>
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
-                <li>
-                    <Link to="/about">About</Link>
-                </li>
-                <li>
-                    <Link to="/contact">Contact</Link>
-                </li>
-            </ul>
+            <Stack direction="row" spacing={2}>
+                <Button variant="contained" sx={{ backgroundColor: '#212b35', color: '#fff' }}  onClick={() => navigate(routes.home)}>
+                    Home
+                </Button>
+                <Button variant="contained" sx={{ backgroundColor: '#212b35', color: '#fff' }} onClick={() => navigate(routes.about)}>
+                    About
+                </Button>
+                <Button variant="contained" sx={{ backgroundColor: '#212b35', color: '#fff' }} onClick={() => navigate(routes.contact)}>
+                    Contact
+                </Button>
+            </Stack>
         </nav>
     );
 }

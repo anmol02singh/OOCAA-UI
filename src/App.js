@@ -5,7 +5,8 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserSignUp from "./pages/UserSignUp.tsx";
-import { Box } from "@mui/material";
+import routes from './routes';
+
 
 const App = () => {
   return (
@@ -17,6 +18,14 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<UserSignUp />} />
       </Routes>
+      <div>
+        <Navbar />
+        <Routes>
+                <Route path={routes.home} element={<Home />} />
+                <Route path={routes.about} element={<About />} />
+                <Route path={routes.contact} element={<Contact />} />
+            </Routes>
+      </div>
     </Router>
   );
 };
