@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
 import logo from "../images/logo-2.jpg";
-import spacebg from "../images/bg-2.jpg";
+import spacebg from "../images/space_bg2.jpg";
 
 const UserLogin = () => {
   return (
@@ -22,17 +22,17 @@ const UserLogin = () => {
       <Box
         sx={{
           p: 3,
-          border: "1px solid #59D0EE",
-          boxShadow: "0px 4px 30px rgba(89, 208, 238, 0.9)",
+          border: "1px solid #A46EF7",
+          boxShadow: "0px 4px 30px rgba(164, 110, 247, 1)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           width: "50%",
           maxWidth: "400px",
-          backgroundColor: "#0A1E3D",
+          backgroundColor: "#1a0033",
           color: "#FFFFFF",
           borderRadius: "8px",
-          backdropFilter: "blur(4px)",
+          backdropFilter: "blur(6px)",
         }}
       >
         <Box
@@ -59,42 +59,11 @@ const UserLogin = () => {
                 color: "transparent",
                 fontWeight: "bold",
                 fontSize: "3rem",
-                WebkitTextStroke: "2px #59D0EE",
+                WebkitTextStroke: "2px #A46EF7",
               }}
             >
               OOCAA
             </Typography>
-          </Grid2>
-
-          <Grid2>
-            <TextField
-              id="name"
-              label="Name"
-              variant="outlined"
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#59D0EE",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#59D0EE",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#59D0EE",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#59D0EE",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#59D0EE",
-                },
-                input: {
-                  color: "#FFFFFF",
-                },
-              }}
-            />
           </Grid2>
 
           <Grid2>
@@ -106,20 +75,20 @@ const UserLogin = () => {
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                   "&:hover fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#59D0EE",
+                  color: "#A46EF7",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#59D0EE",
+                  color: "#A46EF7",
                 },
                 input: {
                   color: "#FFFFFF",
@@ -137,20 +106,20 @@ const UserLogin = () => {
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                   "&:hover fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#59D0EE",
+                    borderColor: "#A46EF7",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#59D0EE",
+                  color: "#A46EF7",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#59D0EE",
+                  color: "#A46EF7",
                 },
                 input: {
                   color: "#FFFFFF",
@@ -162,9 +131,15 @@ const UserLogin = () => {
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "#59D0EE", color: "#0A1E3D" }}
+              sx={{
+                backgroundColor: "#A46EF7",
+                color: "#0A1E3D",
+                "&:hover": {
+                  backgroundColor: "#8F5ACB",
+                },
+              }}
             >
-              Sign up
+              Log In
             </Button>
           </Grid2>
         </Grid2>
