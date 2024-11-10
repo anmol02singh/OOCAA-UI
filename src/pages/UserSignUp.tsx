@@ -13,7 +13,6 @@ const UserSignUp = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        width: "100vw",
         backgroundImage: `url(${spacebg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
