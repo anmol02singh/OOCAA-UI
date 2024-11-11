@@ -5,7 +5,6 @@ import spaceShip from "../assets/space-ship-space.svg";
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
@@ -79,7 +78,8 @@ const DrawerHeader = styled('div')(
 const Logo: React.CSSProperties = ({
     width: '50px',
     height: 'auto',
-    margin: '10px 12px'
+    margin: '10px 12px',
+    cursor: 'pointer'
 });
 
 const DrawerButton = styled(IconButton, { shouldForwardProp: (prop) => prop !== 'open' })<{ open: boolean }>(
@@ -91,7 +91,7 @@ const DrawerButton = styled(IconButton, { shouldForwardProp: (prop) => prop !== 
         border: theme.spacing(0.1) + " solid",
         borderColor: theme.palette.divider,
         '&:hover': {
-            backgroundColor: theme.palette.grey.A100,  // Change to desired hover color
+            backgroundColor: theme.palette.grey.A100,
         },
         transition: theme.transitions.create('left', {
             duration: theme.transitions.duration.standard,
@@ -124,7 +124,7 @@ const Navbar = () => {
             <CssBaseline />
             <Drawer variant="permanent" open={isDrawerOpen} onClose={toggleDrawer}>
                 <DrawerHeader>
-                    <img src={spaceShip} alt="rocketship" style={Logo} />
+                    <img src={spaceShip} alt="rocketship" style={Logo} onClick={() => navigate(routes.home)} />
                     <DrawerButton
                         open={isDrawerOpen}
                         onClick={toggleDrawer}
