@@ -18,7 +18,8 @@ import AboutIcon from '@mui/icons-material/Info';
 import ContactIcon from '@mui/icons-material/PermContactCalendar';
 import ListSubheader from '@mui/material/ListSubheader';
 import routes from '../routes';
-import {useNavbar} from './NavbarContext.tsx';
+import { useNavbar } from './NavbarContext.tsx';
+import { Typography } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -41,27 +42,41 @@ const closedMixin = (theme: Theme): CSSObject => ({
     },
 });
 
+const themeColors = {
+    color: '#59D0EE',
+    backgroundColor: {
+        normal: '#0A1E3D',
+        hover: '#07162C',
+    },
+    borderColor: '#59D0EE',
+};
+
+const themeStyle: React.CSSProperties = {
+    color: themeColors.color,
+    backgroundColor: themeColors.backgroundColor.normal,
+    borderColor: themeColors.borderColor,
+}
+
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme }) => ({
+    ({ theme, open }) => ({
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
-        variants: [
-            {
-                props: ({ open }) => open,
-                style: {
-                    ...openedMixin(theme),
-                    '& .MuiDrawer-paper': openedMixin(theme),
-                },
-            },
-            {
-                props: ({ open }) => !open,
-                style: {
-                    ...closedMixin(theme),
-                    '& .MuiDrawer-paper': closedMixin(theme),
-                },
-            },
-        ],
+        '& .MuiPaper-root': {
+            color: themeColors.color,
+            backgroundColor: themeColors.backgroundColor.normal,
+            borderColor: themeColors.borderColor,
+        },
+        ...(open
+            ? {
+                ...openedMixin(theme),
+                '& .MuiDrawer-paper': openedMixin(theme),
+            }
+            : {
+                ...closedMixin(theme),
+                '& .MuiDrawer-paper': closedMixin(theme),
+            }
+        ),
     }),
 );
 
@@ -71,26 +86,30 @@ const DrawerHeader = styled('div')(
         alignItems: 'center',
         justifyContent: 'start',
         padding: '5px',
+        color: themeColors.color,
+        backgroundColor: themeColors.backgroundColor.normal,
+        borderColor: themeColors.borderColor,
     })
 );
 
-const Logo: React.CSSProperties = ({
+const Logo: React.CSSProperties = {
     width: '50px',
     height: 'auto',
     margin: '10px 12px',
-    cursor: 'pointer'
-});
+    cursor: 'pointer',
+};
 
 const DrawerButton = styled(IconButton, { shouldForwardProp: (prop) => prop !== 'open' })<{ open: boolean }>(
     ({ theme, open }) => ({
         width: theme.spacing(3.5),
         height: theme.spacing(3.5),
         position: 'fixed',
-        backgroundColor: theme.palette.background.default,
+        color: themeColors.color,
+        backgroundColor: themeColors.backgroundColor.normal,
         border: theme.spacing(0.1) + " solid",
-        borderColor: theme.palette.divider,
+        borderColor: themeColors.borderColor,
         '&:hover': {
-            backgroundColor: theme.palette.grey.A100,
+            backgroundColor: themeColors.backgroundColor.hover,
         },
         transition: theme.transitions.create('left', {
             duration: theme.transitions.duration.standard,
@@ -110,7 +129,7 @@ const NavbarItems = [
 
 const Navbar = () => {
     const theme = useTheme();
-    const {isNavbarOpen, toggleNavbar} = useNavbar();
+    const { isNavbarOpen, toggleNavbar } = useNavbar();
 
     const navigate = useNavigate();
 
@@ -139,23 +158,55 @@ const Navbar = () => {
                         return null;
                     }
                     if (item.kind === 'header') {
-                        return <ListSubheader key={item.title}>{item.title}</ListSubheader>;
+                        return (
+                            <ListSubheader
+                                style={themeStyle}
+                                key={item.title}
+                                sx={{
+                                    display: 'box',
+                                    margin: '0.4rem',
+                                    marginTop: '0.8rem',
+                                    paddingX: isNavbarOpen ? '1rem' : 0,
+                                    textAlign: isNavbarOpen ? 'initial' : 'center',
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '14px'}}>
+                                    {item.title}
+                                </Typography>
+                            </ListSubheader>
+                        );
                     }
                     if (item.kind === 'divider') {
-                        return <Divider key={item.title} />;
+                        return <Divider style={themeStyle} key={item.title} />;
                     }
                     return (
-                        <ListItem key={item.segment} disablePadding sx={{ display: 'block'}}>
+                        <ListItem
+                            key={item.segment}
+                            sx={{
+                                display: 'block',
+                                padding: 0,
+                            }}
+                        >
                             <ListItemButton
                                 sx={{
+                                    margin: '0.4rem',
+                                    paddingX: '1rem',
+                                    borderRadius: '6px',
                                     justifyContent: isNavbarOpen ? 'initial' : 'center',
-                                    height: theme.spacing(5),                            
+                                    height: theme.spacing(5),
+                                    '&:hover': {
+                                        backgroundColor: themeColors.backgroundColor.hover,
+                                    },
                                 }}
                                 onClick={() => navigate(routes[item.segment])}>
                                 <ListItemIcon
                                     sx={{
                                         minWidth: 0,
                                         marginRight: isNavbarOpen ? theme.spacing(1) : 0,
+                                        color: themeColors.color,
+                                        '&:hover': {
+                                            backgroundColor: themeColors.backgroundColor.hover,
+                                        },
                                     }}>
                                     {item.icon}
                                 </ListItemIcon>
