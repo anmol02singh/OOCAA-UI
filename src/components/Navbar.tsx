@@ -1,12 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import spaceShip from "../assets/space-ship-space.svg";
 
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -20,6 +18,7 @@ import AboutIcon from '@mui/icons-material/Info';
 import ContactIcon from '@mui/icons-material/PermContactCalendar';
 import ListSubheader from '@mui/material/ListSubheader';
 import routes from '../routes';
+import {useNavbar} from './NavbarContext.tsx';
 
 const drawerWidth = 240;
 
@@ -102,7 +101,7 @@ const DrawerButton = styled(IconButton, { shouldForwardProp: (prop) => prop !== 
 
 const NavbarItems = [
     { kind: 'divider' },
-    /*{ kind: 'header', title: 'Overview' }*/,
+    { kind: 'header', title: 'Overview' },
     { segment: 'home', title: 'Home', icon: <HomeIcon /> },
     { segment: 'about', title: 'About', icon: <AboutIcon /> },
     { segment: 'contact', title: 'Contact', icon: <ContactIcon /> },
@@ -111,73 +110,62 @@ const NavbarItems = [
 
 const Navbar = () => {
     const theme = useTheme();
-    const [isDrawerOpen, setDrawerOpen] = React.useState(false);
-
-    const toggleDrawer = () => {
-        setDrawerOpen((prev) => !prev);
-    };
+    const {isNavbarOpen, toggleNavbar} = useNavbar();
 
     const navigate = useNavigate();
 
     return (
-        <Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
-            <CssBaseline />
-            <Drawer variant="permanent" open={isDrawerOpen} onClose={toggleDrawer}>
-                <DrawerHeader>
-                    <img src={spaceShip} alt="rocketship" style={Logo} onClick={() => navigate(routes.home)} />
-                    <DrawerButton
-                        open={isDrawerOpen}
-                        onClick={toggleDrawer}
-                        sx={[
-                            isDrawerOpen
-                                ? {
-                                    left: '225px',
-                                }
-                                : {
-                                    left: '74px',
-                                },
-                        ]}>
-                        {isDrawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </DrawerButton>
-                </DrawerHeader>
-                <List>
-                    {NavbarItems.map((item) => {
-                        if (item == null) {
-                            return;
-                        }
-                        if (item.kind === 'header') {
-                            return <ListSubheader key={item.title}>{item.title}</ListSubheader>;
-                        }
-                        if (item.kind === 'divider') {
-                            return <Divider key={item.title} />;
-                        }
-                        return (
-                            <ListItem key={item.segment} disablePadding sx={{ display: 'block'}}>
-                                <ListItemButton
+        <Drawer variant="permanent" open={isNavbarOpen} onClose={toggleNavbar}>
+            <DrawerHeader>
+                <img src={spaceShip} alt="rocketship" style={Logo} onClick={() => navigate(routes.home)} />
+                <DrawerButton
+                    open={isNavbarOpen}
+                    onClick={toggleNavbar}
+                    sx={[
+                        isNavbarOpen
+                            ? {
+                                left: '225px',
+                            }
+                            : {
+                                left: '74px',
+                            },
+                    ]}>
+                    {isNavbarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </DrawerButton>
+            </DrawerHeader>
+            <List>
+                {NavbarItems.map((item) => {
+                    if (item == null) {
+                        return null;
+                    }
+                    if (item.kind === 'header') {
+                        return <ListSubheader key={item.title}>{item.title}</ListSubheader>;
+                    }
+                    if (item.kind === 'divider') {
+                        return <Divider key={item.title} />;
+                    }
+                    return (
+                        <ListItem key={item.segment} disablePadding sx={{ display: 'block'}}>
+                            <ListItemButton
+                                sx={{
+                                    justifyContent: isNavbarOpen ? 'initial' : 'center',
+                                    height: theme.spacing(5),                            
+                                }}
+                                onClick={() => navigate(routes[item.segment])}>
+                                <ListItemIcon
                                     sx={{
-                                        justifyContent: isDrawerOpen ? 'initial' : 'center',
-                                        height: theme.spacing(5),                            
-                                    }}
-                                    onClick={() => navigate(routes[item.segment])}>
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            marginRight: isDrawerOpen ? theme.spacing(1) : 0,
-                                        }}>
-                                        {item.icon}
-                                    </ListItemIcon>
-                                    {isDrawerOpen && <ListItemText primary={item.title} />}
-                                </ListItemButton>
-                            </ListItem>
-                        );
-                    })}
-                </List>
-            </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <DrawerHeader />
-
-            </Box>
-        </Box>
+                                        minWidth: 0,
+                                        marginRight: isNavbarOpen ? theme.spacing(1) : 0,
+                                    }}>
+                                    {item.icon}
+                                </ListItemIcon>
+                                {isNavbarOpen && <ListItemText primary={item.title} />}
+                            </ListItemButton>
+                        </ListItem>
+                    );
+                })}
+            </List>
+        </Drawer>
     );
 }
 
