@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import spaceShip from "../assets/space-ship-space.svg";
+import Logo from '@mui/icons-material/SatelliteAlt';
 import './Navbar.css';
 
 import MuiDrawer from '@mui/material/Drawer';
@@ -44,10 +44,14 @@ const Navbar = () => {
             onClose={toggleNavbar}
         >
             <div className='navbarDrawerHeader'>
-                <img
+                {/* <img
                     className='logo'
-                    src={spaceShip}
+                    src={Logo}
                     alt="rocketship"
+                    onClick={() => navigate(routes.home)}
+                /> */}
+                <Logo
+                    className='logo'
                     onClick={() => navigate(routes.home)}
                 />
                 <IconButton

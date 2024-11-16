@@ -6,7 +6,7 @@
     --navbar-border-color: #59D0EE;
     --navbar-border-width: 1px;
     --drawer-width-open: 240px;
-    --drawer-width-closed: 87px;
+    --drawer-width-closed: 92px;
     --drawer-button-diameter: 28px;
 }
 
@@ -84,12 +84,21 @@
 
 
 /*Website Logo Style*/
-.logo {
+/* .logo {
+    width: 60px;
+    height: auto;
+    margin: 0.4rem;
+    cursor: pointer;
+}; */
+
+.logo.MuiSvgIcon-root{
     width: 50px;
     height: auto;
-    margin: 10px 12px;
-    cursor: pointer;
-};
+    margin: 0.4rem 1rem ;
+    cursor: pointer; 
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+}
 
 
 /*Navbar Item List Style*/
@@ -124,7 +133,6 @@
 }
 
 .navbarSubheader.MuiListSubheader-root.open {
-    padding: auto 1rem;
     text-align: initial;
 }
 
