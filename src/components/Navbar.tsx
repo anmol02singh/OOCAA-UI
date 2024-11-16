@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import spaceShip from "../assets/space-ship-space.svg";
+import './Navbar.css';
 
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -21,103 +21,6 @@ import routes from '../routes';
 import { useNavbar } from './NavbarContext.tsx';
 import { Typography } from '@mui/material';
 
-const drawerWidth = 240;
-
-const openedMixin = (theme: Theme): CSSObject => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        duration: theme.transitions.duration.standard,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-    transition: theme.transitions.create('width', {
-        duration: theme.transitions.duration.standard,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(10)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(11)} + 1px)`,
-    },
-});
-
-const themeColors = {
-    color: '#59D0EE',
-    backgroundColor: {
-        normal: '#0A1E3D',
-        hover: '#07162C',
-    },
-    borderColor: '#59D0EE',
-};
-
-const themeStyle: React.CSSProperties = {
-    color: themeColors.color,
-    backgroundColor: themeColors.backgroundColor.normal,
-    borderColor: themeColors.borderColor,
-}
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        '& .MuiPaper-root': {
-            color: themeColors.color,
-            backgroundColor: themeColors.backgroundColor.normal,
-            borderColor: themeColors.borderColor,
-        },
-        ...(open
-            ? {
-                ...openedMixin(theme),
-                '& .MuiDrawer-paper': openedMixin(theme),
-            }
-            : {
-                ...closedMixin(theme),
-                '& .MuiDrawer-paper': closedMixin(theme),
-            }
-        ),
-    }),
-);
-
-const DrawerHeader = styled('div')(
-    () => ({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'start',
-        padding: '5px',
-        color: themeColors.color,
-        backgroundColor: themeColors.backgroundColor.normal,
-        borderColor: themeColors.borderColor,
-    })
-);
-
-const Logo: React.CSSProperties = {
-    width: '50px',
-    height: 'auto',
-    margin: '10px 12px',
-    cursor: 'pointer',
-};
-
-const DrawerButton = styled(IconButton, { shouldForwardProp: (prop) => prop !== 'open' })<{ open: boolean }>(
-    ({ theme, open }) => ({
-        width: theme.spacing(3.5),
-        height: theme.spacing(3.5),
-        position: 'fixed',
-        color: themeColors.color,
-        backgroundColor: themeColors.backgroundColor.normal,
-        border: theme.spacing(0.1) + " solid",
-        borderColor: themeColors.borderColor,
-        '&:hover': {
-            backgroundColor: themeColors.backgroundColor.hover,
-        },
-        transition: theme.transitions.create('left', {
-            duration: theme.transitions.duration.standard,
-        }),
-        left: open ? '225px' : '74px',
-    })
-);
-
 const NavbarItems = [
     { kind: 'divider' },
     { kind: 'header', title: 'Overview' },
@@ -128,31 +31,33 @@ const NavbarItems = [
 ];
 
 const Navbar = () => {
-    const theme = useTheme();
     const { isNavbarOpen, toggleNavbar } = useNavbar();
 
     const navigate = useNavigate();
 
     return (
-        <Drawer variant="permanent" open={isNavbarOpen} onClose={toggleNavbar}>
-            <DrawerHeader>
-                <img src={spaceShip} alt="rocketship" style={Logo} onClick={() => navigate(routes.home)} />
-                <DrawerButton
-                    open={isNavbarOpen}
+        <MuiDrawer
+            className={`navbarDrawer ${isNavbarOpen ? 'open' : ''}`}
+            variant="permanent"
+            anchor="left"
+            open={isNavbarOpen}
+            onClose={toggleNavbar}
+        >
+            <div className='navbarDrawerHeader'>
+                <img
+                    className='logo'
+                    src={spaceShip}
+                    alt="rocketship"
+                    onClick={() => navigate(routes.home)}
+                />
+                <IconButton
+                    className={`navbarDrawerButton ${isNavbarOpen ? 'open' : ''}`}
                     onClick={toggleNavbar}
-                    sx={[
-                        isNavbarOpen
-                            ? {
-                                left: '225px',
-                            }
-                            : {
-                                left: '74px',
-                            },
-                    ]}>
+                >
                     {isNavbarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </DrawerButton>
-            </DrawerHeader>
-            <List>
+                </IconButton>
+            </div>
+            <List className='navbarList'>
                 {NavbarItems.map((item) => {
                     if (item == null) {
                         return null;
@@ -160,54 +65,30 @@ const Navbar = () => {
                     if (item.kind === 'header') {
                         return (
                             <ListSubheader
-                                style={themeStyle}
+                                className={`navbarSubheader ${isNavbarOpen ? 'open' : ''}`}
                                 key={item.title}
-                                sx={{
-                                    display: 'box',
-                                    margin: '0.4rem',
-                                    marginTop: '0.8rem',
-                                    paddingX: isNavbarOpen ? '1rem' : 0,
-                                    textAlign: isNavbarOpen ? 'initial' : 'center',
-                                }}
                             >
-                                <Typography sx={{ fontSize: '14px'}}>
+                                <Typography className='navbarSubheaderText'>
                                     {item.title}
                                 </Typography>
                             </ListSubheader>
                         );
                     }
                     if (item.kind === 'divider') {
-                        return <Divider style={themeStyle} key={item.title} />;
+                        return <Divider
+                            className="navbarDivider"
+                            key={item.title}
+                        />;
                     }
                     return (
                         <ListItem
+                            className='navbarListItem'
                             key={item.segment}
-                            sx={{
-                                display: 'block',
-                                padding: 0,
-                            }}
                         >
                             <ListItemButton
-                                sx={{
-                                    margin: '0.4rem',
-                                    paddingX: '1rem',
-                                    borderRadius: '6px',
-                                    justifyContent: isNavbarOpen ? 'initial' : 'center',
-                                    height: theme.spacing(5),
-                                    '&:hover': {
-                                        backgroundColor: themeColors.backgroundColor.hover,
-                                    },
-                                }}
+                                className={`navbarItemButton ${isNavbarOpen ? 'open' : ''}`}                                
                                 onClick={() => navigate(routes[item.segment])}>
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        marginRight: isNavbarOpen ? theme.spacing(1) : 0,
-                                        color: themeColors.color,
-                                        '&:hover': {
-                                            backgroundColor: themeColors.backgroundColor.hover,
-                                        },
-                                    }}>
+                                <ListItemIcon className={`navbarItemIcon ${isNavbarOpen ? 'open' : ''}`}>
                                     {item.icon}
                                 </ListItemIcon>
                                 {isNavbarOpen && <ListItemText primary={item.title} />}
@@ -216,7 +97,7 @@ const Navbar = () => {
                     );
                 })}
             </List>
-        </Drawer>
+        </MuiDrawer>
     );
 }
 
