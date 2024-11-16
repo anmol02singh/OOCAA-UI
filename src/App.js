@@ -5,8 +5,8 @@ import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
-import routes from './routes';
-import { NavbarProvider } from "./components/NavbarContext.tsx";
+import routes from "./routes";
+import UserLogin from "./pages/UserLogin.tsx";import { NavbarProvider } from "./components/NavbarContext.tsx";
 
 const PageContainer = {
   padding: '1em',
@@ -18,20 +18,19 @@ const PageContainer = {
 
 const App = () => {
   return (
-    <NavbarProvider>
-      <Router>
-        <Box sx={{ display: "flex" }}>
-          <Navbar />
-          <Box style={PageContainer}>
-            <Routes>
-              <Route path={routes.home} element={<Home />} />
-              <Route path={routes.about} element={<About />} />
-              <Route path={routes.contact} element={<Contact />} />
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/login" element={<UserLogin />} />
+        </Routes>
+        <Navbar />
+        <Routes>
+                <Route path={routes.home} element={<Home />} />
+                <Route path={routes.about} element={<About />} />
+                <Route path={routes.contact} element={<Contact />} />
             </Routes>
-          </Box>
-        </Box>
-      </Router>
-    </NavbarProvider>
+      </div>
+    </Router>
   );
 };
 
