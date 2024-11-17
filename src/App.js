@@ -5,6 +5,9 @@ import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./components/Navbar.tsx";
 import routes from './routes';
+import { ColorModeContext, useMode } from "./theme.tsx";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import Topbar from "./scenes/global/Topbar.tsx";
 
 
 const App = () => {
@@ -21,5 +24,25 @@ const App = () => {
     </Router>
   );
 };
+
+
+
+
+function App(){
+const [theme, colorMode] = useMode();
+
+return(
+    <ColorModeContext.Provider value = {colorMode}> 
+        <ThemeProvider theme = {theme}> 
+          <CssBaseline />
+          <div className = "app">
+             < main className="content">
+              <Topbar />
+             </main>
+          </div>
+        </ThemeProvider>
+     </ColorModeContext.Provider>
+  );
+}
 
 export default App;
