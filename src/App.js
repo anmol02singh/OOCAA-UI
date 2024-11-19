@@ -8,22 +8,13 @@ import routes from './routes';
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar.tsx";
+import Bar from "./scenes/Bar/index.tsx";
+import Pie from "./scenes/Pie/index.tsx";
+import Line from "./scenes/Line/index.tsx";
+import Geo from "./scenes/Geo/index.tsx";
+import Dashboard from "./scenes/dashboard/index.tsx";
+//import { Dashboard } from "@mui/icons-material";
 
-
-const App = () => {
-  return (
-    <Router>
-      <div>
-        <Navbar />
-        <Routes>
-                <Route path={routes.home} element={<Home />} />
-                <Route path={routes.about} element={<About />} />
-                <Route path={routes.contact} element={<Contact />} />
-            </Routes>
-      </div>
-    </Router>
-  );
-};
 
 
 
@@ -38,6 +29,13 @@ return(
           <div className = "app">
              < main className="content">
               <Topbar />
+              <Routes> 
+               <Route path = "/" element = {<Dashboard/>}/>
+               <Route path = "/bar" element = {<Bar/>}/>
+               <Route path = "/pie" element = {<Pie/>}/>
+               <Route path = "/line" element = {<Line/>}/>
+               <Route path = "/geo" element = {<Geo/>}/>
+              </Routes>
              </main>
           </div>
         </ThemeProvider>

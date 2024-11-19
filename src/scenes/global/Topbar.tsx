@@ -1,6 +1,6 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext } from 'react';
-import { ColorModeContext, tokens } from '../../theme';
+import { ColorModeContext, tokens} from  '/Users/san/OOCAA-UI/src/theme.tsx';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -33,7 +33,13 @@ const Topbar: FC = () => {
         {/* ICONS */}
          <Box display = "flex"> 
             <IconButton onClick={colorMode.toggleColorMode}>
-                <LightModeOutlinedIcon />
+                {theme.palette.mode === 'dark' ? (
+                   <DarkModeOutlinedIcon /> 
+                ) : (
+                    <LightModeOutlinedIcon />
+
+                )}
+                
             </IconButton>
 
             <IconButton>
