@@ -3,19 +3,20 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes";
 import UserLogin from "./pages/UserLogin.tsx";
 import NavbarLayout from "./components/NavbarLayout.tsx";
 
 const App = () => {
   return (
-
     <Router>
-      <div>
-        <Routes>
-          <Route path="/login" element={<UserLogin />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/signup" element={<UserSignUp />} />
+      </Routes>
+      <Routes>
+        <Route path="/login" element={<UserLogin />} />
+      </Routes>
       <Routes>
         <Route
           path={routes.home}
