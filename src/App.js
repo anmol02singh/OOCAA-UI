@@ -1,11 +1,12 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
-import Navbar from "./components/Navbar.tsx";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes";
+import UserLogin from "./pages/UserLogin.tsx";
+import NavbarLayout from "./components/NavbarLayout.tsx";
 
 const App = () => {
   return (
@@ -14,13 +15,38 @@ const App = () => {
         <Route path="/signup" element={<UserSignUp />} />
       </Routes>
       <div>
-        <Navbar />
         <Routes>
           <Route path={routes.home} element={<Home />} />
           <Route path={routes.about} element={<About />} />
           <Route path={routes.contact} element={<Contact />} />
         </Routes>
       </div>
+      <Routes>
+        <Route
+          path={routes.home}
+          element={
+            <NavbarLayout>
+              <Home />
+            </NavbarLayout>
+          }
+        />
+        <Route
+          path={routes.about}
+          element={
+            <NavbarLayout>
+              <About />
+            </NavbarLayout>
+          }
+        />
+        <Route
+          path={routes.contact}
+          element={
+            <NavbarLayout>
+              <Contact />
+            </NavbarLayout>
+          }
+        />
+      </Routes>
     </Router>
   );
 };
