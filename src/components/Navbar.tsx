@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@mui/icons-material/SatelliteAlt';
-import './Navbar.css';
+import '../styles/Navbar.css';
 
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
