@@ -4,7 +4,7 @@ import { NavbarProvider } from '../components/NavbarContext.tsx';
 import Box from '@mui/material/Box';
 
 const PageContainer: React.CSSProperties = {
-    padding: '1em',
+    padding: '0',
     overflowX: 'auto',
     whiteSpace: 'pre-wrap',
     wordWrap: 'break-word',

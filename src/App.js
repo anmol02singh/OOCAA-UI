@@ -7,6 +7,8 @@ import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes";
 import UserLogin from "./pages/UserLogin.tsx";
 import NavbarLayout from "./components/NavbarLayout.tsx";
+import Filtering from "./pages/Filtering.tsx";
+
 
 const App = () => {
   return (
@@ -39,6 +41,14 @@ const App = () => {
           element={
             <NavbarLayout>
               <Contact />
+            </NavbarLayout>
+          }
+        />
+        <Route
+          path={routes.filter}
+          element={
+            <NavbarLayout>
+              <Filtering />
             </NavbarLayout>
           }
         />
