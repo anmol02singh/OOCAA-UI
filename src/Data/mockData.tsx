@@ -1,4 +1,4 @@
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
+import { tokens } from "../theme.tsx";
 
 
 export const mockDataTeam = [

@@ -1,8 +1,8 @@
 import React from "react";
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
-import { mockBarData as data } from "/Users/san/OOCAA-UI/src/Data/mockData.tsx";
+import { tokens } from "../theme.tsx";
+import { mockBarData as data } from "../Data/mockData.tsx";
 
 interface BarChartProps {
   isDashboard?: boolean;

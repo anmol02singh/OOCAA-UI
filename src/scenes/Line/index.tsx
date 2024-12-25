@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
-import Header from "/Users/san/OOCAA-UI/src/components/Header.tsx";
-import LineChart from "/Users/san/OOCAA-UI/src/components/LineChart.tsx";
+import Header from "../../components/Header.tsx";
+import LineChart from "../../components/LineChart.tsx";
 
 const Line = () => {
  return(

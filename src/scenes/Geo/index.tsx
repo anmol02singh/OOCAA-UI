@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, colors } from "@mui/material";
-import Header from "/Users/san/OOCAA-UI/src/components/Header.tsx";
-import GeographyChart from "/Users/san/OOCAA-UI/src/components/GeographyChart.tsx";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
+import Header from "../../components/Header.tsx";
+import GeographyChart from "../../components/GeographyChart.tsx";
+import { tokens } from "../../theme.tsx";
 import { useTheme } from "@mui/material";
 
 const Geo = () => {

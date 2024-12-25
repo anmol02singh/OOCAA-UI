@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Box,Typography, useTheme } from "@mui/material";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
-import ProgressCircle from "/Users/san/OOCAA-UI/src/components/ProgressCircle.tsx";
+import { tokens } from "../theme.tsx";
+import ProgressCircle from "../components/ProgressCircle.tsx";
 
 const StatBox = ({ title, subtitle, icon, progress, increase }) => {
     const theme = useTheme();

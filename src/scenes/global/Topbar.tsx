@@ -1,6 +1,6 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext } from 'react';
-import { ColorModeContext, tokens} from  '/Users/san/OOCAA-UI/src/theme.tsx';
+import { ColorModeContext, tokens} from  '../../theme.tsx';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';

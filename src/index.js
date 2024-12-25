@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "/Users/san/OOCAA-UI/src/App.js";
-import "/Users/san/OOCAA-UI/src/styles/index.css";
+import App from "./App.js";
+import "./styles/index.css";
 import reportWebVitals from "./reportWebVitals";
 import {BrowserRouter} from "react-router-dom"; 
 

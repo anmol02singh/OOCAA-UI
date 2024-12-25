@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Box, useTheme } from "@mui/material";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
+import { tokens } from "../theme.tsx";
 
 interface ProgressCircleProps {
   progress?: string;

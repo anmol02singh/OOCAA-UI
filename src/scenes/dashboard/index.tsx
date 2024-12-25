@@ -1,20 +1,20 @@
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import React from 'react';
-import Header from '/Users/san/OOCAA-UI/src/components/Header.tsx';
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
-import { mockTransactions } from '/Users/san/OOCAA-UI/src/Data/mockData.tsx';
+import Header from '../../components/Header.tsx';
+import { tokens } from "../../theme.tsx";
+import { mockTransactions } from '../../Data/mockData.tsx';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import EmailIcon from '@mui/icons-material/Email';
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import PersonAddIcon from '@mui/icons-material/PersonAddOutlined';
 import TrafficIcon from '@mui/icons-material/TrafficOutlined';
-import LineChart from '/Users/san/OOCAA-UI/src/components/LineChart.tsx';
-import PieChart from '/Users/san/OOCAA-UI/src/components/PieChart.tsx';
-import BarChart from '/Users/san/OOCAA-UI/src/components/BarChart.tsx';
-import GeographyChart from '/Users/san/OOCAA-UI/src/components/GeographyChart.tsx';
-import StatBox from '/Users/san/OOCAA-UI/src/components/StatBox.tsx';
-import ProgressCircle from '/Users/san/OOCAA-UI/src/components/ProgressCircle.tsx';
+import LineChart from '../../components/LineChart.tsx';
+import PieChart from '../../components/PieChart.tsx';
+import BarChart from '../../components/BarChart.tsx';
+import GeographyChart from '../../components/GeographyChart.tsx';
+import StatBox from '../../components/StatBox.tsx';
+import ProgressCircle from '../../components/ProgressCircle.tsx';
 
 const Dashboard = () => {
     const theme = useTheme();

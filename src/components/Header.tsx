@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Box, useTheme } from '@mui/material';
-import { tokens } from '/Users/san/OOCAA-UI/src/theme.tsx';
+import { tokens } from '../theme.tsx';
 
 const Header = ({ title, subtitle }) => {
   const theme = useTheme();

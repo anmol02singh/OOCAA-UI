@@ -1,8 +1,8 @@
 import React from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
-import { mockLineData as data } from "/Users/san/OOCAA-UI/src/Data/mockData.tsx";
+import { tokens } from "../theme.tsx";
+import { mockLineData as data } from "../Data/mockData.tsx";
 
 type LineChartProps = {
   isCustomLineColors?: boolean;

@@ -1,9 +1,9 @@
 import React from "react";
 import { useTheme } from "@mui/material";
 import { ResponsiveChoropleth } from "@nivo/geo";
-import { geoFeatures } from "/Users/san/OOCAA-UI/src/Data/mockGeoFeatures.tsx";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
-import { mockGeographyData as data } from "/Users/san/OOCAA-UI/src/Data/mockData.tsx";
+import { geoFeatures } from "../Data/mockGeoFeatures.tsx";
+import { tokens } from "../theme.tsx";
+import { mockGeographyData as data } from "../Data/mockData.tsx";
 
 const GeographyChart = ({ isDashboard = false }) => {
   const theme = useTheme();

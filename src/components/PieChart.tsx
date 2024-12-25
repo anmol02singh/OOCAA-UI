@@ -1,8 +1,8 @@
 import React from "react";
 import { ResponsivePie } from "@nivo/pie";
-import { tokens } from "/Users/san/OOCAA-UI/src/theme.tsx";
+import { tokens } from "../theme.tsx";
 import { useTheme } from "@mui/material";
-import { mockPieData as data } from "/Users/san/OOCAA-UI/src/Data/mockData.tsx";
+import { mockPieData as data } from "../Data/mockData.tsx";
 
 const PieChart = () => {
   const theme = useTheme();
