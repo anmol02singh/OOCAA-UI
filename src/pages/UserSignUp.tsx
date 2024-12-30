@@ -2,8 +2,8 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
-import logo from "../images/logo.png";
-import spacebg from "../images/space_bg.jpg";
+import logo from "../assets/logo.png";
+import spacebg from "../assets/space_bg.jpg";
 
 const UserSignUp = () => {
   return (
