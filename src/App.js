@@ -13,6 +13,7 @@ import Pie from "./scenes/Pie/index.tsx";
 import Line from "./scenes/Line/index.tsx";
 import Geo from "./scenes/Geo/index.tsx";
 import Dashboard from "./scenes/dashboard/index.tsx";
+import UserLogin from "./pages/UserLogin.tsx";
 
 function App() {
     const [theme, colorMode] = useMode();
@@ -33,6 +34,7 @@ function App() {
                             <Route path="/pie" element={<Pie />} />
                             <Route path="/line" element={<Line />} />
                             <Route path="/geo" element={<Geo />} />
+                            <Route path="/login" element={<UserLogin />} />
                         </Routes>
                     </main>
                 </div>
