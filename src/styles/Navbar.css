@@ -1,0 +1,195 @@
+/*Variable definition.*/
+:root {
+    --navbar-color: #59D0EE;
+    --navbar-background-color: #0A1E3D;
+    --navbar-background-color-hover: #07162C;
+    --navbar-border-color: #59D0EE;
+    --navbar-border-width: 1px;
+    --drawer-width-open: 240px;
+    --drawer-width-closed: 92px;
+    --drawer-button-diameter: 28px;
+}
+
+
+/*Drawer Style*/
+.navbarDrawer.MuiDrawer-root {
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: width 0.3s ease;
+}
+
+.navbarDrawer.MuiDrawer-root .MuiPaper-root {
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+    border-color: var(--navbar-border-color);
+    transition: width 0.3s ease;
+}
+
+.navbarDrawer.MuiDrawer-root.open {
+    width: var(--drawer-width-open);
+}
+
+.navbarDrawer.MuiDrawer-root.open .MuiDrawer-paper {
+    width: var(--drawer-width-open);
+}
+
+.navbarDrawer.MuiDrawer-root:not(.open) {
+    width: var(--drawer-width-closed);
+}
+
+.navbarDrawer.MuiDrawer-root:not(.open) .MuiDrawer-paper {
+    width: var(--drawer-width-closed);
+}
+
+
+/*Drawer Header Style*/
+.navbarDrawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 5px;
+    position: relative;
+    overflow: visible;
+}
+
+
+/*Drawer Button Style*/
+.navbarDrawerButton.MuiButtonBase-root {
+    position: fixed;
+    width: var(--drawer-button-diameter);
+    height: var(--drawer-button-diameter);
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+    border: var(--navbar-border-width) solid var(--navbar-border-color);
+    transition: var(--transition-time, 0.3s);
+}
+
+.navbarDrawerButton.MuiButtonBase-root {
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+    border: var(--navbar-border-width) solid var(--navbar-border-color);
+}
+
+.navbarDrawerButton.MuiButtonBase-root.open {
+    left: calc(var(--drawer-width-open) - var(--drawer-button-diameter)/2);
+}
+
+.navbarDrawerButton.MuiButtonBase-root:not(.open) {
+    left: calc(var(--drawer-width-closed) - var(--drawer-button-diameter)/2);
+}
+
+.navbarDrawerButton.MuiButtonBase-root:hover {
+    background-color: var(--navbar-background-color-hover);
+}
+
+
+/*Website Logo Style*/
+/* .logo {
+    width: 60px;
+    height: auto;
+    margin: 0.4rem;
+    cursor: pointer;
+}; */
+
+.logo.MuiSvgIcon-root{
+    width: 50px;
+    height: auto;
+    margin: 0.4rem 1rem ;
+    cursor: pointer; 
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+}
+
+
+/*Navbar Item List Style*/
+.MuiList-root{
+    margin: 0;
+    padding: 0;
+}
+
+.navbarList.MuiList-root{
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+    margin: 0;
+    padding: 0;
+}
+
+
+/*Navbar List Divider Style*/
+.navbarDivider.MuiDivider-root{
+    border-color: var(--navbar-color);
+    margin: 0;
+    padding: 0;
+}
+
+
+/*Navbar List Subheader Style*/
+.navbarSubheader.MuiListSubheader-root {
+    display: box;
+    margin: 0.6rem 0.4rem 0.4rem;
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+    border-color: var(--navbar-border-color);
+}
+
+.navbarSubheader.MuiListSubheader-root.open {
+    text-align: initial;
+}
+
+.navbarSubheader.MuiListSubheader-root:not(.open) {
+    padding: 0;
+    text-align: center;
+}
+
+.navbarSubheaderText.MuiTypography-root {
+    font-size: 14px;
+    color: var(--navbar-color);
+    background-color: var(--navbar-background-color);
+}
+
+
+/*Navbar List Item Style*/
+.navbarListItem.MuiListItem-root {
+    display: block;
+    padding: 0;
+}
+
+
+/*Navbar Item Button Style*/
+.navbarItemButton.MuiButtonBase-root {
+    margin: 0.4rem 0.6rem;
+    padding: 1rem 0.8rem;
+    border-radius: 6px;
+    height: 2rem;
+}
+
+.navbarItemButton.open {
+   justify-content: initial;
+}
+
+.navbarItemButton:not(.open) {
+    justify-content: center;
+}
+
+.navbarItemButton.MuiButtonBase-root:hover{
+    background-color: var(--navbar-background-color-hover);
+}
+
+
+/*Navbar Item Icon Style*/
+.navbarItemIcon.MuiListItemIcon-root {
+    min-width: 0;
+    color: var(--navbar-color);
+}
+
+.navbarItemIcon.open {
+    margin-right: 0.8rem;
+}
+
+.navbarItemIcon:not(.open) {
+    margin-right: 0;
+}
+
+.navbarItemIcon:hover {
+    background-color: var(--navbar-background-color-hover);
+}
