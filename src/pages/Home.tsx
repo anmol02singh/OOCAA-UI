@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchAllCDMData } from "../API/cdm";
 import space from "../assets/space-ship-space.svg";
-import "../styles/shipStyle.css";
+//import "../styles/shipStyle.css";
 
 const Home = () => {
   const [data, setData] = useState([]);
