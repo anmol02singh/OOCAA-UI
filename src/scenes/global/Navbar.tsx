@@ -68,7 +68,7 @@ const Navbar: FC = () => {
             {!isCollapsed && (
               <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
                 <Typography variant="h3" fontWeight= "bold"color={colors.grey[100]}>
-                  OOCA
+                  OOCAA
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />

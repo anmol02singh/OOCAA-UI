@@ -14,33 +14,64 @@ import Line from "./scenes/Line/index.tsx";
 import Geo from "./scenes/Geo/index.tsx";
 import Dashboard from "./scenes/dashboard/index.tsx";
 import UserLogin from "./pages/UserLogin.tsx";
+import { useLocation } from "react-router-dom";
 
 function App() {
-    const [theme, colorMode] = useMode();
-    const [isNavbar, setIsNavbar] = useState(true);
+  const [theme, colorMode] = useMode();
+  const [isNavbar, setIsNavbar] = useState(true);
+  const location = useLocation(); 
 
-    return (
-        <ColorModeContext.Provider value={colorMode}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <div className="app">
-                  <Navbar isNavbar = {isNavbar}/>   
-                    <main className="content">
-                        <Topbar setIsNavbar={setIsNavbar} />
-                        
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/bar" element={<Bar />} />
-                            <Route path="/pie" element={<Pie />} />
-                            <Route path="/line" element={<Line />} />
-                            <Route path="/geo" element={<Geo />} />
-                            <Route path="/login" element={<UserLogin />} />
-                        </Routes>
-                    </main>
-                </div>
-            </ThemeProvider>
-        </ColorModeContext.Provider>
-    );
+  const isLoginPage = location.pathname === "/login";
+
+  return (
+      <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <div className="app">
+                  {!isLoginPage && <Navbar isNavbar={isNavbar} />}
+                  <main className="content">
+                      {!isLoginPage && <Topbar setIsNavbar={setIsNavbar} />}
+                      
+                      <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/bar" element={<Bar />} />
+                          <Route path="/pie" element={<Pie />} />
+                          <Route path="/line" element={<Line />} />
+                          <Route path="/geo" element={<Geo />} />
+                          <Route path="/login" element={<UserLogin />} />
+                      </Routes>
+                  </main>
+              </div>
+          </ThemeProvider>
+      </ColorModeContext.Provider>
+  );
 }
+// function App() {
+//     const [theme, colorMode] = useMode();
+//     const [isNavbar, setIsNavbar] = useState(true);
+
+//     return (
+//         <ColorModeContext.Provider value={colorMode}>
+//             <ThemeProvider theme={theme}>
+//                 <CssBaseline />
+//                 <div className="app">
+//                   <Navbar isNavbar = {isNavbar}/>   
+//                     <main className="content">
+//                         <Topbar setIsNavbar={setIsNavbar} />
+                        
+//                         <Routes>
+//                             <Route path="/" element={<Dashboard />} />
+//                             <Route path="/bar" element={<Bar />} />
+//                             <Route path="/pie" element={<Pie />} />
+//                             <Route path="/line" element={<Line />} />
+//                             <Route path="/geo" element={<Geo />} />
+//                             <Route path="/login" element={<UserLogin />} />
+//                         </Routes>
+//                     </main>
+//                 </div>
+//             </ThemeProvider>
+//         </ColorModeContext.Provider>
+//     );
+// }
 
 export default App;
