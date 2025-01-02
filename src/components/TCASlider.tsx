@@ -20,18 +20,18 @@ const TcaSlider: React.FC<TcaSliderProps> = ({
 }) => {
   const formatTimestamp = (timestamp: number): string => {
     const date = new Date(timestamp);
-    return date.toISOString().replace('T', ' ').split('.')[0]; // Format to YYYY-MM-DD HH:MM:SS
+    return date.toISOString().replace('T', ' ').split('.')[0];
   };
 
   return (
     <Box mt={4}>
-      <Typography variant="h6" mb={2}>
+      <Typography variant="h5" mb={2}>
         Filter by TCA Range: {formatTimestamp(tcaRange[0])} to {formatTimestamp(tcaRange[1])}
       </Typography>
       <Slider
         value={tcaRange}
         onChange={onTcaChange}
-        valueLabelDisplay="auto"
+        // valueLabelDisplay="auto"
         min={min}
         max={max}
         step={step}

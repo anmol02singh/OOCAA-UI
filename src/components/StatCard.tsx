@@ -7,9 +7,10 @@ interface StatCardProps {
   backgroundColor: string;
   accentColor: string;
   textColor: string;
+  borderColor: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ value, label, backgroundColor, accentColor, textColor }) => {
+const StatCard: React.FC<StatCardProps> = ({ value, label, backgroundColor, accentColor, textColor, borderColor }) => {
   return (
     <Box
       textAlign="center"
@@ -17,13 +18,13 @@ const StatCard: React.FC<StatCardProps> = ({ value, label, backgroundColor, acce
       style={{
         backgroundColor,
         padding: '20px',
-        borderRadius: '8px',
+        border: `1px solid ${borderColor}`,
       }}
     >
-      <Typography variant="h3" style={{ color: accentColor }}>
+      <Typography variant="h2" style={{ color: accentColor }}>
         {value}
       </Typography>
-      <Typography variant="subtitle2" style={{ color: textColor }}>
+      <Typography variant="subtitle1" style={{ color: textColor }}>
         {label}
       </Typography>
     </Box>

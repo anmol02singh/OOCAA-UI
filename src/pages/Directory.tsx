@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { Box, Typography, IconButton, useTheme } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import StatCard from '../components/StatCard.tsx';
 import SearchBar from '../components/SearchBar.tsx';
 import TcaSlider from '../components/TCASlider.tsx';
+import CesiumViewer from '../components/CesiumViewer.tsx';
+import { tokens } from "../theme.tsx";
 
 const Directory = () => {
   const theme = useTheme();
-  const colors = {
-    primary: theme.palette.mode === 'dark' ? '#121212' : '#ffffff',
-    textPrimary: theme.palette.mode === 'dark' ? '#ffffff' : '#121212',
-    accent: '#6A5ACD',
-    searchBackground: '#2C2C2C',
-    searchText: '#ffffff',
-    searchBorder: '#555555',
-  };
+  const colors = tokens(theme.palette.mode);
+  // const colors = {
+  //   primary: theme.palette.mode === 'dark' ? '#121212' : '#ffffff',
+  //   textPrimary: theme.palette.mode === 'dark' ? '#ffffff' : '#121212',
+  //   accent: '#6A5ACD',
+  //   searchBackground: '#2C2C2C',
+  //   searchText: '#ffffff',
+  //   searchBorder: '#555555',
+  // };
+
 
   const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'name' }]);
   const [tcaRange, setTcaRange] = useState([new Date('2024-10-05').getTime(), Date.now()]);
@@ -43,12 +47,21 @@ const Directory = () => {
   };
 
   return (
-    <Box p={3} style={{ backgroundColor: colors.primary, color: colors.textPrimary, minHeight: '100vh' }}>
-      <Typography variant="h4" fontWeight="bold">
-        Satcat — Spaceflight Intelligence Exchange
+    <Box p={3} style={{ backgroundColor: colors.primary[500], color: colors.grey[100], minHeight: '100vh' }}>
+      <Typography
+            variant="body1"
+            sx={{
+              color: colors.grey[300],
+              fontFamily: "Arial, sans-serif",
+            }}
+          >
+            62,998 searchable objects
+          </Typography>
+      <Typography variant="h3" fontWeight="bold" mt={1}>
+        OOCAA — On-Orbit Collision Avoidance Assistant
       </Typography>
-      <Typography variant="subtitle1" mt={1} mb={3}>
-        Explore real-time satellite data, debris, and space weather with Satcat
+      <Typography variant="subtitle1" mt={2} mb={3}>
+      OOCAA organizes Conjunction Data Messages (CDMs) into clear formats, enabling quick data analysis with advanced search and filters.
       </Typography>
 
       <Box display="flex" justifyContent="space-between" gap={2} mb={3}>
@@ -63,9 +76,10 @@ const Directory = () => {
             key={index}
             value={stat.value}
             label={stat.label}
-            backgroundColor={colors.searchBackground}
-            accentColor={colors.accent}
-            textColor={colors.searchText}
+            backgroundColor={colors.primary[400]}
+            accentColor={colors.grey[100]}
+            textColor={colors.greenAccent[500]}
+            borderColor="#535b6c"
           />
         ))}
       </Box>
@@ -75,21 +89,21 @@ const Directory = () => {
           key={bar.id}
           criteria={bar.criteria}
           onCriteriaChange={(value) => handleCriteriaChange(bar.id, value)}
-          backgroundColor={colors.searchBackground}
-          textColor={colors.searchText}
-          borderColor={colors.searchBorder}
+          backgroundColor={colors.primary[400]}
+          textColor={colors.grey[100]}
+          borderColor="#535b6c"
         />
       ))}
 
       <Box display="flex" justifyContent="center" mt={2}>
         {searchBars.length === 1 && (
-          <IconButton onClick={handleAddSearchBar} style={{ color: colors.textPrimary }}>
-            <AddCircleIcon />
+          <IconButton onClick={handleAddSearchBar} style={{ color: colors.grey[100] }}>
+            <AddCircleOutlineOutlinedIcon />
           </IconButton>
         )}
         {searchBars.length === 2 && (
-          <IconButton onClick={handleRemoveSearchBar} style={{ color: colors.textPrimary }}>
-            <RemoveCircleIcon />
+          <IconButton onClick={handleRemoveSearchBar} style={{ color: colors.grey[100] }}>
+            <RemoveCircleOutlineOutlinedIcon />
           </IconButton>
         )}
       </Box>
@@ -100,8 +114,20 @@ const Directory = () => {
         min={new Date('2024-10-05').getTime()}
         max={Date.now()}
         step={3600000}
-        accentColor={colors.accent}
+        accentColor={colors.blueAccent[700]}
       />
+      {/* <Box sx={{ mt: 6 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#B0B0B0",
+              mb: 2,
+            }}
+          >
+            Orbital Visualization
+          </Typography>
+          <CesiumViewer />
+      </Box> */}
     </Box>
   );
 };
