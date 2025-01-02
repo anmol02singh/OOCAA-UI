@@ -8,17 +8,15 @@ interface SearchBarProps {
   onCriteriaChange: (value: string) => void;
   backgroundColor: string;
   textColor: string;
-  borderColor: string;
 }
 
-const SearchBox = styled(Box)<{ backgroundColor: string; borderColor: string }>(
-  ({ backgroundColor, borderColor }) => ({
+const SearchBox = styled(Box)<{ backgroundColor: string; }>(
+  ({ backgroundColor }) => ({
     display: 'flex',
     alignItems: 'center',
     backgroundColor,
     borderRadius: '4px',
     padding: '0 10px',
-    border: `1px solid ${borderColor}`,
     height: '2.5rem',
   })
 );
@@ -28,14 +26,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onCriteriaChange,
   backgroundColor,
   textColor,
-  borderColor,
 }) => {
   return (
     <Box display="flex" alignItems="center" gap={2} mb={2}>
       <Select
         value={criteria}
         onChange={(e) => onCriteriaChange(e.target.value)}
-        style={{
+        sx={{
           backgroundColor,
           color: textColor,
           height: '2.5rem',
@@ -46,7 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <MenuItem value="type">Object Type</MenuItem>
         <MenuItem value="designator">Object Designator</MenuItem>
       </Select>
-      <SearchBox flex={1} backgroundColor={backgroundColor} borderColor={borderColor}>
+      <SearchBox flex={1} backgroundColor={backgroundColor}>
         <SearchIcon sx={{ color: textColor }} />
         <InputBase
           placeholder="Search satellites here"
@@ -60,11 +57,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
       </SearchBox>
       <Button
         variant="contained"
-        style={{
-          height: '2.5rem', // Match the height of the other components
+        sx={{
+          height: '2.5rem',
           backgroundColor: backgroundColor,
           color: textColor,
-          border: `1px solid ${borderColor}`,
+          boxShadow: 'none',
         }}
       >
         Search

@@ -11,15 +11,6 @@ import { tokens } from "../theme.tsx";
 const Directory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  // const colors = {
-  //   primary: theme.palette.mode === 'dark' ? '#121212' : '#ffffff',
-  //   textPrimary: theme.palette.mode === 'dark' ? '#ffffff' : '#121212',
-  //   accent: '#6A5ACD',
-  //   searchBackground: '#2C2C2C',
-  //   searchText: '#ffffff',
-  //   searchBorder: '#555555',
-  // };
-
 
   const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'name' }]);
   const [tcaRange, setTcaRange] = useState([new Date('2024-10-05').getTime(), Date.now()]);
@@ -47,21 +38,28 @@ const Directory = () => {
   };
 
   return (
-    <Box p={3} style={{ backgroundColor: colors.primary[500], color: colors.grey[100], minHeight: '100vh' }}>
+    <Box
+      p={3}
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        color: colors.grey[100],
+        minHeight: '100vh',
+      }}
+    >
       <Typography
-            variant="body1"
-            sx={{
-              color: colors.grey[300],
-              fontFamily: "Arial, sans-serif",
-            }}
-          >
-            62,998 searchable objects
-          </Typography>
+        variant="body1"
+        sx={{
+          color: colors.grey[300],
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        62,998 searchable objects
+      </Typography>
       <Typography variant="h3" fontWeight="bold" mt={1}>
-        OOCAA — On-Orbit Collision Avoidance Assistant
+        OOCAA - On-Orbit Collision Avoidance Assistant
       </Typography>
       <Typography variant="subtitle1" mt={2} mb={3}>
-      OOCAA organizes Conjunction Data Messages (CDMs) into clear formats, enabling quick data analysis with advanced search and filters.
+        OOCAA organizes Conjunction Data Messages (CDMs) into clear formats, enabling quick data analysis with advanced search and filters.
       </Typography>
 
       <Box display="flex" justifyContent="space-between" gap={2} mb={3}>
@@ -79,7 +77,6 @@ const Directory = () => {
             backgroundColor={colors.primary[400]}
             accentColor={colors.grey[100]}
             textColor={colors.greenAccent[500]}
-            borderColor="#535b6c"
           />
         ))}
       </Box>
@@ -91,18 +88,17 @@ const Directory = () => {
           onCriteriaChange={(value) => handleCriteriaChange(bar.id, value)}
           backgroundColor={colors.primary[400]}
           textColor={colors.grey[100]}
-          borderColor="#535b6c"
         />
       ))}
 
       <Box display="flex" justifyContent="center" mt={2}>
         {searchBars.length === 1 && (
-          <IconButton onClick={handleAddSearchBar} style={{ color: colors.grey[100] }}>
+          <IconButton onClick={handleAddSearchBar} sx={{ color: colors.grey[100] }}>
             <AddCircleOutlineOutlinedIcon />
           </IconButton>
         )}
         {searchBars.length === 2 && (
-          <IconButton onClick={handleRemoveSearchBar} style={{ color: colors.grey[100] }}>
+          <IconButton onClick={handleRemoveSearchBar} sx={{ color: colors.grey[100] }}>
             <RemoveCircleOutlineOutlinedIcon />
           </IconButton>
         )}
@@ -116,18 +112,6 @@ const Directory = () => {
         step={3600000}
         accentColor={colors.blueAccent[700]}
       />
-      {/* <Box sx={{ mt: 6 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              color: "#B0B0B0",
-              mb: 2,
-            }}
-          >
-            Orbital Visualization
-          </Typography>
-          <CesiumViewer />
-      </Box> */}
     </Box>
   );
 };
