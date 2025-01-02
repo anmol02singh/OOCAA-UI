@@ -10,6 +10,7 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import SatelliteAltOutlinedIcon from '@mui/icons-material/SatelliteAltOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
@@ -106,6 +107,7 @@ const Navbar: FC = () => {
             <Item title="Manage Team" to="/team" icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Contacts Information" to="/contacts" icon={<ContactsOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Watchlist" to="/watchlist" icon={<ReceiptOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="Directory" to="/directory" icon={<SatelliteAltOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Pages
             </Typography>

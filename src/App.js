@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-//import "/Users/san/OOCAA-UI/src/styles/index.css";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
@@ -16,6 +15,7 @@ import Dashboard from "./scenes/dashboard/index.tsx";
 import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
+import Directory from "./pages/Directory.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -43,6 +43,7 @@ function App() {
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
+                          <Route path="/directory" element={<Directory />} />
                       </Routes>
                   </main>
               </div>
