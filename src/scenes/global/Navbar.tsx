@@ -17,6 +17,7 @@ import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import profilePic from '../../assets/zuc.png';
 
 interface ItemProps {
   title: string;
@@ -68,7 +69,7 @@ const Navbar: FC = () => {
             {!isCollapsed && (
               <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
                 <Typography variant="h3" fontWeight= "bold"color={colors.grey[100]}>
-                  OOCA
+                  OOCAA
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -83,7 +84,7 @@ const Navbar: FC = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src = "zuc.png"
+                  src = {profilePic}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
