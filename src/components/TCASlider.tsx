@@ -26,7 +26,7 @@ const TcaSlider: React.FC<TcaSliderProps> = ({
   return (
     <Box mt={4}>
       <Typography variant="h5" mb={2}>
-        Filter by TCA Range: {formatTimestamp(tcaRange[0])} to {formatTimestamp(tcaRange[1])}
+        Filter by TCA Range [UTC]: {formatTimestamp(tcaRange[0])} to {formatTimestamp(tcaRange[1])}
       </Typography>
       <Slider
         value={tcaRange}

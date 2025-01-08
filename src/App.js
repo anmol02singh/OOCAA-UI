@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Navbar from "./scenes/global/Navbar.tsx";
@@ -24,7 +23,6 @@ function App() {
 
   const isLoginPage = location.pathname === "/login";
   const isSignupPage = location.pathname === "/signup";
-
 
   return (
       <ColorModeContext.Provider value={colorMode}>

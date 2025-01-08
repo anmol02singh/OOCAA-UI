@@ -5,9 +5,12 @@ import { styled } from '@mui/system';
 
 interface SearchBarProps {
   criteria: string;
-  onCriteriaChange: (value: string) => void;
   backgroundColor: string;
   textColor: string;
+  value: string;
+  onCriteriaChange: (value: string) => void;
+  onValueChange: (value: string) => void;
+  onSearch: () => void;
 }
 
 const SearchBox = styled(Box)<{ backgroundColor: string; }>(
@@ -26,6 +29,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onCriteriaChange,
   backgroundColor,
   textColor,
+  value,
+  onValueChange,
+  onSearch,
 }) => {
   return (
     <Box display="flex" alignItems="center" gap={2} mb={2}>
@@ -39,14 +45,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
           borderRadius: '4px',
         }}
       >
-        <MenuItem value="name">Object Name</MenuItem>
-        <MenuItem value="type">Object Type</MenuItem>
-        <MenuItem value="designator">Object Designator</MenuItem>
+        <MenuItem value="objectName">Object Name</MenuItem>
+        <MenuItem value="objectType">Object Type</MenuItem>
+        <MenuItem value="objectDesignator">Object Designator</MenuItem>
       </Select>
       <SearchBox flex={1} backgroundColor={backgroundColor}>
         <SearchIcon sx={{ color: textColor }} />
         <InputBase
-          placeholder="Search satellites here"
+          placeholder="Search objects here"
+          value={value} 
+          onChange={(e) => onValueChange(e.target.value)} 
           sx={{
             ml: 1,
             flex: 1,
@@ -63,6 +71,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           color: textColor,
           boxShadow: 'none',
         }}
+        onClick={onSearch}
       >
         Search
       </Button>
