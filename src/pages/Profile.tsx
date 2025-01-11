@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Input, TextField, useTheme } from '@mui/material';
+import { TextField, useTheme } from '@mui/material';
 import { ColorModeContext, themeSettings, tokens } from '../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid2';
@@ -9,23 +9,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IconButton } from "@mui/material";
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-
-import Stack from '@mui/material/Stack';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Stepper from '@mui/material/Stepper';
-
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/material.css';
 
 
 const Profile = () => {
@@ -41,7 +26,16 @@ const Profile = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
-    const [state, setState] = useState<string>('display');
+    const [states] = useState({
+        display: 'display',
+        edit: 'edit',
+        editName: 'editName',
+        editUsername: 'editUsername',
+        editEmail: 'editEmail',
+        editPhone: 'editPhone',
+    })
+    const [state, setState] = useState(states.display);
+    const [disabled, setDisabled] = useState(true);
     const [formData, setFormData] = useState({
         firstName: fName,
         lastName: lName,
@@ -50,44 +44,71 @@ const Profile = () => {
         phoneNumber: oPhone,
     });
 
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     setEditMode(false);
-    //     // const formData = new FormData(event.currentTarget);
-    //     // console.log("Form submitted:", Object.fromEntries(formData));
-    // };
-
     const handleEdit = () => {
-        setState('edit');
+        setState(states.edit);
     };
 
     const handleCancel = () => {
-        setState('display');
+        setState(states.display);
     };
 
-    const handleEditName = () => {
-        setFormData({...formData, firstName: fName, lastName: lName});
-        setState('editName');
-    }
+    const handleEditItem = (currentState) => {
+        if(!(currentState in states)
+            || currentState===states.display
+            || currentState===states.edit) return;
+        
+        setDisabled(true);
+        switch(currentState){
+            case states.editName:
+                setFormData({...formData, firstName: fName, lastName: lName});
+                break;
+            case states.editUsername:
+                setFormData({...formData, username: oUsername});
+                break;
+            case states.editEmail:
+                setFormData({...formData, email: oEmail});
+                break;
+            case states.editPhone:
+                setFormData({...formData, phoneNumber: oPhone});
+                break;            
+        }       
 
-    const handleEditUsername = () => {
-        setFormData({...formData, username: oUsername});
-        setState('editUsername');
-    }
-
-    const handleEditEmail = () => {
-        setFormData({...formData, email: oEmail});
-        setState('editEmail');
-    }
-
-    const handleEditPhone = () => {
-        setFormData({...formData, phoneNumber: oPhone});
-        setState('editPhone');
+        setState(currentState);
     }
     
     const handleChange = (event) => {
+        if(disabled) setDisabled(false);
         setFormData({...formData, [event.target.name]: event.target.value});
     }
+
+    const preventEnterSubmit = (event) => {
+        if(event.keyCode == 13) event.preventDefault();
+    }
+
+    const handleSubmit = (event, currentState) => {
+        event.preventDefault();
+        
+        if(!(currentState in states)) return;
+        
+        //These alerts are just placeholders
+        //Add proper checks like no spaces or symbols on first and last name and so on.
+        switch(currentState){
+            case states.editName:
+                alert(`Submitted: ${formData.firstName} ${formData.lastName}`);
+                break;
+            case states.editUsername:
+                alert(`Submitted: ${formData.username}`);
+                break;
+            case states.editEmail:
+                alert(`Submitted: ${formData.email}`);
+                break;
+            case states.editPhone:
+                alert(`Submitted: ${formData.phoneNumber}`);
+                break;            
+        }
+
+        setState(states.edit);
+    };
 
     const handleinputCancel = (event, data) => {
         const textField = event.target.closest("div").querySelector("input");
@@ -95,10 +116,6 @@ const Profile = () => {
         if (textField) {
             setFormData({...formData, [textField.name]: data});
         }
-    };
-    
-    const handleSave = (/*state*/) => {
-        setState('edit');
     };
     
 
@@ -266,7 +283,7 @@ const Profile = () => {
     const editItemTextField: React.CSSProperties = {
         height: '3.5rem',
         cursor: 'pointer',
-        borderRadius: '9px',
+        borderRadius: '4px',
         color: colors.grey[100],
         backgroundColor: colors.primary[500],
     }
@@ -277,6 +294,11 @@ const Profile = () => {
 
     const editItemTextField_input: React.CSSProperties = {
         fontSize: '16px',
+    }
+
+    const editItemTextField_outline: React.CSSProperties = {
+        border: "1px solid "+colors.grey[500],
+        borderRadius: '4px',
     }
 
     const editItemButtonContainer: React.CSSProperties = {
@@ -431,7 +453,7 @@ const Profile = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={handleEditName}
+                            onClick={()=>handleEditItem(states.editName)}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -452,7 +474,7 @@ const Profile = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={handleEditUsername}
+                            onClick={()=>handleEditItem(states.editUsername)}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -473,7 +495,7 @@ const Profile = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={handleEditEmail}
+                            onClick={()=>handleEditItem(states.editEmail)}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -494,7 +516,7 @@ const Profile = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={handleEditPhone}
+                            onClick={()=>handleEditItem(states.editPhone)}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -511,7 +533,7 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editName:            
-            <Box sx={editItemContainer}>
+            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleEdit}>
@@ -535,6 +557,7 @@ const Profile = () => {
                             name='firstName'
                             value={formData.firstName}
                             onChange={handleChange}
+                            onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.firstName!==fName ? (
@@ -547,11 +570,20 @@ const Profile = () => {
                             sx={{
                                 ...editItemTextField,
                                 "& .MuiInputBase-root": {
-                                    ...fixEditItemTextField
+                                    ...fixEditItemTextField,
                                 },
                                 "& .MuiInputBase-input": {
-                                    ...editItemTextField_input
-                                }
+                                    ...editItemTextField_input,
+                                },
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    ...editItemTextField_outline,
+                                    "&:hover": {
+                                        borderColor: colors.grey[100], // Hover border color
+                                    },
+                                    "&.Mui-focused": {
+                                        border: 'none', // Focus border color
+                                    },
+                                },
                             }}
                         >
                         </TextField>                            
@@ -566,6 +598,7 @@ const Profile = () => {
                             name='lastName'
                             value={formData.lastName}
                             onChange={handleChange}
+                            onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.lastName!==lName ? (
@@ -578,11 +611,20 @@ const Profile = () => {
                             sx={{
                                 ...editItemTextField,
                                 "& .MuiInputBase-root": {
-                                    ...fixEditItemTextField
+                                    ...fixEditItemTextField,
                                 },
                                 "& .MuiInputBase-input": {
-                                    ...editItemTextField_input
-                                }
+                                    ...editItemTextField_input,                                    
+                                },
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    ...editItemTextField_outline,
+                                    "&:hover": {
+                                        borderColor: colors.grey[100], // Hover border color
+                                    },
+                                    "&.Mui-focused": {
+                                        border: 'none', // Focus border color
+                                    },
+                                },
                             }}
                         >
                         </TextField> 
@@ -590,7 +632,8 @@ const Profile = () => {
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
-                            onClick={handleSave/*(state)*/}
+                            type="submit"
+                            disabled={disabled}
                             sx={{
                                 ...editItemSaveButton,
                                 '&:hover': {
@@ -604,72 +647,221 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editUsername:
-        <Box sx={editItemContainer}>
-            <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
-                <Grid size={2}>
-                    <IconButton onClick={handleEdit}>
-                        <ArrowBackIcon sx={{fontSize: '1.8rem'}} />
-                    </IconButton>
+            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+                <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
+                    <Grid size={2}>
+                        <IconButton onClick={handleEdit}>
+                            <ArrowBackIcon sx={{fontSize: '1.8rem'}} />
+                        </IconButton>
+                    </Grid>
+                    <Grid size={8} sx={editProfileHeader}>
+                        <Typography variant='h3' sx={{color: colors.grey[100]}}>
+                            Edit Username
+                        </Typography>
+                    </Grid>
+                    <Grid size={2}>                            
+                    </Grid>
+
+                    <Grid size={12}>
+                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                            Username
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            name='username'
+                            value={formData.username}
+                            onChange={handleChange}
+                            onKeyDown={preventEnterSubmit}
+                            slotProps={{
+                                input:{
+                                    endAdornment: formData.username!==oUsername ? (
+                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, oUsername)}>
+                                            <ClearIcon />
+                                        </IconButton>
+                                    ) : undefined
+                                }
+                            }}
+                            sx={{
+                                ...editItemTextField,
+                                "& .MuiInputBase-root": {
+                                    ...fixEditItemTextField,
+                                },
+                                "& .MuiInputBase-input": {
+                                    ...editItemTextField_input,
+                                },
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    ...editItemTextField_outline,
+                                    "&:hover": {
+                                        borderColor: colors.grey[100], // Hover border color
+                                    },
+                                    "&.Mui-focused": {
+                                        border: 'none', // Focus border color
+                                    },
+                                },
+                            }}
+                        >
+                        </TextField>                            
+                    </Grid>                                
+
+                    <Grid size={12} sx={editItemButtonContainer}>
+                        <Button 
+                            type="submit"
+                            disabled={disabled}
+                            sx={{
+                                ...editItemSaveButton,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </Grid>
                 </Grid>
-                <Grid size={8} sx={editProfileHeader}>
-                    <Typography variant='h3' sx={{color: colors.grey[100]}}>
-                        Edit Username
-                    </Typography>
+            </Box>
+        , editEmail:
+            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+                <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
+                    <Grid size={2}>
+                        <IconButton onClick={handleEdit}>
+                            <ArrowBackIcon sx={{fontSize: '1.8rem'}} />
+                        </IconButton>
+                    </Grid>
+                    <Grid size={8} sx={editProfileHeader}>
+                        <Typography variant='h3' sx={{color: colors.grey[100]}}>
+                            Edit Email
+                        </Typography>
+                    </Grid>
+                    <Grid size={2}>                            
+                    </Grid>
+
+                    <Grid size={12}>
+                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                            Email
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            name='email'
+                            value={formData.email}
+                            onChange={handleChange}
+                            onKeyDown={preventEnterSubmit}
+                            slotProps={{
+                                input:{
+                                    endAdornment: formData.email!==oEmail ? (
+                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, oEmail)}>
+                                            <ClearIcon />
+                                        </IconButton>
+                                    ) : undefined
+                                }
+                            }}
+                            sx={{
+                                ...editItemTextField,
+                                "& .MuiInputBase-root": {
+                                    ...fixEditItemTextField,
+                                },
+                                "& .MuiInputBase-input": {
+                                    ...editItemTextField_input,
+                                },
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    ...editItemTextField_outline,
+                                    "&:hover": {
+                                        borderColor: colors.grey[100], // Hover border color
+                                    },
+                                    "&.Mui-focused": {
+                                        border: 'none', // Focus border color
+                                    },
+                                },
+                            }}
+                        >
+                        </TextField>                            
+                    </Grid>                                
+
+                    <Grid size={12} sx={editItemButtonContainer}>
+                        <Button 
+                            type="submit"
+                            disabled={disabled}
+                            sx={{
+                                ...editItemSaveButton,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </Grid>
                 </Grid>
-                <Grid size={2}>                            
+            </Box>
+        , editPhone:
+            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+                <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
+                    <Grid size={2}>
+                        <IconButton onClick={handleEdit}>
+                            <ArrowBackIcon sx={{fontSize: '1.8rem'}} />
+                        </IconButton>
+                    </Grid>
+                    <Grid size={8} sx={editProfileHeader}>
+                        <Typography variant='h3' sx={{color: colors.grey[100]}}>
+                            Edit Phone Number
+                        </Typography>
+                    </Grid>
+                    <Grid size={2}>                            
+                    </Grid>
+
+                    <Grid size={12}>
+                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                            Phone Number
+                        </Typography>
+                        <PhoneInput
+                            country={'us'}
+                            value={formData.phoneNumber}
+                            specialLabel=''
+                            onChange={handleChange}
+                            onKeyDown={preventEnterSubmit}
+                            inputStyle={{
+                                ...editItemTextField,
+                                ...fixEditItemTextField,
+                                ...editItemTextField_input,
+                                width: '100%',
+                                // ...editItemTextField_outline,
+                                // "&:hover": {
+                                //     borderColor: colors.grey[100], // Hover border color
+                                // },
+                                // "&.Mui-focused": {
+                                //     border: 'none', // Focus border color
+                                // },
+                            }}
+                            dropdownStyle={{
+                                backgroundColor: "#f8f8f8", // Dropdown background color
+                                borderRadius: "5px", // Rounded corners for dropdown
+                                width: "300px", // Set dropdown width to match input
+                            }}
+                        >
+                            {/* {formData.phoneNumber!==oPhone && (
+                                <IconButton size="small" onClick={(event) => handleinputCancel(event, oPhone)}>
+                                    <ClearIcon />
+                                </IconButton>
+                            )} */}
+                        </PhoneInput>                            
+                    </Grid>                                
+
+                    <Grid size={12} sx={editItemButtonContainer}>
+                        <Button 
+                            type="submit"
+                            disabled={disabled}
+                            sx={{
+                                ...editItemSaveButton,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </Grid>
                 </Grid>
-
-                <Grid size={12}>
-                    <Typography variant='h6' sx={regProfileFieldLabel}>
-                        Username
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        name='username'
-                        value={formData.username}
-                        onChange={handleChange}
-                        slotProps={{
-                            input:{
-                                endAdornment: formData.username!==oUsername ? (
-                                    <IconButton size="small" onClick={(event) => handleinputCancel(event, oUsername)}>
-                                        <ClearIcon />
-                                    </IconButton>
-                                ) : undefined
-                            }
-                        }}
-                        sx={{
-                            ...editItemTextField,
-                            "& .MuiInputBase-root": {
-                                ...fixEditItemTextField
-                            },
-                            "& .MuiInputBase-input": {
-                                ...editItemTextField_input
-                            }
-                        }}
-                    >
-                    </TextField>                            
-                </Grid>                                
-
-                <Grid size={12} sx={editItemButtonContainer}>
-                    <Button 
-                        onClick={handleSave/*(state)*/}
-                        sx={{
-                            ...editItemSaveButton,
-                            '&:hover': {
-                                ...button_hover
-                            },
-                        }}
-                    >
-                        Save
-                    </Button>
-                </Grid>
-            </Grid>
-        </Box>
-
-        // , editEmail:
-
-        // , editPhone:
-
+            </Box>
+        ,
     }
 
     return (
