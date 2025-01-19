@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ClearIcon from "@mui/icons-material/Clear";
-import { IconButton } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ClearIcon from '@mui/icons-material/Clear';
+import { IconButton } from '@mui/material';
 import Button from '@mui/material/Button';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
@@ -18,7 +18,7 @@ const Profile = () => {
     const fName = 'John';
     const lName = 'Smith';
     const oUsername = 'JSmith';
-    const oRole = "Admin";
+    const oRole = 'Admin';
     const oEmail = 'John.Smith@gmail.com';
     const oPhone = '+1 (416)-123-4567';
 
@@ -52,13 +52,13 @@ const Profile = () => {
         setState(states.display);
     };
 
-    const handleEditItem = (currentState) => {
-        if(!(currentState in states)
-            || currentState===states.display
-            || currentState===states.edit) return;
+    const handleEditItem = (nextState) => {
+        if(!(nextState in states)
+            || nextState===states.display
+            || nextState===states.edit) return;
         
         setDisabled(true);
-        switch(currentState){
+        switch(nextState){
             case states.editName:
                 setFormData({...formData, firstName: fName, lastName: lName});
                 break;
@@ -73,45 +73,123 @@ const Profile = () => {
                 break;            
         }       
 
-        setState(currentState);
+        setState(nextState);
     }
     
-    const handleChange = (event) => {
+    const handleChange = (event, currentState) => {
+        if(!(currentState in states)
+            || currentState===states.display
+            || currentState===states.edit) return;
+        
         if(disabled) setDisabled(false);
-        setFormData({...formData, [event.target.name]: event.target.value});
+
+        let fieldName;
+        let fieldValue;
+        
+        if(currentState !== states.editPhone){
+            fieldName = event.target.name;
+            fieldValue = event.target.value;
+        } else {
+            fieldName = 'phoneNumber';
+            fieldValue = event;
+        }
+
+        if(!(fieldName === 'firstName' || fieldName === 'phoneNumber')) fieldValue = fieldValue.trim();
+        
+        switch(currentState){
+            case states.editName:
+                if(fieldValue.length>100) return
+                break;
+            case states.editUsername:
+                if(fieldValue.length>40) return
+                break;
+            case states.editEmail:
+                if(fieldValue.length>150) return
+                break;           
+        }
+
+        setFormData({...formData, [fieldName]: fieldValue});
     }
 
     const preventEnterSubmit = (event) => {
-        if(event.keyCode == 13) event.preventDefault();
+        if(event.keyCode === 13) event.preventDefault();
     }
 
     const handleSubmit = (event, currentState) => {
         event.preventDefault();
         
         if(!(currentState in states)) return;
-        
+
         //These alerts are just placeholders
         //Add proper checks like no spaces or symbols on first and last name and so on.
         switch(currentState){
             case states.editName:
-                alert(`Submitted: ${formData.firstName} ${formData.lastName}`);
+                if(!handleNameSubmit()) return;
                 break;
             case states.editUsername:
-                alert(`Submitted: ${formData.username}`);
+                if(!handleUsernameSubmit()) return;
                 break;
             case states.editEmail:
-                alert(`Submitted: ${formData.email}`);
+                if(!handleEmailSubmit()) return;
                 break;
             case states.editPhone:
-                alert(`Submitted: ${formData.phoneNumber}`);
+                if(!handlePhoneSubmit()) return;
                 break;            
         }
 
         setState(states.edit);
     };
 
+    const isLettersAndWhitespace = /^[a-zA-Z\s]+$/;
+    const containsMultipleSpaces = /\s+/g;
+    const isEmailFormat = /(@)(.+)$/;
+
+    const handleNameSubmit = () => {        
+        
+        const processedFirstName = formData.firstName.replace(containsMultipleSpaces, ' ').trim()
+
+        if(formData.firstName === fName && formData.lastName === lName) return false;
+        if(!isLettersAndWhitespace.test(formData.firstName)) return false;
+
+        //Replace with object update logic
+        alert(`Submitted: ${processedFirstName} ${formData.lastName}`);
+
+        setFormData({...formData, 'firstName': processedFirstName})
+        
+        return true;
+    };
+
+    const handleUsernameSubmit = () => {      
+        if(formData.username === oUsername) return false;
+        if(!isLettersAndWhitespace.test(formData.firstName)) return false;
+
+        //Replace with object update logic        
+        alert(`Submitted: ${formData.username}`);
+        
+        return true;
+    };
+
+    const handleEmailSubmit = () => {        
+        if(formData.email === oEmail) return false;
+        if(formData.email.match(isEmailFormat) === null) return false;
+
+        //Replace with object update logic        
+        alert(`Submitted: ${formData.email}`);
+
+        return true;
+    };
+
+    const handlePhoneSubmit = () => {        
+        if(formData.phoneNumber === oPhone) return false;
+        
+        //Replace with object update logic 
+        alert(`Submitted: ${formData.phoneNumber}`);
+
+        return true;
+    };
+
     const handleinputCancel = (event, data) => {
-        const textField = event.target.closest("div").querySelector("input");
+        const textField = event.target.closest('div').querySelector('input');
     
         if (textField) {
             setFormData({...formData, [textField.name]: data});
@@ -151,8 +229,8 @@ const Profile = () => {
     }
 
     const profilePicture: React.CSSProperties = {
-        cursor: "pointer",
-        borderRadius: "50%"
+        cursor: 'pointer',
+        borderRadius: '50%'
     }
 
     const button: React.CSSProperties = {
@@ -183,7 +261,6 @@ const Profile = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        // backgroundColor: colors.primary[600],
         overflow: 'hidden',
         paddingTop: '5rem',
         gap: '1rem',
@@ -223,7 +300,7 @@ const Profile = () => {
         margin: '0.3rem 0.1rem',
         padding: '0 0.2rem 0.3rem',
         color: colors.grey[100],
-        borderBottom: 'solid 1px '+colors.grey[300],        
+        borderBottom: `solid 1px ${colors.grey[300]}`,        
     }
 
     const regButtonContainer: React.CSSProperties = {
@@ -297,7 +374,7 @@ const Profile = () => {
     }
 
     const editItemTextField_outline: React.CSSProperties = {
-        border: "1px solid "+colors.grey[500],
+        border: `1px solid ${colors.grey[500]}`,
         borderRadius: '4px',
     }
 
@@ -311,10 +388,14 @@ const Profile = () => {
         width: '6rem',
     }
 
+    /*==========Edit Phone Number Display==========*/
+    const editPhoneDropDown: React.CSSProperties = {
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        borderRadius: '6px',
+        width: '20rem',
+    }    
 
-/* Form template
-<Box component="form" onSubmit={handleSubmit} noValidate autoComplete='off' sx={profileContainer}>
-</Box>*/
 
     const contentMap = {
         display:
@@ -332,7 +413,7 @@ const Profile = () => {
                                 Name
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
-                                {fName+' '+lName}
+                                {`${fName} ${lName}`}
                             </Typography>
                         </Grid> 
                         
@@ -382,8 +463,8 @@ const Profile = () => {
                     <Grid container sx={profileElements} spacing={1}>
                         <Grid size={12} sx={pictureContainer}>
                             <img
-                                alt="profile-user"                            
-                                src = "zuc.png"   
+                                alt='profile-user'                            
+                                src = 'zuc.png'   
                                 style={regProfilePicture}                             
                             />
                         </Grid>
@@ -396,7 +477,7 @@ const Profile = () => {
                                     fontWeight: 'bold',
                                 }}
                             >
-                                {fName+' '+lName}
+                                {`${fName} ${lName}`}
                             </Typography>
                             <Typography
                                 variant='h5'
@@ -441,8 +522,8 @@ const Profile = () => {
                     
                     <Grid size={12} sx={pictureContainer}>
                         <img
-                            alt="profile-user"                            
-                            src = "zuc.png"   
+                            alt='profile-user'                            
+                            src = 'zuc.png'   
                             style={editProfilePicture}                             
                         />
                     </Grid>
@@ -464,7 +545,7 @@ const Profile = () => {
                                 },
                             }}
                         >
-                            {fName+' '+lName}
+                            {`${fName} ${lName}`}
                         </Button>                            
                     </Grid>
 
@@ -533,7 +614,7 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editName:            
-            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+            <Box component='form' onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleEdit}>
@@ -556,12 +637,13 @@ const Profile = () => {
                             fullWidth
                             name='firstName'
                             value={formData.firstName}
-                            onChange={handleChange}
+                            autoComplete='off'
+                            onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.firstName!==fName ? (
-                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, fName)}>
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, fName)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -569,19 +651,19 @@ const Profile = () => {
                             }}
                             sx={{
                                 ...editItemTextField,
-                                "& .MuiInputBase-root": {
+                                '& .MuiInputBase-root': {
                                     ...fixEditItemTextField,
                                 },
-                                "& .MuiInputBase-input": {
+                                '& .MuiInputBase-input': {
                                     ...editItemTextField_input,
                                 },
-                                "& .MuiOutlinedInput-notchedOutline": {
+                                '& .MuiOutlinedInput-notchedOutline': {
                                     ...editItemTextField_outline,
-                                    "&:hover": {
-                                        borderColor: colors.grey[100], // Hover border color
+                                    '&:hover': {
+                                        borderColor: colors.grey[100],
                                     },
-                                    "&.Mui-focused": {
-                                        border: 'none', // Focus border color
+                                    '&.Mui-focused': {
+                                        border: 'none',
                                     },
                                 },
                             }}
@@ -597,12 +679,13 @@ const Profile = () => {
                             fullWidth
                             name='lastName'
                             value={formData.lastName}
-                            onChange={handleChange}
+                            autoComplete='off'
+                            onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.lastName!==lName ? (
-                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, lName)}>
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, lName)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -610,19 +693,19 @@ const Profile = () => {
                             }}
                             sx={{
                                 ...editItemTextField,
-                                "& .MuiInputBase-root": {
+                                '& .MuiInputBase-root': {
                                     ...fixEditItemTextField,
                                 },
-                                "& .MuiInputBase-input": {
+                                '& .MuiInputBase-input': {
                                     ...editItemTextField_input,                                    
                                 },
-                                "& .MuiOutlinedInput-notchedOutline": {
+                                '& .MuiOutlinedInput-notchedOutline': {
                                     ...editItemTextField_outline,
-                                    "&:hover": {
-                                        borderColor: colors.grey[100], // Hover border color
+                                    '&:hover': {
+                                        borderColor: colors.grey[100],
                                     },
-                                    "&.Mui-focused": {
-                                        border: 'none', // Focus border color
+                                    '&.Mui-focused': {
+                                        border: 'none',
                                     },
                                 },
                             }}
@@ -632,7 +715,7 @@ const Profile = () => {
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
-                            type="submit"
+                            type='submit'
                             disabled={disabled}
                             sx={{
                                 ...editItemSaveButton,
@@ -647,7 +730,7 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editUsername:
-            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+            <Box component='form' onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleEdit}>
@@ -670,12 +753,13 @@ const Profile = () => {
                             fullWidth
                             name='username'
                             value={formData.username}
-                            onChange={handleChange}
+                            autoComplete='off'
+                            onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.username!==oUsername ? (
-                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, oUsername)}>
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, oUsername)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -683,19 +767,19 @@ const Profile = () => {
                             }}
                             sx={{
                                 ...editItemTextField,
-                                "& .MuiInputBase-root": {
+                                '& .MuiInputBase-root': {
                                     ...fixEditItemTextField,
                                 },
-                                "& .MuiInputBase-input": {
+                                '& .MuiInputBase-input': {
                                     ...editItemTextField_input,
                                 },
-                                "& .MuiOutlinedInput-notchedOutline": {
+                                '& .MuiOutlinedInput-notchedOutline': {
                                     ...editItemTextField_outline,
-                                    "&:hover": {
-                                        borderColor: colors.grey[100], // Hover border color
+                                    '&:hover': {
+                                        borderColor: colors.grey[100],
                                     },
-                                    "&.Mui-focused": {
-                                        border: 'none', // Focus border color
+                                    '&.Mui-focused': {
+                                        border: 'none',
                                     },
                                 },
                             }}
@@ -705,7 +789,7 @@ const Profile = () => {
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
-                            type="submit"
+                            type='submit'
                             disabled={disabled}
                             sx={{
                                 ...editItemSaveButton,
@@ -720,7 +804,7 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editEmail:
-            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+            <Box component='form' onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleEdit}>
@@ -743,12 +827,13 @@ const Profile = () => {
                             fullWidth
                             name='email'
                             value={formData.email}
-                            onChange={handleChange}
+                            autoComplete='off'
+                            onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
                                     endAdornment: formData.email!==oEmail ? (
-                                        <IconButton size="small" onClick={(event) => handleinputCancel(event, oEmail)}>
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, oEmail)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -756,19 +841,19 @@ const Profile = () => {
                             }}
                             sx={{
                                 ...editItemTextField,
-                                "& .MuiInputBase-root": {
+                                '& .MuiInputBase-root': {
                                     ...fixEditItemTextField,
                                 },
-                                "& .MuiInputBase-input": {
+                                '& .MuiInputBase-input': {
                                     ...editItemTextField_input,
                                 },
-                                "& .MuiOutlinedInput-notchedOutline": {
+                                '& .MuiOutlinedInput-notchedOutline': {
                                     ...editItemTextField_outline,
-                                    "&:hover": {
-                                        borderColor: colors.grey[100], // Hover border color
+                                    '&:hover': {
+                                        borderColor: colors.grey[100],
                                     },
-                                    "&.Mui-focused": {
-                                        border: 'none', // Focus border color
+                                    '&.Mui-focused': {
+                                        border: 'none',
                                     },
                                 },
                             }}
@@ -778,7 +863,7 @@ const Profile = () => {
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
-                            type="submit"
+                            type='submit'
                             disabled={disabled}
                             sx={{
                                 ...editItemSaveButton,
@@ -793,7 +878,10 @@ const Profile = () => {
                 </Grid>
             </Box>
         , editPhone:
-            <Box component="form" onSubmit={(event)=>handleSubmit(event, state)} sx={editItemContainer}>
+            <Box
+                component='form'
+                onSubmit={(event)=>handleSubmit(event, state)}
+                sx={editItemContainer}>
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleEdit}>
@@ -807,47 +895,76 @@ const Profile = () => {
                     </Grid>
                     <Grid size={2}>                            
                     </Grid>
-
                     <Grid size={12}>
                         <Typography variant='h6' sx={regProfileFieldLabel}>
                             Phone Number
                         </Typography>
+                        <style> {/*For styling inaccessible components*/}
+                            {`
+                                .react-tel-input .country:hover {
+                                    background-color: ${colors.primary[600]} !important;
+                                }
+
+                                .react-tel-input .country.highlight {
+                                    background-color: ${colors.primary[600]} !important;
+                                }
+
+                                .react-tel-input .form-control {
+                                    border: 1px solid ${colors.grey[500]};
+                                    borderRadius: 4px;
+                                    transition: none;
+                                }
+
+                                .react-tel-input .form-control:hover {
+                                    border-color: ${colors.grey[100]};
+                                }
+
+                                .react-tel-input .form-control:focus {
+                                    border-color: ${colors.primary[500]};
+                                    box-shadow: none;
+                                }
+
+                                .country-list .country .dial-code {
+                                    color: ${colors.grey[400]} !important;
+                                }
+                            `}
+                        </style>
                         <PhoneInput
-                            country={'us'}
+                            country={'ca'}
+                            preferredCountries={['us', 'ca']}
+                            countryCodeEditable={false}
                             value={formData.phoneNumber}
                             specialLabel=''
-                            onChange={handleChange}
+                            onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             inputStyle={{
                                 ...editItemTextField,
                                 ...fixEditItemTextField,
                                 ...editItemTextField_input,
                                 width: '100%',
-                                // ...editItemTextField_outline,
-                                // "&:hover": {
-                                //     borderColor: colors.grey[100], // Hover border color
-                                // },
-                                // "&.Mui-focused": {
-                                //     border: 'none', // Focus border color
-                                // },
                             }}
-                            dropdownStyle={{
-                                backgroundColor: "#f8f8f8", // Dropdown background color
-                                borderRadius: "5px", // Rounded corners for dropdown
-                                width: "300px", // Set dropdown width to match input
-                            }}
+                            dropdownStyle={editPhoneDropDown}
+                            inputProps={{
+                                // endAdornment: formData.phoneNumber!==oPhone ? (
+                                //     <IconButton size='small' onClick={(event) => handleinputCancel(event, oPhone)}>
+                                //         <ClearIcon />
+                                //     </IconButton>
+                                // ) : undefined
+                            }}                            
                         >
-                            {/* {formData.phoneNumber!==oPhone && (
-                                <IconButton size="small" onClick={(event) => handleinputCancel(event, oPhone)}>
-                                    <ClearIcon />
-                                </IconButton>
-                            )} */}
-                        </PhoneInput>                            
-                    </Grid>                                
-
+                        </PhoneInput>                   
+                    </Grid>
+                    <Grid
+                        size={12}
+                        sx={{
+                            height: '6rem'
+                        }}
+                    >
+                        {/*Spacing for dropdown*/}
+                    </Grid>
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
-                            type="submit"
+                            type='submit'
                             disabled={disabled}
                             sx={{
                                 ...editItemSaveButton,
