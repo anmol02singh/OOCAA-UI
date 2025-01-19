@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { TextField, useTheme } from '@mui/material';
 import { ColorModeContext, themeSettings, tokens } from '../theme.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -43,6 +43,13 @@ const Profile = () => {
         email: oEmail,
         phoneNumber: oPhone,
     });
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleEdit = () => {
         setState(states.edit);
@@ -208,9 +215,13 @@ const Profile = () => {
         backgroundColor: colors.primary[500],
     };
 
-    const profileElements: React.CSSProperties = {
+    const profileElements: React.CSSProperties = windowWidth >= 600 ? {
         width: '100%',
+        flexDirection: 'row',
+    }:{
+        flexDirection: 'column',
     };
+    //########TODO: FIX DISPLAY FOR WINDOW RESIZING#############
 
     const profileItemContainer: React.CSSProperties = {
         padding: '3rem',
@@ -327,6 +338,7 @@ const Profile = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        minWidth: '13.1rem',
     };
 
     const editProfilePicture: React.CSSProperties = {
@@ -626,8 +638,6 @@ const Profile = () => {
                             Edit Name
                         </Typography>
                     </Grid>
-                    <Grid size={2}>                            
-                    </Grid>
 
                     <Grid size={12}>
                         <Typography variant='h6' sx={regProfileFieldLabel}>
@@ -742,8 +752,6 @@ const Profile = () => {
                             Edit Username
                         </Typography>
                     </Grid>
-                    <Grid size={2}>                            
-                    </Grid>
 
                     <Grid size={12}>
                         <Typography variant='h6' sx={regProfileFieldLabel}>
@@ -815,8 +823,6 @@ const Profile = () => {
                         <Typography variant='h3' sx={{color: colors.grey[100]}}>
                             Edit Email
                         </Typography>
-                    </Grid>
-                    <Grid size={2}>                            
                     </Grid>
 
                     <Grid size={12}>
@@ -893,8 +899,7 @@ const Profile = () => {
                             Edit Phone Number
                         </Typography>
                     </Grid>
-                    <Grid size={2}>                            
-                    </Grid>
+
                     <Grid size={12}>
                         <Typography variant='h6' sx={regProfileFieldLabel}>
                             Phone Number
@@ -913,6 +918,7 @@ const Profile = () => {
                                     border: 1px solid ${colors.grey[500]};
                                     borderRadius: 4px;
                                     transition: none;
+                                    cursor: text !important;
                                 }
 
                                 .react-tel-input .form-control:hover {
@@ -926,6 +932,25 @@ const Profile = () => {
 
                                 .country-list .country .dial-code {
                                     color: ${colors.grey[400]} !important;
+                                }
+
+                                .react-tel-input .flag-dropdown{
+                                    cursor: pointer;
+                                }
+
+                                .react-tel-input .selected-flag .arrow{
+                                    border-top: 4px solid ${colors.grey[300]};                                
+                                }
+
+                                .react-tel-input .selected-flag:focus .arrow{
+                                    border-left-width: 4px;
+                                    border-right-width: 4px;
+                                    border-top: 5px solid ${colors.blueAccent[500]};                                
+                                }
+
+                                .react-tel-input .selected-flag .arrow.up{  
+                                    border-top: none;
+                                    border-bottom: 4px solid ${colors.grey[300]};                             
                                 }
                             `}
                         </style>
