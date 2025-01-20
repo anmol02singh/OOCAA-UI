@@ -7,6 +7,8 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/SearchOutlined';
 
 import React, { FC } from 'react';
@@ -16,6 +18,11 @@ const Topbar: FC = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
+
+    function logout() {
+        localStorage.removeItem("activeUsername");
+        window.location.reload();
+    }
 
     return (<Box display = "flex" justifyContent = "space-between" p = {2}> 
     {/* SEARCH BAR */}
@@ -50,9 +57,21 @@ const Topbar: FC = () => {
                 <SettingsOutlinedIcon />
             </IconButton>
 
-            <IconButton>
-                <PersonOutlinedIcon />
-            </IconButton>
+            {localStorage.getItem("activeUsername") ? (<>
+                <IconButton>
+                    <PersonOutlinedIcon />
+                </IconButton>
+
+                <IconButton onClick={logout}>
+                    <LogoutIcon />
+                </IconButton>
+            </>) : (
+                <a href="/login">
+                    <IconButton>
+                        <LoginIcon />
+                    </IconButton>
+                </a>
+            )}
          </Box>
         </Box>
     );

@@ -80,21 +80,25 @@ const Navbar: FC = () => {
           {!isCollapsed && (
             <Box marginBottom="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src = {profilePic}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+                {localStorage.getItem("activeUsername") && (
+                  <img
+                    alt="profile-user"
+                    width="100px"
+                    height="100px"
+                    src = {profilePic}
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  />
+                )}
               </Box>
               <Box textAlign="center">
                 <Typography variant="h2" color={colors.grey[100]} fontWeight="bold" sx={{ m: "10px 0 0 0 0" }}>
                   {localStorage.getItem("activeUsername") || "Not logged in"}
                 </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  ADMIN
-                </Typography>
+                {localStorage.getItem("activeUsername") && (
+                  <Typography variant="h5" color={colors.greenAccent[500]}>
+                    ADMIN
+                  </Typography>
+                )}
               </Box>
             </Box>
           )}

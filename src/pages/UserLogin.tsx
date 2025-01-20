@@ -146,6 +146,10 @@ const UserLogin = () => {
             />
           </Grid2>
 
+          <Typography>
+            Don't have an account? <a href="/signup">Sign up</a>
+          </Typography>
+
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
