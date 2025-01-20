@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import { register } from "../API/account";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
 import logo from "../assets/logo.png";
 import spacebg from "../assets/space_bg.jpg";
 
 const UserSignUp = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  async function handleRegister() {
+    const response = await register(username, password);
+    console.log(response);
+  }
+
   return (
     <Box
       sx={{
@@ -100,6 +109,8 @@ const UserSignUp = () => {
           <Grid2>
             <TextField
               id="username"
+              onChange={event => setUsername(event.target.value)}
+              value={username}
               label="User Name"
               variant="outlined"
               fullWidth
@@ -131,6 +142,8 @@ const UserSignUp = () => {
           <Grid2>
             <TextField
               id="password"
+              onChange={event => setPassword(event.target.value)}
+              value={password}
               label="Password"
               variant="outlined"
               fullWidth
@@ -163,6 +176,7 @@ const UserSignUp = () => {
             <Button
               variant="contained"
               sx={{ backgroundColor: "#59D0EE", color: "#0A1E3D" }}
+              onClick={handleRegister}
             >
               Sign up
             </Button>
