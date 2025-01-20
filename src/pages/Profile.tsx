@@ -252,7 +252,7 @@ const Profile = () => {
 
     const handlePhoneSubmit = () => {        
         
-        if(formData.phoneNumber === oPhone){
+        if(formData.phoneNumber === oPhone.replace(/\D/g, '')){
             isInvalidInput = true;
             setErrorMessageElement('unchangedPhone');
         }
@@ -1102,6 +1102,15 @@ const Profile = () => {
                                     border-color: ${colors.grey[100]};
                                 }
 
+                                .react-tel-input .form-control.invalid-number:hover {
+                                    border-color: #f44336;
+                                }
+
+                                .react-tel-input .form-control.invalid-number:focus {
+                                    border-color: #f44336;
+                                    box-shadow: 0 0 0 1px #f44336;
+                                }
+
                                 .react-tel-input .form-control:focus {
                                     border-color: ${colors.primary[500]};
                                     box-shadow: none;
@@ -1139,6 +1148,7 @@ const Profile = () => {
                             specialLabel=''
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
+                            isValid={!invalidInput.phoneNumber}
                             inputStyle={{
                                 ...editItemTextField,
                                 ...fixEditItemTextField,
