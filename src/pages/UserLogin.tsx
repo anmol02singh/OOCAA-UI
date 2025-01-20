@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import { login } from "../API/account";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
 import logo from "../assets/logo-2.jpg";
 import spacebg from "../assets/space_bg2.jpg";
 
 const UserLogin = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  async function handleLogin() {
+    const response = await login(username, password);
+    if (response.success) {
+      alert("Login successful");
+    } else {
+      alert("Login failed");
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -69,6 +82,8 @@ const UserLogin = () => {
           <Grid2>
             <TextField
               id="username"
+              onChange={event => setUsername(event.target.value)}
+              value={username}
               label="User Name"
               variant="outlined"
               fullWidth
@@ -100,6 +115,8 @@ const UserLogin = () => {
           <Grid2>
             <TextField
               id="password"
+              onChange={event => setPassword(event.target.value)}
+              value={password}
               label="Password"
               variant="outlined"
               fullWidth
@@ -138,6 +155,7 @@ const UserLogin = () => {
                   backgroundColor: "#8F5ACB",
                 },
               }}
+              onClick={handleLogin}
             >
               Log In
             </Button>
