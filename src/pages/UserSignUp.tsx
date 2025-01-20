@@ -13,6 +13,8 @@ const UserSignUp = () => {
   async function handleRegister() {
     const response = await register(username, password);
     console.log(response);
+    localStorage.setItem("activeUsername", username);
+    window.location.replace("/");
   }
 
   return (

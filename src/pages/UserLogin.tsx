@@ -7,13 +7,14 @@ import logo from "../assets/logo-2.jpg";
 import spacebg from "../assets/space_bg2.jpg";
 
 const UserLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   async function handleLogin() {
     const response = await login(username, password);
     if (response.success) {
-      alert("Login successful");
+      localStorage.setItem("activeUsername", username);
+      window.location.replace("/");
     } else {
       alert("Login failed");
     }
