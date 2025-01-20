@@ -4,9 +4,11 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+import Profile from "./pages/Profile.tsx";
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import Box from "@mui/material/Box";
 import Topbar from "./scenes/global/Topbar.tsx";
 import Bar from "./scenes/Bar/index.tsx";
 import Pie from "./scenes/Pie/index.tsx";
@@ -33,17 +35,20 @@ function App() {
               <div className="app">
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
-                      {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                      
-                      <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/bar" element={<Bar />} />
-                          <Route path="/pie" element={<Pie />} />
-                          <Route path="/line" element={<Line />} />
-                          <Route path="/geo" element={<Geo />} />
-                          <Route path="/login" element={<UserLogin />} />
-                          <Route path="/signup" element={<UserSignUp />} />
-                      </Routes>
+                    <Box sx={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+                        {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
+                        
+                        <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/bar" element={<Bar />} />
+                            <Route path="/pie" element={<Pie />} />
+                            <Route path="/line" element={<Line />} />
+                            <Route path="/geo" element={<Geo />} />
+                            <Route path="/login" element={<UserLogin />} />
+                            <Route path="/signup" element={<UserSignUp />} />
+                            <Route path="/profile" element={<Profile />} />
+                        </Routes>
+                    </Box>
                   </main>
               </div>
           </ThemeProvider>
