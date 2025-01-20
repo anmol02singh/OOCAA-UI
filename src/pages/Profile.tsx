@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect} from 'react';
+import React, { useContext, useRef, useState, useEffect} from 'react';
 import { TextField, useTheme } from '@mui/material';
 import { ColorModeContext, themeSettings, tokens } from '../theme.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -22,10 +22,13 @@ const Profile = () => {
     const oEmail = 'John.Smith@gmail.com';
     const oPhone = '+1 (416)-123-4567';
 
+    const mdWindowWidth = 802;
+    const smWindowWidth = 600;
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+    
     const [states] = useState({
         display: 'display',
         edit: 'edit',
@@ -35,7 +38,18 @@ const Profile = () => {
         editPhone: 'editPhone',
     })
     const [state, setState] = useState(states.display);
+    
     const [disabled, setDisabled] = useState(true);
+    const [errorMessageElement, setErrorMessageElement] = useState('none');
+
+    const [invalidInput, setinvalidInput] = useState({
+        firstName: false,
+        lastName: false,
+        username: false,
+        email: false,
+        phoneNumber: false,
+    });
+
     const [formData, setFormData] = useState({
         firstName: fName,
         lastName: lName,
@@ -43,13 +57,29 @@ const Profile = () => {
         email: oEmail,
         phoneNumber: oPhone,
     });
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    const boxRef = useRef<HTMLDivElement>(null);
+    const [pageWidth, setPageWidth] = useState(0);
+
+    const updatePageWidth = () => {
+        if (boxRef.current) {
+            const width = boxRef.current.getBoundingClientRect().width;
+            setPageWidth(width);
+            console.log('Width of the box:', width);
+        }
+    }
+
 
     useEffect(() => {
-        const handleResize = () => setWindowWidth(window.innerWidth);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        updatePageWidth();
+
+        window.addEventListener('resize', updatePageWidth);
+
+        return () => {
+            window.removeEventListener('resize', updatePageWidth);
+        };
     }, []);
+    
 
     const handleEdit = () => {
         setState(states.edit);
@@ -65,18 +95,23 @@ const Profile = () => {
             || nextState===states.edit) return;
         
         setDisabled(true);
+        setErrorMessageElement('none');
         switch(nextState){
             case states.editName:
                 setFormData({...formData, firstName: fName, lastName: lName});
+                setinvalidInput({...invalidInput, firstName: false, lastName: false});
                 break;
             case states.editUsername:
                 setFormData({...formData, username: oUsername});
+                setinvalidInput({...invalidInput, username: false});
                 break;
             case states.editEmail:
                 setFormData({...formData, email: oEmail});
+                setinvalidInput({...invalidInput, email: false});
                 break;
             case states.editPhone:
                 setFormData({...formData, phoneNumber: oPhone});
+                setinvalidInput({...invalidInput, phoneNumber: false});
                 break;            
         }       
 
@@ -122,6 +157,7 @@ const Profile = () => {
         if(event.keyCode === 13) event.preventDefault();
     }
 
+    let isInvalidInput = false;
     const handleSubmit = (event, currentState) => {
         event.preventDefault();
         
@@ -129,6 +165,8 @@ const Profile = () => {
 
         //These alerts are just placeholders
         //Add proper checks like no spaces or symbols on first and last name and so on.
+        isInvalidInput = false;
+        setErrorMessageElement('none');
         switch(currentState){
             case states.editName:
                 if(!handleNameSubmit()) return;
@@ -147,52 +185,86 @@ const Profile = () => {
         setState(states.edit);
     };
 
-    const isLettersAndWhitespace = /^[a-zA-Z\s]+$/;
+    // const isLettersAndWhitespace = /^[a-zA-Z\s]+$/;
     const containsMultipleSpaces = /\s+/g;
     const isEmailFormat = /(@)(.+)$/;
 
     const handleNameSubmit = () => {        
-        
+        let invalidFirstName = false;
+        let invalidLastName = false;
         const processedFirstName = formData.firstName.replace(containsMultipleSpaces, ' ').trim()
+        const processedLastName = formData.lastName.replace(containsMultipleSpaces, ' ').trim()
 
-        if(formData.firstName === fName && formData.lastName === lName) return false;
-        if(!isLettersAndWhitespace.test(formData.firstName)) return false;
+        if(processedFirstName === fName && processedLastName === lName){
+            invalidFirstName = true;
+            invalidLastName = true;
+            setErrorMessageElement('unchangedName');
+        }
 
-        //Replace with object update logic
-        alert(`Submitted: ${processedFirstName} ${formData.lastName}`);
+        if(!(invalidFirstName || invalidLastName)){
+            //Replace with object update logic
+            alert(`Submitted: ${processedFirstName} ${processedLastName}`);
+            
+            setFormData({...formData, firstName: processedFirstName, lastName: processedLastName})
+        }
 
-        setFormData({...formData, 'firstName': processedFirstName})
+        setinvalidInput({...invalidInput, firstName: invalidFirstName, lastName: invalidLastName});
         
-        return true;
+        return !(invalidFirstName || invalidLastName)
     };
 
-    const handleUsernameSubmit = () => {      
-        if(formData.username === oUsername) return false;
-        if(!isLettersAndWhitespace.test(formData.firstName)) return false;
+    const handleUsernameSubmit = () => {     
+        if(formData.username === oUsername){
+            isInvalidInput = true;
+            setErrorMessageElement('unchangedUsername');
+        }
 
-        //Replace with object update logic        
-        alert(`Submitted: ${formData.username}`);
+        if(!isInvalidInput){
+            //Replace with object update logic        
+            alert(`Submitted: ${formData.username}`);
+        }
+
+        setinvalidInput({...invalidInput, username: isInvalidInput});
         
-        return true;
+        return !isInvalidInput;
     };
 
-    const handleEmailSubmit = () => {        
-        if(formData.email === oEmail) return false;
-        if(formData.email.match(isEmailFormat) === null) return false;
+    const handleEmailSubmit = () => {   
+        
+        if(formData.email === oEmail){
+            isInvalidInput = true;
+            setErrorMessageElement('unchangedEmail');
+        }
+        if(!formData.email.match(isEmailFormat)){
+            isInvalidInput = true;
+            setErrorMessageElement('invalidEmailFormat');
+        }
 
-        //Replace with object update logic        
-        alert(`Submitted: ${formData.email}`);
+        if(!isInvalidInput){
+            //Replace with object update logic        
+            alert(`Submitted: ${formData.email}`);
+        }
 
-        return true;
+        setinvalidInput({...invalidInput, email: isInvalidInput});
+
+        return !isInvalidInput;
     };
 
     const handlePhoneSubmit = () => {        
-        if(formData.phoneNumber === oPhone) return false;
         
-        //Replace with object update logic 
-        alert(`Submitted: ${formData.phoneNumber}`);
+        if(formData.phoneNumber === oPhone){
+            isInvalidInput = true;
+            setErrorMessageElement('unchangedPhone');
+        }
 
-        return true;
+        if(!isInvalidInput){
+            //Replace with object update logic 
+            alert(`Submitted: ${formData.phoneNumber}`);
+        }
+
+        setinvalidInput({...invalidInput, phoneNumber: isInvalidInput});
+
+        return !isInvalidInput;
     };
 
     const handleinputCancel = (event, data) => {
@@ -215,34 +287,44 @@ const Profile = () => {
         backgroundColor: colors.primary[500],
     };
 
-    const profileElements: React.CSSProperties = windowWidth >= 600 ? {
+    const profileElements: React.CSSProperties = {
         width: '100%',
-        flexDirection: 'row',
-    }:{
-        flexDirection: 'column',
     };
-    //########TODO: FIX DISPLAY FOR WINDOW RESIZING#############
 
     const profileItemContainer: React.CSSProperties = {
-        padding: '3rem',
+        padding:
+            pageWidth >= mdWindowWidth ? '3rem'
+            : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
+            : '2rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.primary[400],
-        borderRadius: '9px',   
+        borderRadius: '9px', 
+        overflow: 'hidden', 
     };
 
-    const pictureContainer: React.CSSProperties = {
+    const profilePictureContainer: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    };
+    
+    const imageContainer: React.CSSProperties = {
+        cursor: 'pointer',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
 
     const profilePicture: React.CSSProperties = {
-        cursor: 'pointer',
-        borderRadius: '50%'
-    }
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+    };
 
     const button: React.CSSProperties = {
         padding: '0.8rem',
@@ -253,85 +335,103 @@ const Profile = () => {
         textTransform: 'none',
         fontSize: '1rem',
         margin: '0.5rem',
-    }
+    };
 
     const button_hover: React.CSSProperties = {
         backgroundColor: colors.primary[600],
         color: colors.blueAccent[500],
-    }
+    };
 
     const button_click: React.CSSProperties = {
         color: colors.blueAccent[500],
-    }
+    };
+
+    const fieldLabel: React.CSSProperties = {
+        margin: '0.3rem 0.1rem',
+        color: colors.grey[300]
+    };
     
     /*==========Regular Profile Display==========*/    
     const regProfileContainer: React.CSSProperties = {
         width: '90%',
-        maxWidth: '85rem',
-        minWidth: '50rem',
+        maxWidth: '65rem',
+        minWidth: pageWidth >= mdWindowWidth ? '50rem' : '16rem',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        overflow: 'hidden',
-        paddingTop: '5rem',
+        justifyContent: pageWidth >= mdWindowWidth ? 'center' : 'flex-start',
+        alignItems: pageWidth >= mdWindowWidth ? 'flex-start' : 'center',
+        padding: '4rem 0',
         gap: '1rem',
+        flexDirection: pageWidth >= mdWindowWidth ? 'row' : 'column',
     };
     
     const regProfileInfoContainer: React.CSSProperties = {
         ...profileItemContainer,
-        width: '65%',  
+        width: pageWidth >= mdWindowWidth ? '65%' : '95%',
+        minWidth: '21rem',
     };
 
     const regProfileCardContainer: React.CSSProperties = {
         ...profileItemContainer,
-        width: '35%',
+        width: pageWidth >= mdWindowWidth ? '35%' : '75%',
+        minWidth: '20rem',
     };
-    
-    const regProfilePicture: React.CSSProperties = {
-        ...profilePicture,
-        width: '10rem',
-        height: '10rem',
-    }
+
+    const regImageContainer: React.CSSProperties = {
+        ...imageContainer,
+        maxWidth: '10rem',
+        maxHeight: '10rem',
+        width: '15vw',
+        height: '15vw',
+        minWidth: pageWidth >= mdWindowWidth ? '10rem' : '7rem',
+        minHeight: pageWidth >= mdWindowWidth ? '10rem' : '7rem',
+    };
 
     const regProfileCardText: React.CSSProperties = {
         color: colors.grey[100],
         textAlign: 'center',
-    }    
+        width: '100%',
+        minWidth: 0,
+        minHeight: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    };   
 
     const regProfileInfoHeader: React.CSSProperties = {
         color: colors.blueAccent[400],
     };
 
-    const regProfileFieldLabel: React.CSSProperties = {
-        margin: '0.3rem 0.1rem',
-        color: colors.grey[300]
-    }
-
     const regProfileFieldValue: React.CSSProperties = {
         margin: '0.3rem 0.1rem',
         padding: '0 0.2rem 0.3rem',
         color: colors.grey[100],
-        borderBottom: `solid 1px ${colors.grey[300]}`,        
-    }
+        borderBottom: `solid 1px ${colors.grey[300]}`,
+        width: '100%',
+        minWidth: 0,
+        minHeight: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    };
 
     const regButtonContainer: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'flex-end',
-    }
+    };
 
     const regProfileButton: React.CSSProperties = {
         ...button,
         width: '7rem',
-    }
+    };
 
     /*==========Edit Profile Display==========*/
     const editProfileContainer: React.CSSProperties = {
         ...profileItemContainer,
         width: '90%',
         maxWidth: '50rem',
-        minWidth: '35rem',
+        minWidth: '21rem',
         overflow: 'hidden',
-        marginTop: '5rem'
+        margin: '4rem 0',
     };
 
     const editProfileHeader: React.CSSProperties = {
@@ -341,12 +441,6 @@ const Profile = () => {
         minWidth: '13.1rem',
     };
 
-    const editProfilePicture: React.CSSProperties = {
-        ...profilePicture,
-        width: '6rem',
-        height: '6rem',
-    }
-
     const profileFieldButton: React.CSSProperties = {
         height: '3.5rem',
         cursor: 'pointer',
@@ -354,19 +448,32 @@ const Profile = () => {
         color: colors.grey[100],
         backgroundColor: colors.primary[500],
         textTransform: 'none',
-        fontSize: '16px',
         justifyContent: 'flex-start',
         padding: '0 1rem',
-    }
+        overflow: 'hidden',
+    };
+    
+    const profileFieldButtonText : React.CSSProperties = {
+        fontSize: '16px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    };
+
+    const editImageContainer: React.CSSProperties = {
+        ...imageContainer,
+        width: '7rem',
+        height: '7rem',
+    };
 
     /*==========General Edit Item Displays==========*/
     const editItemContainer: React.CSSProperties = {
         ...profileItemContainer,
         width: '90%',
         maxWidth: '40rem',
-        minWidth: '25rem',
+        minWidth: '21rem',
         overflow: 'hidden',
-        marginTop: '5rem'
+        margin: '5rem 0'
     };
     
     const editItemTextField: React.CSSProperties = {
@@ -375,30 +482,35 @@ const Profile = () => {
         borderRadius: '4px',
         color: colors.grey[100],
         backgroundColor: colors.primary[500],
-    }
+    };
 
     const fixEditItemTextField: React.CSSProperties = {
         height: '100%',
-    }
+    };
 
     const editItemTextField_input: React.CSSProperties = {
         fontSize: '16px',
-    }
+    };
 
     const editItemTextField_outline: React.CSSProperties = {
         border: `1px solid ${colors.grey[500]}`,
         borderRadius: '4px',
-    }
+    };
 
     const editItemButtonContainer: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
-    }
+    };
+
+    const errorMessageStyle: React.CSSProperties = {
+        margin: '0.3rem 0.1rem',
+        color: '#f44336',
+    };
 
     const editItemSaveButton: React.CSSProperties = {
         ...button,
         width: '6rem',
-    }
+    };
 
     /*==========Edit Phone Number Display==========*/
     const editPhoneDropDown: React.CSSProperties = {
@@ -406,13 +518,51 @@ const Profile = () => {
         backgroundColor: colors.primary[500],
         borderRadius: '6px',
         width: '20rem',
-    }    
+    }; 
 
 
-    const contentMap = {
-        display:
-            <Box sx={regProfileContainer}>
-                <Box sx={regProfileInfoContainer}>
+    const errorMessageElements = {
+        none: undefined
+        , unchangedName:
+            <Grid size={12}>
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a new first name or last name.
+                </Typography>
+            </Grid>
+        , unchangedUsername:
+            <Grid size={12}>
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a new username.
+                </Typography>
+            </Grid>
+        , unchangedEmail:
+            <Grid size={12}>   
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a new email address.
+                </Typography>
+            </Grid>
+        , invalidEmailFormat:
+            <Grid size={12}>
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a valid email address.
+                </Typography>
+            </Grid>
+        , unchangedPhone:
+            <Grid size={12}>
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a new phone number.
+                </Typography>
+            </Grid>
+        , invalidPhoneFormat:
+            <Grid size={12}>
+                <Typography variant='h6' sx={errorMessageStyle}>
+                    *Please enter a valid phone number.
+                </Typography>
+            </Grid>
+    };
+
+    const regProfileInfoElements = (
+        <Box sx={regProfileInfoContainer}>
                     <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                         <Grid size={12}>
                             <Typography variant='h2' sx={regProfileInfoHeader}>
@@ -421,7 +571,7 @@ const Profile = () => {
                         </Grid>
                         
                         <Grid size={12}>
-                            <Typography variant='h6' sx={regProfileFieldLabel}>
+                            <Typography variant='h6' sx={fieldLabel}>
                                 Name
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
@@ -430,7 +580,7 @@ const Profile = () => {
                         </Grid> 
                         
                         <Grid size={12}>
-                            <Typography variant='h6' sx={regProfileFieldLabel}>
+                            <Typography variant='h6' sx={fieldLabel}>
                                 Username
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
@@ -439,7 +589,7 @@ const Profile = () => {
                         </Grid>                   
 
                         <Grid size={12}>
-                            <Typography variant='h6' sx={regProfileFieldLabel}>
+                            <Typography variant='h6' sx={fieldLabel}>
                                 Email
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
@@ -448,7 +598,7 @@ const Profile = () => {
                         </Grid>
 
                         <Grid size={12}>
-                            <Typography variant='h6' sx={regProfileFieldLabel}>
+                            <Typography variant='h6' sx={fieldLabel}>
                                 Phone Number
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
@@ -471,14 +621,22 @@ const Profile = () => {
                         </Grid>
                     </Grid>
                 </Box>
+    );
+
+    const contentMap = {
+        display:
+            <Box sx={regProfileContainer}>
+                {pageWidth >= mdWindowWidth ? regProfileInfoElements : undefined}
                 <Box sx={regProfileCardContainer}>
                     <Grid container sx={profileElements} spacing={1}>
-                        <Grid size={12} sx={pictureContainer}>
-                            <img
-                                alt='profile-user'                            
-                                src = 'zuc.png'   
-                                style={regProfilePicture}                             
-                            />
+                        <Grid size={12} sx={profilePictureContainer}>
+                            <Box sx={regImageContainer}>
+                                <img
+                                    alt='profile-user'                            
+                                    src = 'zuc.png'   
+                                    style={profilePicture}                             
+                                />
+                            </Box>
                         </Grid>
 
                         <Grid size={12}>
@@ -515,6 +673,7 @@ const Profile = () => {
                         </Grid>
                     </Grid>
                 </Box>
+                {pageWidth < mdWindowWidth ? regProfileInfoElements : undefined}
             </Box>
         , edit:
             <Box sx={editProfileContainer}>
@@ -529,19 +688,19 @@ const Profile = () => {
                             Edit Profile
                         </Typography>
                     </Grid>
-                    <Grid size={2}>                            
-                    </Grid>
                     
-                    <Grid size={12} sx={pictureContainer}>
-                        <img
-                            alt='profile-user'                            
-                            src = 'zuc.png'   
-                            style={editProfilePicture}                             
-                        />
-                    </Grid>
+                    <Grid size={12} sx={profilePictureContainer}>
+                            <Box sx={editImageContainer}>
+                                <img
+                                    alt='profile-user'                            
+                                    src = 'zuc.png'   
+                                    style={profilePicture}                             
+                                />
+                            </Box>
+                        </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Name
                         </Typography>
                         <Button
@@ -557,12 +716,14 @@ const Profile = () => {
                                 },
                             }}
                         >
-                            {`${fName} ${lName}`}
+                            <Typography sx={profileFieldButtonText}>
+                                {`${fName} ${lName}`}
+                            </Typography>
                         </Button>                            
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Username
                         </Typography>
                         <Button
@@ -578,12 +739,14 @@ const Profile = () => {
                                 },
                             }}
                         >
-                            {oUsername}
+                            <Typography sx={profileFieldButtonText}>
+                                {oUsername}
+                            </Typography>
                         </Button>
                     </Grid>                  
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Email
                         </Typography>
                         <Button
@@ -599,12 +762,14 @@ const Profile = () => {
                                 },
                             }}
                         >
-                            {oEmail}
+                            <Typography sx={profileFieldButtonText}>
+                                {oEmail}
+                            </Typography>
                         </Button>
                     </Grid> 
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Phone Number
                         </Typography>
                         <Button
@@ -620,7 +785,9 @@ const Profile = () => {
                                 },
                             }}
                         >
-                            {oPhone}
+                            <Typography sx={profileFieldButtonText}>
+                                {oPhone}
+                            </Typography>
                         </Button>
                     </Grid> 
                 </Grid>
@@ -640,7 +807,7 @@ const Profile = () => {
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             First Name
                         </Typography>
                         <TextField
@@ -648,6 +815,7 @@ const Profile = () => {
                             name='firstName'
                             value={formData.firstName}
                             autoComplete='off'
+                            error={invalidInput.firstName}
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
@@ -682,7 +850,7 @@ const Profile = () => {
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Last Name
                         </Typography>
                         <TextField
@@ -690,6 +858,7 @@ const Profile = () => {
                             name='lastName'
                             value={formData.lastName}
                             autoComplete='off'
+                            error={invalidInput.lastName}
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
@@ -721,7 +890,9 @@ const Profile = () => {
                             }}
                         >
                         </TextField> 
-                    </Grid>                  
+                    </Grid>      
+
+                    {errorMessageElements[errorMessageElement]}             
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
@@ -754,7 +925,7 @@ const Profile = () => {
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Username
                         </Typography>
                         <TextField
@@ -762,6 +933,7 @@ const Profile = () => {
                             name='username'
                             value={formData.username}
                             autoComplete='off'
+                            error={invalidInput.username}
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
@@ -793,7 +965,9 @@ const Profile = () => {
                             }}
                         >
                         </TextField>                            
-                    </Grid>                                
+                    </Grid>   
+
+                    {errorMessageElements[errorMessageElement]}                               
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
@@ -826,7 +1000,7 @@ const Profile = () => {
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Email
                         </Typography>
                         <TextField
@@ -834,6 +1008,7 @@ const Profile = () => {
                             name='email'
                             value={formData.email}
                             autoComplete='off'
+                            error={invalidInput.email}
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
@@ -865,7 +1040,9 @@ const Profile = () => {
                             }}
                         >
                         </TextField>                            
-                    </Grid>                                
+                    </Grid>       
+
+                    {errorMessageElements[errorMessageElement]}                          
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
@@ -901,7 +1078,7 @@ const Profile = () => {
                     </Grid>
 
                     <Grid size={12}>
-                        <Typography variant='h6' sx={regProfileFieldLabel}>
+                        <Typography variant='h6' sx={fieldLabel}>
                             Phone Number
                         </Typography>
                         <style> {/*For styling inaccessible components*/}
@@ -979,6 +1156,7 @@ const Profile = () => {
                         >
                         </PhoneInput>                   
                     </Grid>
+
                     <Grid
                         size={12}
                         sx={{
@@ -987,6 +1165,9 @@ const Profile = () => {
                     >
                         {/*Spacing for dropdown*/}
                     </Grid>
+
+                    {errorMessageElements[errorMessageElement]} 
+
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 
                             type='submit'
@@ -1007,7 +1188,7 @@ const Profile = () => {
     }
 
     return (
-        <Box sx={pageContainer}>
+        <Box ref={boxRef} sx={pageContainer}>
             {contentMap[state]}           
         </Box>
     );
