@@ -7,11 +7,12 @@ import logo from "../assets/logo.png";
 import spacebg from "../assets/space_bg.jpg";
 
 const UserSignUp = () => {
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   async function handleRegister() {
-    const response = await register(username, password);
+    const response = await register(name, username, password);
     console.log(response);
     localStorage.setItem("activeUsername", username);
     window.location.replace("/");
@@ -80,6 +81,8 @@ const UserSignUp = () => {
           <Grid2>
             <TextField
               id="name"
+              onChange={event => setName(event.target.value)}
+              value={name}
               label="Name"
               variant="outlined"
               fullWidth
