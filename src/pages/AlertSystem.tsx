@@ -1,4 +1,3 @@
-// App.js
 import React from "react";
 import {
   Table,
@@ -20,6 +19,8 @@ import {
   Delete,
 } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
+// Import the Heatmap component
+import Heatmap from "../components/HeatMap.tsx"; // Adjust the path if Heatmap is in a different folder
 
 const rows = [
   {
@@ -59,14 +60,23 @@ const rows = [
   },
 ];
 
-const App = () => {
+const AlertSystem = () => {
   const getStatusColor = (status) => {
     return status === "New Alert" ? "red" : "green";
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        variant="h2"
+        sx={{ paddingBottom: "20px", paddingTop: "20px" }}
+      >
+        Heatmap
+      </Typography>
+      {/* Add Heatmap below the table */}
+      <Heatmap />
+
+      <Typography variant="h2" gutterBottom>
         Alert System
       </Typography>
       <Button variant="Text">Sort By</Button>
@@ -84,7 +94,7 @@ const App = () => {
                 <strong>Last Update</strong>
               </TableCell>
               <TableCell>
-                <strong>Number of CDM's</strong>
+                <strong>Number of Events</strong>
               </TableCell>
               <TableCell>
                 <strong>Status</strong>
@@ -129,4 +139,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AlertSystem;
