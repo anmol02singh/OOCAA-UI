@@ -6,17 +6,22 @@ import { Box } from "@mui/material";
 
 ChartJS.register(LinearScale, PointElement, Tooltip);
 
+type HeatMapData = {
+  x: number;
+  y: number;
+  value: number;
+};
+
 const generateHeatmapData = () => {
-  // Example heatmap data
-  const data = [];
-  const rows = 24; // Number of rows
-  const cols = 7; // Number of columns
+  const data: HeatMapData[] = [];
+  const rows = 24;
+  const cols = 7;
   for (let x = 1; x <= cols; x++) {
     for (let y = 1; y <= rows; y++) {
       data.push({
         x,
         y,
-        value: Math.floor(Math.random() * 100), // Random value between 0 and 100
+        value: Math.floor(Math.random() * 50), // Random value between 0 and 50
       });
     }
   }
@@ -30,10 +35,10 @@ const Heatmap = () => {
     datasets: [
       {
         label: "Heatmap",
-        data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })), // Scale the radius
+        data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })), // Scale radius based on values
         backgroundColor: data.map(
           ({ value }) =>
-            `rgba(255, ${255 - value * 2.5}, ${255 - value * 2.5}, 0.8)`
+            `rgba(255, ${255 - value * 5}, ${255 - value * 5}, 0.8)`
         ),
         borderWidth: 1,
         borderColor: "rgba(0, 0, 0, 0.1)",
@@ -49,10 +54,18 @@ const Heatmap = () => {
         type: "linear",
         position: "bottom",
         ticks: { stepSize: 1 },
+        grid: {
+          color: "rgba(200, 200, 200, 0.8)",
+          lineWidth: 1,
+        },
       },
       y: {
         type: "linear",
         ticks: { stepSize: 1 },
+        grid: {
+          color: "rgba(200, 200, 200, 0.8)",
+          lineWidth: 1,
+        },
       },
     },
     plugins: {
@@ -74,7 +87,6 @@ const Heatmap = () => {
         padding: 2,
         border: "1px solid #ccc",
         borderRadius: "8px",
-        backgroundColor: "#f9f9f9",
       }}
     >
       <Scatter data={chartData} options={options} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,78 +8,154 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
-  Stack,
   Button,
+  Stack,
+  Grid2,
 } from "@mui/material";
-import {
-  PlayCircleOutline,
-  PauseCircleOutline,
-  Edit,
-  Delete,
-} from "@mui/icons-material";
+import { Edit, Delete } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
-// Import the Heatmap component
-import Heatmap from "../components/HeatMap.tsx"; // Adjust the path if Heatmap is in a different folder
+import Heatmap from "../components/HeatMap.tsx";
 
-const rows = [
+const initialRows = [
   {
     name: "123",
     description: "CDM for 123",
-    duration: "00:05:00",
-    latency: 10,
-    status: "New Alert",
+    duration: "00:01:00",
+    events: 10,
+    status: "New Event",
   },
   {
     name: "234",
     description: "CDM for 234",
     duration: "00:05:00",
-    latency: 12,
-    status: "No New Alert",
+    events: 12,
+    status: "Actioned by: James",
   },
   {
     name: "345",
     description: "CDM for 345",
-    duration: "00:05:00",
-    latency: 4,
-    status: "New Alert",
+    duration: "00:03:00",
+    events: 4,
+    status: "New Event",
   },
   {
     name: "456",
     description: "CDM for 456",
     duration: "00:05:00",
-    latency: 6,
-    status: "No New Alert",
+    events: 6,
+    status: "Actioned by: James",
   },
   {
     name: "567",
     description: "CDM for 567",
     duration: "00:05:00",
-    latency: 8,
-    status: "New Alert",
+    events: 18,
+    status: "New Event",
+  },
+  {
+    name: "213",
+    description: "CDM for 213",
+    duration: "00:05:00",
+    events: 23,
+    status: "Actioned by: James",
+  },
+  {
+    name: "334",
+    description: "CDM for 334",
+    duration: "00:04:00",
+    events: 36,
+    status: "New Event",
+  },
+  {
+    name: "435",
+    description: "CDM for 435",
+    duration: "00:07:00",
+    events: 17,
+    status: "Actioned by: James",
+  },
+  {
+    name: "543",
+    description: "CDM for 543",
+    duration: "00:10:00",
+    events: 15,
+    status: "New Event",
   },
 ];
 
 const AlertSystem = () => {
+  const [rows, setRows] = useState(initialRows);
+
   const getStatusColor = (status) => {
-    return status === "New Alert" ? "red" : "green";
+    return status === "New Event" ? "red" : "green";
+  };
+
+  const handleEditClick = (index) => {
+    const updatedRows = [...rows];
+    updatedRows[index].status =
+      updatedRows[index].status == "Actioned by: James"
+        ? "New Event"
+        : "Actioned by: James";
+    setRows(updatedRows);
+  };
+
+  const handleDelete = (index) => {
+    const updatedRows = [...rows];
+    const newRows = [
+      ...updatedRows.slice(0, index),
+      ...updatedRows.slice(index + 1),
+    ];
+    setRows(newRows);
+  };
+
+  const handleSort = () => {
+    const updatedRows = [...rows];
+
+    const sortedRows = updatedRows.sort((a, b) => b.events - a.events);
+
+    setRows(sortedRows);
+  };
+
+  const handleStatusSort = () => {
+    const updatedRows = [...rows];
+
+    const sortedByStatus = updatedRows.sort((a, b) =>
+      b.status.localeCompare(a.status)
+    );
+
+    setRows(sortedByStatus);
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <Typography
-        variant="h2"
-        sx={{ paddingBottom: "20px", paddingTop: "20px" }}
-      >
+      <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
         Heatmap
       </Typography>
-      {/* Add Heatmap below the table */}
       <Heatmap />
 
-      <Typography variant="h2" gutterBottom>
+      <Typography variant="h2" gutterBottom sx={{ paddingTop: "20px" }}>
         Alert System
       </Typography>
-      <Button variant="Text">Sort By</Button>
+      <Grid2 container spacing={2}>
+        <Grid2>
+          <Button
+            variant="outlined"
+            sx={{ padding: "5px", marginBottom: "10px" }}
+            onClick={() => handleSort()}
+          >
+            Sort By Events
+          </Button>
+        </Grid2>
+
+        <Grid2>
+          <Button
+            variant="outlined"
+            sx={{ padding: "5px", marginBottom: "10px" }}
+            onClick={() => handleStatusSort()}
+          >
+            Sort By Status
+          </Button>
+        </Grid2>
+      </Grid2>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -110,7 +186,7 @@ const AlertSystem = () => {
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.description}</TableCell>
                 <TableCell>{row.duration}</TableCell>
-                <TableCell>{row.latency}</TableCell>
+                <TableCell>{row.events}</TableCell>
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <CircleIcon
@@ -122,12 +198,12 @@ const AlertSystem = () => {
                 </TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <IconButton color="info">
+                    <Button color="info" onClick={() => handleEditClick(index)}>
                       <Edit />
-                    </IconButton>
-                    <IconButton color="error">
+                    </Button>
+                    <Button color="error" onClick={() => handleDelete(index)}>
                       <Delete />
-                    </IconButton>
+                    </Button>
                   </Stack>
                 </TableCell>
               </TableRow>
