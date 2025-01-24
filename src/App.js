@@ -3,8 +3,9 @@ import { Routes, Route } from "react-router-dom";
 //import "/Users/san/OOCAA-UI/src/styles/index.css";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
-import Contact from "./pages/Contact.tsx";
+import Contacts from "./scenes/Watchlist/index.tsx";
 import Navbar from "./scenes/global/Navbar.tsx";
+import Team from "./scenes/Team/index.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar.tsx";
@@ -37,6 +38,8 @@ function App() {
                       
                       <Routes>
                           <Route path="/" element={<Dashboard />} />
+                          <Route path="/team" element={<Team />} />
+                          <Route path="/watchlist" element={<Contacts />} />
                           <Route path="/bar" element={<Bar />} />
                           <Route path="/pie" element={<Pie />} />
                           <Route path="/line" element={<Line />} />
