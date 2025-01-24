@@ -1,41 +1,42 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar, GridColDef } from "@mui/x-data-grid";
 import { tokens } from '../../theme.tsx';
-import { mockDataContacts } from "../../Data/mockData.tsx";
 import Header from "../../components/Header.tsx";
 import React from "react";
 import { useTheme } from "@mui/material";
+import { mockDataWatchlist } from "../../Data/mockDataWatchlist.tsx";
 
 const Contacts = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", flex: 0.5, type: "number" },
-    { field: "registrarId", headerName: "Registrar ID", type: "number" },
+    { field: "id", headerName: "MESSAGE ID", flex: 1},
+    { field: "CREATION_DATE", headerName: "CREATION DATE - (UTC)", flex: 1 },
     {
-      field: "name",
-      headerName: "Name",
+      field: "TCA",
+      headerName: "TCA - (UTC)",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
+      field: "MISS_DISTANCE",
+      headerName: "MISS DISTANCE - (M)",
+      flex: 1
+     // type: "number",
+     // headerAlign: "left",
+     // align: "left",
     },
-    { field: "phone", headerName: "Phone Number", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "address", headerName: "Address", flex: 1 },
-    { field: "city", headerName: "City", flex: 1 },
-    { field: "zipCode", headerName: "Zip Code", flex: 1 },
+    { field: "COLLISION_PROBABILITY", headerName: "COLLISION PROBABILITY", flex: 1 },
+   // { field: "email", headerName: "Email", flex: 1 },
+   // { field: "address", headerName: "Address", flex: 1 },
+   // { field: "city", headerName: "City", flex: 1 },
+   // { field: "zipCode", headerName: "Zip Code", flex: 1 },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Watchlist" subtitle="Monitor selected satellites" />
+      <Header title="Watchlist" subtitle="Stay informed with real-time insights on your monitored satellites" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -60,7 +61,7 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={mockDataWatchlist}
           columns={columns}
           slots={{ toolbar: GridToolbar }}
         />
