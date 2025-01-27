@@ -17,6 +17,7 @@ import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import SettingsPopover from '../../pages/SettingsPopover.tsx';
 
 interface ItemProps {
   title: string;
@@ -47,6 +48,8 @@ const Navbar: FC = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('Dashboard');
+   const [textSize, setTextSize] = useState(16);
+  
 
   return (
     <Box
@@ -76,6 +79,8 @@ const Navbar: FC = () => {
               </Box>
             )}
           </MenuItem>
+          {/* <SettingsPopover setTextSizeState={setTextSize} /> */}
+          <Box paddingLeft={isCollapsed ? undefined : '10%'}></Box>
           {!isCollapsed && (
             <Box marginBottom="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
