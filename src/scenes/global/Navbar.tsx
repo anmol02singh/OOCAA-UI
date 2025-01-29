@@ -5,6 +5,7 @@ import "react-pro-sidebar/dist/css/styles.css";
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { tokens } from '../../theme.tsx';
+import { role } from '../../API/account.js';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
@@ -48,6 +49,13 @@ const Navbar: FC = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('Dashboard');
+  const [savedRole, setSavedRole] = useState<string>('');
+
+  if (localStorage.getItem("activeUsername")) {
+    role(localStorage.getItem("activeUsername"))
+      .then(json => json.role ? json.role : "Unknown Role")
+      .then(setSavedRole);
+  }
 
   return (
     <Box
@@ -96,7 +104,7 @@ const Navbar: FC = () => {
                 </Typography>
                 {localStorage.getItem("activeUsername") && (
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    ADMIN
+                    { savedRole.toUpperCase() }
                   </Typography>
                 )}
               </Box>
