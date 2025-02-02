@@ -31,6 +31,7 @@
     "react-scripts": "5.0.1",
     "resium": "^1.18.3",
     "sass": "^1.81.0",
+    "satellite.js": "^5.0.0",
     "styled-components": "^6.1.13",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"

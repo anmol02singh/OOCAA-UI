@@ -3,9 +3,11 @@ export interface SearchParams {
     value: string;
   }
   
+  const API_URL = process.env.API_URL || 'http://localhost:3000';
+
   export const fetchCDMs = async (searchParams, tcaRange) => {
     try {
-      const response = await fetch('http://localhost:3000/cdm-data/search', {
+      const response = await fetch(`${API_URL}/cdm-data/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ searchParams, tcaRange }),

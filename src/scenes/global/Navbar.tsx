@@ -52,7 +52,7 @@ const Navbar: FC = () => {
 
   return (
     <Box
-      sx={{height:"100vh",
+      sx={{height:"272%",
         '& .pro-sidebar-inner': { background: `${colors.primary[400]} !important`, height:"100%" },
         '& .pro-icon-wrapper': { backgroundColor: 'transparent !important' },
         '& .pro-inner-item': { padding: '5px 35px 5px 20px !important' },
