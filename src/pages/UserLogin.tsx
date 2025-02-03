@@ -9,6 +9,7 @@ import spacebg from "../assets/space_bg2.jpg";
 const UserLogin = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [loginFailed, setLoginFailed] = useState<boolean>(false);
 
   async function handleLogin() {
     const response = await login(username, password);
@@ -16,7 +17,7 @@ const UserLogin = () => {
       localStorage.setItem("accountToken", response.token);
       window.location.replace("/");
     } else {
-      alert("Login failed");
+      setLoginFailed(true);
     }
   }
 
@@ -79,6 +80,15 @@ const UserLogin = () => {
               OOCAA
             </Typography>
           </Grid2>
+
+          { loginFailed ? <Typography
+            variant="p"
+            sx={{
+              color: "red",
+            }}
+          >
+            <em>Login failed.  Please try again.</em>
+          </Typography> : null }
 
           <Grid2>
             <TextField

@@ -7,9 +7,10 @@ import logo from "../assets/logo.png";
 import spacebg from "../assets/space_bg.jpg";
 
 const UserSignUp = () => {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [registrationFailed, setRegistrationFailed] = useState<boolean>(false);
 
   async function handleRegister() {
     const response = await register(name, username, password);
@@ -17,7 +18,7 @@ const UserSignUp = () => {
       localStorage.setItem("accountToken", response.token);
       window.location.replace("/");
     } else {
-      alert("Registration failed");
+      setRegistrationFailed(true);
     }
   }
 
@@ -80,6 +81,15 @@ const UserSignUp = () => {
               OOCAA
             </Typography>
           </Grid2>
+
+          { registrationFailed ? <Typography
+            variant="p"
+            sx={{
+              color: "red",
+            }}
+          >
+            <em>This username is already taken.</em>
+          </Typography> : null }
 
           <Grid2>
             <TextField
