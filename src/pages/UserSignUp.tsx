@@ -13,6 +13,8 @@ const UserSignUp = () => {
   const [registrationFailed, setRegistrationFailed] = useState<boolean>(false);
 
   async function handleRegister() {
+    if (!username || !password) { return; }
+
     const response = await register(name, username, password);
     if (response.success) {
       localStorage.setItem("accountToken", response.token);
@@ -132,6 +134,7 @@ const UserSignUp = () => {
               label="User Name"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
@@ -165,6 +168,7 @@ const UserSignUp = () => {
               label="Password"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {

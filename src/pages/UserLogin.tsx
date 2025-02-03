@@ -12,6 +12,8 @@ const UserLogin = () => {
   const [loginFailed, setLoginFailed] = useState<boolean>(false);
 
   async function handleLogin() {
+    if (!username || !password) { return; }
+
     const response = await login(username, password);
     if (response.success) {
       localStorage.setItem("accountToken", response.token);
@@ -98,6 +100,7 @@ const UserLogin = () => {
               label="User Name"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
@@ -131,6 +134,7 @@ const UserLogin = () => {
               label="Password"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
