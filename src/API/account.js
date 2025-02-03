@@ -1,10 +1,10 @@
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-export async function role(username) {
+export async function userdata(token) {
     try {
-        const response = await fetch(`${API_URL}/role`, {
+        const response = await fetch(`${API_URL}/userdata`, {
             method: "POST",
-            body: JSON.stringify({ username: username }),
+            body: JSON.stringify({ token: token }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
         if (!response.ok) {

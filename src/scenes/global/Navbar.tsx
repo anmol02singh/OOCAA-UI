@@ -5,7 +5,7 @@ import "react-pro-sidebar/dist/css/styles.css";
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { tokens } from '../../theme.tsx';
-import { role } from '../../API/account.js';
+import { userdata } from '../../API/account.js';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
@@ -49,12 +49,21 @@ const Navbar: FC = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('Dashboard');
+  const [activeUsername, setActiveUsername] = useState<string>('');
   const [savedRole, setSavedRole] = useState<string>('');
 
-  if (localStorage.getItem("activeUsername")) {
-    role(localStorage.getItem("activeUsername"))
-      .then(json => json.role ? json.role : "Unknown Role")
-      .then(setSavedRole);
+  function setTokenData(json) {
+    setActiveUsername(json.username);
+    if (json.role) {
+      setSavedRole(json.role);
+    } else {
+      setSavedRole("Unknown Role");
+    }
+  }
+
+  if (localStorage.getItem("accountToken")) {
+    userdata(localStorage.getItem("accountToken"))
+      .then(setTokenData);
   }
 
   return (
@@ -88,7 +97,7 @@ const Navbar: FC = () => {
           {!isCollapsed && (
             <Box marginBottom="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                {localStorage.getItem("activeUsername") && (
+                {activeUsername && (
                   <img
                     alt="profile-user"
                     width="100px"
@@ -100,9 +109,9 @@ const Navbar: FC = () => {
               </Box>
               <Box textAlign="center">
                 <Typography variant="h2" color={colors.grey[100]} fontWeight="bold" sx={{ m: "10px 0 0 0 0" }}>
-                  {localStorage.getItem("activeUsername") || "Not logged in"}
+                  {activeUsername || "Not logged in"}
                 </Typography>
-                {localStorage.getItem("activeUsername") && (
+                {activeUsername && (
                   <Typography variant="h5" color={colors.greenAccent[500]}>
                     { savedRole.toUpperCase() }
                   </Typography>

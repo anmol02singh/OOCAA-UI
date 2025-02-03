@@ -13,9 +13,12 @@ const UserSignUp = () => {
 
   async function handleRegister() {
     const response = await register(name, username, password);
-    console.log(response);
-    localStorage.setItem("activeUsername", username);
-    window.location.replace("/");
+    if (response.success) {
+      localStorage.setItem("accountToken", response.token);
+      window.location.replace("/");
+    } else {
+      alert("Registration failed");
+    }
   }
 
   return (

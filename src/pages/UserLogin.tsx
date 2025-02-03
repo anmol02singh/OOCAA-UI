@@ -13,7 +13,7 @@ const UserLogin = () => {
   async function handleLogin() {
     const response = await login(username, password);
     if (response.success) {
-      localStorage.setItem("activeUsername", username);
+      localStorage.setItem("accountToken", response.token);
       window.location.replace("/");
     } else {
       alert("Login failed");

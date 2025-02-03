@@ -1,6 +1,7 @@
 import { Box, IconButton, useTheme } from '@mui/material';
-import { useContext } from 'react';
-import { ColorModeContext, tokens} from  '../../theme.tsx';
+import { useContext, useState } from 'react';
+import { ColorModeContext, tokens } from  '../../theme.tsx';
+import { userdata } from '../../API/account.js';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -14,13 +15,19 @@ import SearchIcon from '@mui/icons-material/SearchOutlined';
 import React, { FC } from 'react';
 
 const Topbar: FC = () => {
-
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
+    const [activeUsername, setActiveUsername] = useState<string>('');
+
+    if (localStorage.getItem("accountToken")) {
+        userdata(localStorage.getItem("accountToken"))
+            .then(json => json.username)
+            .then(setActiveUsername);
+    }
 
     function logout() {
-        localStorage.removeItem("activeUsername");
+        localStorage.removeItem("accountToken");
         window.location.reload();
     }
 
@@ -57,7 +64,7 @@ const Topbar: FC = () => {
                 <SettingsOutlinedIcon />
             </IconButton>
 
-            {localStorage.getItem("activeUsername") ? (<>
+            {activeUsername ? (<>
                 <IconButton>
                     <PersonOutlinedIcon />
                 </IconButton>
