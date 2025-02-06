@@ -8,6 +8,8 @@ import spacebg from "../assets/space_bg.jpg";
 
 const UserSignUp = () => {
   const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [registrationFailed, setRegistrationFailed] = useState<boolean>(false);
@@ -15,7 +17,7 @@ const UserSignUp = () => {
   async function handleRegister() {
     if (!username || !password) { return; }
 
-    const response = await register(name, username, password);
+    const response = await register(name, email, phone, username, password);
     if (response.success) {
       localStorage.setItem("accountToken", response.token);
       window.location.replace("/");
@@ -99,6 +101,73 @@ const UserSignUp = () => {
               onChange={event => setName(event.target.value)}
               value={name}
               label="Name"
+              variant="outlined"
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#59D0EE",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#59D0EE",
+                },
+                input: {
+                  color: "#FFFFFF",
+                },
+              }}
+            />
+          </Grid2>
+
+          <Grid2>
+            <TextField
+              id="email"
+              onChange={event => setEmail(event.target.value)}
+              value={email}
+              label="Email"
+              variant="outlined"
+              required
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#59D0EE",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#59D0EE",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#59D0EE",
+                },
+                input: {
+                  color: "#FFFFFF",
+                },
+              }}
+            />
+          </Grid2>
+
+          <Grid2>
+            <TextField
+              id="phoneNumber"
+              onChange={event => setPhone(event.target.value)}
+              value={phone}
+              label="Phone Number"
               variant="outlined"
               fullWidth
               sx={{
