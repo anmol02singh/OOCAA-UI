@@ -12,7 +12,7 @@ const UserSignUp = () => {
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [registrationFailed, setRegistrationFailed] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   async function handleRegister() {
     if (!username || !password) { return; }
@@ -22,7 +22,7 @@ const UserSignUp = () => {
       localStorage.setItem("accountToken", response.token);
       window.location.replace("/");
     } else {
-      setRegistrationFailed(true);
+      setError(response.error);
     }
   }
 
@@ -86,13 +86,13 @@ const UserSignUp = () => {
             </Typography>
           </Grid2>
 
-          { registrationFailed ? <Typography
+          { error !== "" ? <Typography
             variant="p"
             sx={{
               color: "red",
             }}
           >
-            <em>This username is already taken.</em>
+            <em>{error}</em>
           </Typography> : null }
 
           <Grid2>
