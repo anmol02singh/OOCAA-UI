@@ -35,7 +35,6 @@ function App() {
             {!(isLoginPage || isSignupPage) && (
               <Topbar setIsNavbar={setIsNavbar} />
             )}
-
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/bar" element={<Bar />} />
