@@ -33,10 +33,9 @@ function App() {
           <ThemeProvider theme={theme}>
               <CssBaseline />
               <div className="app">
-                  {(!isLoginPage || !isSignupPage) && <Navbar isNavbar={isNavbar} />}
+                  {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
-                      {(!isLoginPage || !isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                      
+                      {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
                       <Routes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/bar" element={<Bar />} />

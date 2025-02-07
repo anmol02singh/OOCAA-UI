@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import { login } from "../API/account";
 import { Button, Grid2, TextField, Typography } from "@mui/material";
 
 import logo from "../assets/logo-2.jpg";
 import spacebg from "../assets/space_bg2.jpg";
 
 const UserLogin = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loginFailed, setLoginFailed] = useState<boolean>(false);
+
+  async function handleLogin() {
+    if (!username || !password) { return; }
+
+    const response = await login(username, password);
+    if (response.success) {
+      localStorage.setItem("accountToken", response.token);
+      window.location.replace("/");
+    } else {
+      setLoginFailed(true);
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -66,12 +83,24 @@ const UserLogin = () => {
             </Typography>
           </Grid2>
 
+          { loginFailed ? <Typography
+            variant="p"
+            sx={{
+              color: "red",
+            }}
+          >
+            <em>Login failed.  Please try again.</em>
+          </Typography> : null }
+
           <Grid2>
             <TextField
               id="username"
+              onChange={event => setUsername(event.target.value)}
+              value={username}
               label="User Name"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
@@ -100,9 +129,12 @@ const UserLogin = () => {
           <Grid2>
             <TextField
               id="password"
+              onChange={event => setPassword(event.target.value)}
+              value={password}
               label="Password"
               variant="outlined"
               fullWidth
+              required
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
@@ -128,6 +160,10 @@ const UserLogin = () => {
             />
           </Grid2>
 
+          <Typography>
+            Don't have an account? <a href="/signup">Sign up</a>
+          </Typography>
+
           <Grid2 sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               variant="contained"
@@ -138,6 +174,7 @@ const UserLogin = () => {
                   backgroundColor: "#8F5ACB",
                 },
               }}
+              onClick={handleLogin}
             >
               Log In
             </Button>
