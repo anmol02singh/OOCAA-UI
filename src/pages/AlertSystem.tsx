@@ -127,19 +127,38 @@ const AlertSystem = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      <Typography variant="h1" gutterBottom sx={{ paddingTop: "20px" }}>
+        Alert System
+      </Typography>
+      <Typography
+        variant="body1"
+        gutterBottom
+        sx={{ paddingTop: "10px", paddingBottom: "20px" }}
+      >
+        OOCAA derives new Events for each CDM, and organizes all CDM's based on
+        criterias such as number of events, or status of events. These are
+        displayed in a heat map indicating the number of events per day of the
+        week, and each hour an event is derived.
+      </Typography>
+
       <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
         Heatmap
       </Typography>
       <Heatmap />
 
-      <Typography variant="h2" gutterBottom sx={{ paddingTop: "20px" }}>
-        Alert System
+      <Typography
+        variant="h2"
+        sx={{ paddingTop: "20px", paddingBottom: "10px" }}
+      >
+        CDM Alert Table
       </Typography>
+
       <Grid2 container spacing={2}>
         <Grid2>
           <Button
+            data-testid="sort-by-events"
             variant="outlined"
-            sx={{ padding: "5px", marginBottom: "10px" }}
+            sx={{ padding: "5px", marginBottom: "10px", marginTop: "10px" }}
             onClick={() => handleSort()}
           >
             Sort By Events
@@ -149,7 +168,7 @@ const AlertSystem = () => {
         <Grid2>
           <Button
             variant="outlined"
-            sx={{ padding: "5px", marginBottom: "10px" }}
+            sx={{ padding: "5px", marginBottom: "10px", marginTop: "10px" }}
             onClick={() => handleStatusSort()}
           >
             Sort By Status
@@ -180,7 +199,7 @@ const AlertSystem = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody data-testid="table-list">
             {rows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.name}</TableCell>
