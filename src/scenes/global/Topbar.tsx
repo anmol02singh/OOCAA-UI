@@ -7,15 +7,17 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import SearchIcon from '@mui/icons-material/SearchOutlined';
-
+import { useNavigate } from 'react-router-dom';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import React, { FC } from 'react';
-import SettingsPopover from '../../pages/SettingsPopover.tsx'; // Import SettingsPopover component
+import SettingsPopover from '../../pages/SettingsPopover.tsx';
+
 
 const Topbar: FC = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-
+  const navigate = useNavigate();
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       {/* SEARCH BAR */}
@@ -35,7 +37,9 @@ const Topbar: FC = () => {
         <IconButton>
           <NotificationsOutlinedIcon />
         </IconButton>
-        <SettingsPopover />
+        <IconButton>
+        <SettingsOutlinedIcon onClick={() => navigate("/settings")} />
+        </IconButton>
         <IconButton>
           <PersonOutlinedIcon />
         </IconButton>

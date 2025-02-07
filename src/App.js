@@ -16,6 +16,7 @@ import Dashboard from "./scenes/dashboard/index.tsx";
 import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
+import SettingsPopover from "./pages/SettingsPopover.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -44,6 +45,7 @@ function App() {
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
+                          <Route path="/settings" element={<SettingsPopover />} />
                       </Routes>
                   </main>
               </div>

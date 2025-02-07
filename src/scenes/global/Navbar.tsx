@@ -79,7 +79,6 @@ const Navbar: FC = () => {
               </Box>
             )}
           </MenuItem>
-          {/* <SettingsPopover setTextSizeState={setTextSize} /> */}
           <Box paddingLeft={isCollapsed ? undefined : '10%'}></Box>
           {!isCollapsed && (
             <Box marginBottom="25px">
@@ -125,6 +124,7 @@ const Navbar: FC = () => {
           </Box>
         </Menu>
       </ProSidebar>
+   
     </Box>
   );
 };
