@@ -37,8 +37,7 @@ function App() {
                   <main className="content">
                     <Box sx={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                        
-                        <Routes>
+                          <Routes>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/bar" element={<Bar />} />
                             <Route path="/pie" element={<Pie />} />

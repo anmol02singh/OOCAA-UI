@@ -1,23 +1,38 @@
 import { Box, IconButton, useTheme } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ColorModeContext, tokens} from  '../../theme.tsx';
+import { ColorModeContext, tokens } from  '../../theme.tsx';
+import { userdata } from '../../API/account.js';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/SearchOutlined';
 
 import React, { FC } from 'react';
 
 const Topbar: FC = () => {
-
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
     const navigate = useNavigate();
+    
+    const [activeUsername, setActiveUsername] = useState<string>('');
+
+    if (localStorage.getItem("accountToken")) {
+        userdata(localStorage.getItem("accountToken"))
+            .then(json => json.username)
+            .then(setActiveUsername);
+    }
+
+    function logout() {
+        localStorage.removeItem("accountToken");
+        window.location.reload();
+    }    
 
     return (<Box display = "flex" justifyContent = "space-between" p = {2}> 
     {/* SEARCH BAR */}
@@ -52,9 +67,21 @@ const Topbar: FC = () => {
                 <SettingsOutlinedIcon />
             </IconButton>
 
-            <IconButton>
-                <PersonOutlinedIcon onClick={() => navigate("/profile")}/>
-            </IconButton>
+            {activeUsername ? (<>
+                <IconButton>
+                    <PersonOutlinedIcon onClick={() => navigate("/profile")}/>
+                </IconButton>
+
+                <IconButton onClick={logout}>
+                    <LogoutIcon />
+                </IconButton>
+            </>) : (
+                <a href="/login">
+                    <IconButton>
+                        <LoginIcon />
+                    </IconButton>
+                </a>
+            )}
          </Box>
         </Box>
     );
