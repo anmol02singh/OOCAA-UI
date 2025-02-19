@@ -18,20 +18,24 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import StatCard from '../components/StatCard.tsx';
 import SearchBar from '../components/SearchBar.tsx';
-import TcaSlider from '../components/TCASlider.tsx';
+import TcaPicker from '../components/TCAPicker.tsx';
 import CesiumViewer from '../components/CesiumViewer.tsx';
 import { tokens } from '../theme.tsx';
-import { fetchCDMs } from '../API/searchCDMs.tsx';
+import { fetchEvents } from '../API/searchEvents.tsx';
 import { fetchTLEs } from '../API/fetchTLEs.tsx'; 
 import { CDM } from '../types.tsx';
+import { Event } from '../types.tsx';
 
 const Directory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'objectName', value: '' }]);
-  const [tcaRange, setTcaRange] = useState([new Date('2024-10-05').getTime(), Date.now()]);
-  const [searchResults, setSearchResults] = useState<CDM[]>([]);
+  const [tcaRange, setTcaRange] = useState<[number, number]>([
+    new Date('2024-10-05').getTime(), 
+    Date.now()
+  ]);
+  const [searchResults, setSearchResults] = useState<Event[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [tles, setTles] = useState<{
@@ -40,7 +44,7 @@ const Directory = () => {
   }>({});
   
 
-  const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null) 
+  // const [selectedCDM, setSelectedCDM] = useState<Event | null>(null)
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
@@ -62,10 +66,10 @@ const Directory = () => {
     );
   };
 
-  const handleTcaChange = (event: Event, newValue: number | number[]) => {
-    setTcaRange(newValue as number[]);
+  const handleTcaChange = (newRange: [number, number]) => {
+    setTcaRange(newRange);
   };
-
+  
   const handleValueChange = (id: number, value: string) => {
     setSearchBars((prev) =>
       prev.map((bar) =>
@@ -78,47 +82,49 @@ const Directory = () => {
     const hasEmptySearch = searchBars.some((bar) => bar.value.trim() === '');
     if (hasEmptySearch) {
       setSearchResults([]);
-      setSelectedCDM(null);
-      setTles({});
+      // setSelectedCDM(null);
+      // setTles({});
       return;
     }
     try {
-      const data = await fetchCDMs(searchBars, tcaRange);
+      console.log("tca range", tcaRange);
+      const data = await fetchEvents(searchBars, tcaRange);
+      console.log("please", data);
       setSearchResults(data);
-      setSelectedCDM(null);
-      setTles({});
+      // setSelectedCDM(null);
+      // setTles({});
     } catch (error) {
       console.error('Search failed:', error);
     }
   };
 
-  const handleClickMessageId = async (cdm: CDM) => {
-    try {
-      const { object1, object2, tca } = cdm;
+  // const handleClickMessageId = async (cdm: CDM) => {
+  //   try {
+  //     const { object1, object2, tca } = cdm;
 
-      const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
-      if (data && data.length === 2) {
-        setTles({
-          object1: {
-            designator: data[0].designator,
-            tleLine1: data[0].tleLine1,
-            tleLine2: data[0].tleLine2,
-          },
-          object2: {
-            designator: data[1].designator,
-            tleLine1: data[1].tleLine1,
-            tleLine2: data[1].tleLine2,
-          },
-        });
-      } else {
-        console.error('Unexpected TLE data format:', data);
-      } 
-      console.log('Fetched TLEs:', tles.object1);
-      setSelectedCDM(cdm);
-    } catch (error) {
-      console.error('Failed to fetch TLEs:', error);
-    }
-  };
+  //     const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
+  //     if (data && data.length === 2) {
+  //       setTles({
+  //         object1: {
+  //           designator: data[0].designator,
+  //           tleLine1: data[0].tleLine1,
+  //           tleLine2: data[0].tleLine2,
+  //         },
+  //         object2: {
+  //           designator: data[1].designator,
+  //           tleLine1: data[1].tleLine1,
+  //           tleLine2: data[1].tleLine2,
+  //         },
+  //       });
+  //     } else {
+  //       console.error('Unexpected TLE data format:', data);
+  //     } 
+  //     console.log('Fetched TLEs:', tles.object1);
+  //     setSelectedCDM(cdm);
+  //   } catch (error) {
+  //     console.error('Failed to fetch TLEs:', error);
+  //   }
+  // };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -198,15 +204,8 @@ const Directory = () => {
         )}
       </Box>
 
-      {/* TCA Slider */}
-      <TcaSlider
-        tcaRange={tcaRange}
-        onTcaChange={handleTcaChange}
-        min={new Date('2024-10-05').getTime()}
-        max={Date.now()}
-        step={3600000}
-        accentColor={colors.blueAccent[700]}
-      />
+      {/* TCA Picker */}
+      <TcaPicker tcaRange={tcaRange} onTcaChange={handleTcaChange} />
 
       {/* Search Results Table */}
       {searchResults.length > 0 && (
@@ -214,7 +213,7 @@ const Directory = () => {
         <TableContainer
           component={Paper}
           sx={{
-            backgroundColor: colors.primary[500],
+            backgroundColor: colors.primary[400],
             color: colors.grey[100],
           }}
         >
@@ -227,11 +226,12 @@ const Directory = () => {
               }}
             >
               <TableRow>
-                <TableCell>Message ID</TableCell>
-                <TableCell>Creation Date [UTC]</TableCell>
-                <TableCell>Time of Closest Approach [UTC]</TableCell>
-                <TableCell>Miss Distance [m]</TableCell>
-                <TableCell>Collision Probability</TableCell>
+                <TableCell>Event Name</TableCell>
+                <TableCell>Primary Object Name</TableCell>
+                <TableCell>Primary Object Designator</TableCell>
+                <TableCell>Secondary Object Name</TableCell>
+                <TableCell>Secondary Object Designator</TableCell>
+                <TableCell>TCA [UTC]</TableCell>
               </TableRow>
             </TableHead>
             <TableBody
@@ -243,22 +243,23 @@ const Directory = () => {
             >
               {searchResults
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((cdm, index) => (
+                .map((eventItem, index) => (
                   <TableRow
                     key={index}
                     sx={{
                       cursor: 'pointer',
                       '&:hover': {
-                        backgroundColor: colors.primary[600], // Optional hover effect
+                        backgroundColor: theme.palette.background.default,
                       },
                     }}
-                    onClick={() => handleClickMessageId(cdm)}
+                    // onClick={() => handleClickMessageId(cdm)}
                   >
-                    <TableCell>{cdm.messageId}</TableCell>
-                    <TableCell>{new Date(cdm.creationDate).toISOString()}</TableCell>
-                    <TableCell>{new Date(cdm.tca).toISOString()}</TableCell>
-                    <TableCell>{cdm.missDistance.toFixed(2)}</TableCell>
-                    <TableCell>{cdm.collisionProbability.toExponential(2)}</TableCell>
+                    <TableCell>{eventItem.eventName}</TableCell>
+                    <TableCell>{eventItem.primaryObjectName}</TableCell>
+                    <TableCell>{eventItem.primaryObjectDesignator}</TableCell>
+                    <TableCell>{eventItem.secondaryObjectName}</TableCell>
+                    <TableCell>{eventItem.secondaryObjectDesignator}</TableCell>
+                    <TableCell>{new Date(eventItem.tca).toISOString()}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>
@@ -277,10 +278,11 @@ const Directory = () => {
     )}
 
       {/* Detailed View for Selected CDM */}
-      {selectedCDM && (
-      <Box display="flex" gap={2} mt={4}>
+      {/* {selectedCDM && (
+      <Box display="flex" gap={2} mt={4}> */}
+
         {/* Object 1 Details */}
-        <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[500] }}>
+        {/* <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
           <Typography variant="h4" fontWeight="bold" mb={2}>
             {selectedCDM.object1.objectName} Details
           </Typography>
@@ -308,10 +310,10 @@ const Directory = () => {
               <Typography sx={{ textAlign: 'right' }}>{item.value}</Typography>
             </Box>
           ))}
-        </Paper>
+        </Paper> */}
 
         {/* Object 2 Details */}
-        <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[500] }}>
+        {/* <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
           <Typography variant="h4" fontWeight="bold" mb={2}>
             {selectedCDM.object2.objectName} Details
           </Typography>
@@ -339,15 +341,22 @@ const Directory = () => {
               <Typography sx={{ textAlign: 'right' }}>{item.value}</Typography>
             </Box>
           ))}
-        </Paper>
-      </Box>
-      )}
+        </Paper> */}
+      {/* </Box>
+      )} */}
+
+
+
+
       {/* Cesium Viewer */}
-      {tles && tles.object1 && tles.object2 && (
+      {/* {tles && tles.object1 && tles.object2 && (
         <Box mt={4}>
           <CesiumViewer tle1={tles.object1} tle2={tles.object2} />
         </Box>
-      )}
+      )} */}
+
+
+
     </Box>
   );
 };
@@ -356,6 +365,5 @@ export default Directory;
 
 
 //sort table via creation date? tca?
-//date and time picker, and then slider to go in the future
 //make table a separate component
 //make detailed view a separate component

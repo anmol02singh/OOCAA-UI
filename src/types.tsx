@@ -67,3 +67,14 @@ export interface Position {
     object2: CDMObject;
   }
   
+  export interface Event {
+    _id: string;
+    eventName: string;
+    primaryObjectDesignator: string;
+    primaryObjectName: string;
+    primaryObjectType: string;
+    secondaryObjectDesignator: string;
+    secondaryObjectName: string;
+    secondaryObjectType: string;
+    tca: string; // or Date, depending on your API
+  }

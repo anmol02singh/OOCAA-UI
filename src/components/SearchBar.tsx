@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, InputBase, MenuItem, Select, Button } from '@mui/material';
+import { Box, InputBase, MenuItem, Select, Button, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/system';
+import { tokens } from "../theme.tsx";
 
 interface SearchBarProps {
   criteria: string;
@@ -24,6 +25,7 @@ const SearchBox = styled(Box)<{ backgroundColor: string; }>(
   })
 );
 
+
 const SearchBar: React.FC<SearchBarProps> = ({
   criteria,
   onCriteriaChange,
@@ -33,6 +35,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onValueChange,
   onSearch,
 }) => {
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
   return (
     <Box display="flex" alignItems="center" gap={2} mb={2}>
       <Select
@@ -43,6 +49,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
           color: textColor,
           height: '2.5rem',
           borderRadius: '4px',
+        }}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              backgroundColor: colors.primary[400],
+            },
+          },
         }}
       >
         <MenuItem value="objectName">Object Name</MenuItem>

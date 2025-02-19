@@ -5,7 +5,7 @@ export interface SearchParams {
   
   const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-  export const fetchCDMs = async (searchParams, tcaRange) => {
+  export const fetchEvents = async (searchParams, tcaRange) => {
     try {
       const response = await fetch(`${API_URL}/cdm-data/search`, {
         method: 'POST',
@@ -18,6 +18,7 @@ export interface SearchParams {
       }
   
       const data = await response.json();
+      console.log("hello", data);
       return data;
     } catch (error) {
       console.error('Error fetching CDMs:', error);
