@@ -12,16 +12,34 @@ import Button from '@mui/material/Button';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 
+import { userdata } from '../API/account.js';
+
 
 const Profile = () => {
-    //Temporary Placeholders
-    const fName = 'John';
-    const lName = 'Smith';
-    const oUsername = 'JSmith';
-    const oRole = 'Admin';
-    const oEmail = 'John.Smith@gmail.com';
-    const oPhone = '+1 (416)-123-4567';
+    //User data
+    const [userData, setUserData] = useState({
+        name: '',
+        username: '',
+        email: '',
+        phoneNumber: '',
+        role: '',
+    });
+    
+    if (localStorage.getItem("accountToken")) {
+        userdata(localStorage.getItem("accountToken"))
+            .then(json => {
+                setUserData({
+                    ...userData,                  
+                    name: json.name,
+                    username: json.username,
+                    email: json.email,
+                    phoneNumber: json.email,
+                    role: json.role,
+                });
+            });
+    }
 
+    //Window resizing thresholds
     const mdWindowWidth = 802;
     const smWindowWidth = 600;
 
@@ -43,19 +61,17 @@ const Profile = () => {
     const [errorMessageElement, setErrorMessageElement] = useState('none');
 
     const [invalidInput, setinvalidInput] = useState({
-        firstName: false,
-        lastName: false,
+        name: false,
         username: false,
         email: false,
         phoneNumber: false,
     });
 
     const [formData, setFormData] = useState({
-        firstName: fName,
-        lastName: lName,
-        username: oUsername,
-        email: oEmail,
-        phoneNumber: oPhone,
+        name: userData.name,
+        username: userData.username,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
     });
 
     const boxRef = useRef<HTMLDivElement>(null);
@@ -98,19 +114,19 @@ const Profile = () => {
         setErrorMessageElement('none');
         switch(nextState){
             case states.editName:
-                setFormData({...formData, firstName: fName, lastName: lName});
-                setinvalidInput({...invalidInput, firstName: false, lastName: false});
+                setFormData({...formData, name: userData.name});
+                setinvalidInput({...invalidInput, name: false});
                 break;
             case states.editUsername:
-                setFormData({...formData, username: oUsername});
+                setFormData({...formData, username: userData.username});
                 setinvalidInput({...invalidInput, username: false});
                 break;
             case states.editEmail:
-                setFormData({...formData, email: oEmail});
+                setFormData({...formData, email: userData.email});
                 setinvalidInput({...invalidInput, email: false});
                 break;
             case states.editPhone:
-                setFormData({...formData, phoneNumber: oPhone});
+                setFormData({...formData, phoneNumber: userData.phoneNumber});
                 setinvalidInput({...invalidInput, phoneNumber: false});
                 break;            
         }       
@@ -136,7 +152,7 @@ const Profile = () => {
             fieldValue = event;
         }
 
-        if(!(fieldName === 'firstName' || fieldName === 'phoneNumber')) fieldValue = fieldValue.trim();
+        if(!(fieldName === 'name' || fieldName === 'phoneNumber')) fieldValue = fieldValue.trim();
         
         switch(currentState){
             case states.editName:
@@ -163,8 +179,6 @@ const Profile = () => {
         
         if(!(currentState in states)) return;
 
-        //These alerts are just placeholders
-        //Add proper checks like no spaces or symbols on first and last name and so on.
         isInvalidInput = false;
         setErrorMessageElement('none');
         switch(currentState){
@@ -182,39 +196,35 @@ const Profile = () => {
                 break;            
         }
 
-        setState(states.edit);
+        //setState(states.edit);
     };
 
-    // const isLettersAndWhitespace = /^[a-zA-Z\s]+$/;
-    const containsMultipleSpaces = /\s+/g;
+    const containsExtraSpaces = /\s+/g;
     const isEmailFormat = /(@)(.+)$/;
 
     const handleNameSubmit = () => {        
-        let invalidFirstName = false;
-        let invalidLastName = false;
-        const processedFirstName = formData.firstName.replace(containsMultipleSpaces, ' ').trim()
-        const processedLastName = formData.lastName.replace(containsMultipleSpaces, ' ').trim()
+        let invalidName = false;
+        const processedName = formData.name.replace(containsExtraSpaces, ' ').trim()
 
-        if(processedFirstName === fName && processedLastName === lName){
-            invalidFirstName = true;
-            invalidLastName = true;
+        if(processedName === userData.name){
+            invalidName = true;
             setErrorMessageElement('unchangedName');
         }
 
-        if(!(invalidFirstName || invalidLastName)){
+        if(!invalidName){
             //Replace with object update logic
-            alert(`Submitted: ${processedFirstName} ${processedLastName}`);
+            alert(`Submitted: ${processedName}`);
             
-            setFormData({...formData, firstName: processedFirstName, lastName: processedLastName})
+            setFormData({...formData, name: processedName})
         }
 
-        setinvalidInput({...invalidInput, firstName: invalidFirstName, lastName: invalidLastName});
+        setinvalidInput({...invalidInput, name: invalidName});
         
-        return !(invalidFirstName || invalidLastName)
+        return !(invalidName)
     };
 
     const handleUsernameSubmit = () => {     
-        if(formData.username === oUsername){
+        if(formData.username === userData.username){
             isInvalidInput = true;
             setErrorMessageElement('unchangedUsername');
         }
@@ -231,7 +241,7 @@ const Profile = () => {
 
     const handleEmailSubmit = () => {   
         
-        if(formData.email === oEmail){
+        if(formData.email === userData.email){
             isInvalidInput = true;
             setErrorMessageElement('unchangedEmail');
         }
@@ -252,7 +262,7 @@ const Profile = () => {
 
     const handlePhoneSubmit = () => {        
         
-        if(formData.phoneNumber === oPhone.replace(/\D/g, '')){
+        if(formData.phoneNumber === userData.phoneNumber.replace(/\D/g, '')){
             isInvalidInput = true;
             setErrorMessageElement('unchangedPhone');
         }
@@ -526,7 +536,7 @@ const Profile = () => {
         , unchangedName:
             <Grid size={12}>
                 <Typography variant='h6' sx={errorMessageStyle}>
-                    *Please enter a new first name or last name.
+                    *Please enter a new name.
                 </Typography>
             </Grid>
         , unchangedUsername:
@@ -575,7 +585,7 @@ const Profile = () => {
                                 Name
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
-                                {`${fName} ${lName}`}
+                                {userData.name}
                             </Typography>
                         </Grid> 
                         
@@ -584,7 +594,7 @@ const Profile = () => {
                                 Username
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
-                                {oUsername}
+                                {userData.username}
                             </Typography>
                         </Grid>                   
 
@@ -593,7 +603,7 @@ const Profile = () => {
                                 Email
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
-                                {oEmail}
+                                {userData.email}
                             </Typography>
                         </Grid>
 
@@ -602,7 +612,7 @@ const Profile = () => {
                                 Phone Number
                             </Typography>
                             <Typography variant='h5' sx={regProfileFieldValue}>
-                                {oPhone}
+                                {userData.phoneNumber}
                             </Typography>
                         </Grid>
 
@@ -647,7 +657,7 @@ const Profile = () => {
                                     fontWeight: 'bold',
                                 }}
                             >
-                                {`${fName} ${lName}`}
+                                {userData.name}
                             </Typography>
                             <Typography
                                 variant='h5'
@@ -656,7 +666,7 @@ const Profile = () => {
                                     color: colors.greenAccent[500]
                                 }}
                             >
-                                {oRole.toUpperCase()}
+                                {userData.role.toUpperCase()}
                             </Typography>                                
                         </Grid>
 
@@ -668,7 +678,7 @@ const Profile = () => {
                                     color: colors.grey[300]
                                 }}
                             >
-                                {oEmail}
+                                {userData.email}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -717,7 +727,7 @@ const Profile = () => {
                             }}
                         >
                             <Typography sx={profileFieldButtonText}>
-                                {`${fName} ${lName}`}
+                                {userData.name}
                             </Typography>
                         </Button>                            
                     </Grid>
@@ -740,7 +750,7 @@ const Profile = () => {
                             }}
                         >
                             <Typography sx={profileFieldButtonText}>
-                                {oUsername}
+                                {userData.username}
                             </Typography>
                         </Button>
                     </Grid>                  
@@ -763,7 +773,7 @@ const Profile = () => {
                             }}
                         >
                             <Typography sx={profileFieldButtonText}>
-                                {oEmail}
+                                {userData.email}
                             </Typography>
                         </Button>
                     </Grid> 
@@ -786,7 +796,7 @@ const Profile = () => {
                             }}
                         >
                             <Typography sx={profileFieldButtonText}>
-                                {oPhone}
+                                {userData.phoneNumber}
                             </Typography>
                         </Button>
                     </Grid> 
@@ -808,20 +818,20 @@ const Profile = () => {
 
                     <Grid size={12}>
                         <Typography variant='h6' sx={fieldLabel}>
-                            First Name
+                            Name
                         </Typography>
                         <TextField
                             fullWidth
-                            name='firstName'
-                            value={formData.firstName}
+                            name='name'
+                            value={formData.name}
                             autoComplete='off'
-                            error={invalidInput.firstName}
+                            error={invalidInput.name}
                             onChange={(event)=>handleChange(event, state)}
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
-                                    endAdornment: formData.firstName!==fName ? (
-                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, fName)}>
+                                    endAdornment: formData.name!==userData.name ? (
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, userData.name)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -848,49 +858,6 @@ const Profile = () => {
                         >
                         </TextField>                            
                     </Grid>
-
-                    <Grid size={12}>
-                        <Typography variant='h6' sx={fieldLabel}>
-                            Last Name
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            name='lastName'
-                            value={formData.lastName}
-                            autoComplete='off'
-                            error={invalidInput.lastName}
-                            onChange={(event)=>handleChange(event, state)}
-                            onKeyDown={preventEnterSubmit}
-                            slotProps={{
-                                input:{
-                                    endAdornment: formData.lastName!==lName ? (
-                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, lName)}>
-                                            <ClearIcon />
-                                        </IconButton>
-                                    ) : undefined
-                                }
-                            }}
-                            sx={{
-                                ...editItemTextField,
-                                '& .MuiInputBase-root': {
-                                    ...fixEditItemTextField,
-                                },
-                                '& .MuiInputBase-input': {
-                                    ...editItemTextField_input,                                    
-                                },
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                    ...editItemTextField_outline,
-                                    '&:hover': {
-                                        borderColor: colors.grey[100],
-                                    },
-                                    '&.Mui-focused': {
-                                        border: 'none',
-                                    },
-                                },
-                            }}
-                        >
-                        </TextField> 
-                    </Grid>      
 
                     {errorMessageElements[errorMessageElement]}             
 
@@ -938,8 +905,8 @@ const Profile = () => {
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
-                                    endAdornment: formData.username!==oUsername ? (
-                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, oUsername)}>
+                                    endAdornment: formData.username!==userData.username ? (
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, userData.username)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
@@ -1013,8 +980,8 @@ const Profile = () => {
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
-                                    endAdornment: formData.email!==oEmail ? (
-                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, oEmail)}>
+                                    endAdornment: formData.email!==userData.email ? (
+                                        <IconButton size='small' onClick={(event) => handleinputCancel(event, userData.email)}>
                                             <ClearIcon />
                                         </IconButton>
                                     ) : undefined
