@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 
-import { userdata } from '../API/account.js';
+import { userdata, updateGeneralUserData } from '../API/account.js';
 
 
 const Profile = () => {
@@ -25,15 +25,16 @@ const Profile = () => {
         role: '',
     });
     
-    if (localStorage.getItem("accountToken")) {
-        userdata(localStorage.getItem("accountToken"))
+    const token = localStorage.getItem("accountToken");
+    if (token) {
+        userdata(token)
             .then(json => {
                 setUserData({
                     ...userData,                  
                     name: json.name,
                     username: json.username,
                     email: json.email,
-                    phoneNumber: json.email,
+                    phoneNumber: json.phoneNumber,
                     role: json.role,
                 });
             });
@@ -81,7 +82,7 @@ const Profile = () => {
         if (boxRef.current) {
             const width = boxRef.current.getBoundingClientRect().width;
             setPageWidth(width);
-            console.log('Width of the box:', width);
+            //console.log('Width of the box:', width);
         }
     }
 
@@ -212,10 +213,21 @@ const Profile = () => {
         }
 
         if(!invalidName){
-            //Replace with object update logic
             alert(`Submitted: ${processedName}`);
             
             setFormData({...formData, name: processedName})
+            if (token) {
+                updateGeneralUserData(token, formData.name)
+                    .then(() => {
+                        userdata(token)
+                            .then(json => {
+                                setUserData({
+                                    ...userData,                  
+                                    name: json.name
+                                });
+                            });
+                    });
+            }
         }
 
         setinvalidInput({...invalidInput, name: invalidName});
@@ -230,8 +242,20 @@ const Profile = () => {
         }
 
         if(!isInvalidInput){
-            //Replace with object update logic        
             alert(`Submitted: ${formData.username}`);
+
+            if (token) {
+                updateGeneralUserData(token, undefined, formData.username)
+                    .then(() => {
+                        userdata(token)
+                            .then(json => {
+                                setUserData({
+                                    ...userData,                  
+                                    username: json.username
+                                });
+                            });
+                    });
+            }
         }
 
         setinvalidInput({...invalidInput, username: isInvalidInput});
@@ -251,8 +275,20 @@ const Profile = () => {
         }
 
         if(!isInvalidInput){
-            //Replace with object update logic        
             alert(`Submitted: ${formData.email}`);
+
+            if (token) {
+                updateGeneralUserData(token, undefined, undefined, formData.email)
+                    .then(() => {
+                        userdata(token)
+                            .then(json => {
+                                setUserData({
+                                    ...userData,                  
+                                    email: json.email
+                                });
+                            });
+                    });
+            }
         }
 
         setinvalidInput({...invalidInput, email: isInvalidInput});
@@ -268,8 +304,20 @@ const Profile = () => {
         }
 
         if(!isInvalidInput){
-            //Replace with object update logic 
             alert(`Submitted: ${formData.phoneNumber}`);
+
+            if (token) {
+                updateGeneralUserData(token, undefined, undefined, undefined, formData.phoneNumber)
+                    .then(() => {
+                        userdata(token)
+                            .then(json => {
+                                setUserData({
+                                    ...userData,                  
+                                    phoneNumber: json.phoneNumber
+                                });
+                            });
+                    });
+            }
         }
 
         setinvalidInput({...invalidInput, phoneNumber: isInvalidInput});

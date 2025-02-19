@@ -66,3 +66,33 @@ export async function register(name, email, phone, username, password) {
         throw error;
     }
 }
+
+export async function updateGeneralUserData(
+    token,
+    newName,
+    newUsername,
+    newEmail,
+    newPhone
+) {
+    try {
+        const response = await fetch(`${API_URL}/updateGeneralUserData`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                newName: newName,
+                newUsername: newUsername,
+                newEmail: newEmail,
+                newPhone: newPhone
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user account:', error);
+        throw error;
+    }
+}
