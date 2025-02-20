@@ -13,12 +13,10 @@ export const fetchTLEs = async (objectDesignators: string[], tca: string) => {
       }),
     });
 
-    // Handle response errors
     if (!response.ok) {
       throw new Error(`Failed to fetch TLEs: ${response.statusText}`);
     }
 
-    // Parse and return response JSON
     const data = await response.json();
     return data;
   } catch (error) {

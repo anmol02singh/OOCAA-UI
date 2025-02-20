@@ -23,6 +23,7 @@ import CesiumViewer from '../components/CesiumViewer.tsx';
 import { tokens } from '../theme.tsx';
 import { fetchEvents } from '../API/searchEvents.tsx';
 import { fetchTLEs } from '../API/fetchTLEs.tsx'; 
+import { fetchCDMs } from '../API/fetchCDMs.tsx';
 import { CDM } from '../types.tsx';
 import { Event } from '../types.tsx';
 
@@ -35,16 +36,19 @@ const Directory = () => {
     new Date('2024-10-05').getTime(), 
     Date.now()
   ]);
-  const [searchResults, setSearchResults] = useState<Event[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [cdms, setCdms] = useState<CDM[]>([]);
+  const [pageOne, setPageOne] = useState(0);
+  const [rowsPerPageOne, setRowsPerPageOne] = useState(10);
+  const [pageTwo, setPageTwo] = useState(0);
+  const [rowsPerPageTwo, setRowsPerPageTwo] = useState(10);
   const [tles, setTles] = useState<{
     object1?: { designator: string; tleLine1: string; tleLine2: string };
     object2?: { designator: string; tleLine1: string; tleLine2: string };
   }>({});
-  
 
-  // const [selectedCDM, setSelectedCDM] = useState<Event | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null)
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
@@ -81,58 +85,82 @@ const Directory = () => {
   const handleSearch = async () => {
     const hasEmptySearch = searchBars.some((bar) => bar.value.trim() === '');
     if (hasEmptySearch) {
-      setSearchResults([]);
-      // setSelectedCDM(null);
-      // setTles({});
+      setEvents([]);
+      setCdms([]);
+      setSelectedEvent(null);
+      setSelectedCDM(null);
+      setTles({});
       return;
     }
     try {
-      console.log("tca range", tcaRange);
       const data = await fetchEvents(searchBars, tcaRange);
-      console.log("please", data);
-      setSearchResults(data);
-      // setSelectedCDM(null);
-      // setTles({});
+      setEvents(data);
+      setSelectedCDM(null);
+      setTles({});
+      setSelectedEvent(null);
+      setCdms([]);
     } catch (error) {
       console.error('Search failed:', error);
     }
   };
 
-  // const handleClickMessageId = async (cdm: CDM) => {
-  //   try {
-  //     const { object1, object2, tca } = cdm;
+  const handleClickMessageId = async (cdm: CDM) => {
+    try {
+      const { object1, object2, tca } = cdm;
 
-  //     const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
-  //     if (data && data.length === 2) {
-  //       setTles({
-  //         object1: {
-  //           designator: data[0].designator,
-  //           tleLine1: data[0].tleLine1,
-  //           tleLine2: data[0].tleLine2,
-  //         },
-  //         object2: {
-  //           designator: data[1].designator,
-  //           tleLine1: data[1].tleLine1,
-  //           tleLine2: data[1].tleLine2,
-  //         },
-  //       });
-  //     } else {
-  //       console.error('Unexpected TLE data format:', data);
-  //     } 
-  //     console.log('Fetched TLEs:', tles.object1);
-  //     setSelectedCDM(cdm);
-  //   } catch (error) {
-  //     console.error('Failed to fetch TLEs:', error);
-  //   }
-  // };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+      const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
+      if (data && data.length === 2) {
+        setTles({
+          object1: {
+            designator: data[0].designator,
+            tleLine1: data[0].tleLine1,
+            tleLine2: data[0].tleLine2,
+          },
+          object2: {
+            designator: data[1].designator,
+            tleLine1: data[1].tleLine1,
+            tleLine2: data[1].tleLine2,
+          },
+        });
+      } else {
+        console.error('Unexpected TLE data format:', data);
+      } 
+      console.log('Fetched TLEs:', tles.object1);
+      setSelectedCDM(cdm);
+    } catch (error) {
+      console.error('Failed to fetch TLEs:', error);
+    } 
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleEventClick = async (eventItem: Event) => {
+    try {
+      const data = await fetchCDMs(eventItem._id);
+      setSelectedEvent(eventItem);
+      setCdms(data);
+      setSelectedCDM(null);
+      setTles({});
+      console.log("CDMs", data);
+    } catch (error) {
+      console.error('Failed to fetch CDMs for event:', error);
+    }
+  };
+
+  const handleChangePageOne = (event: unknown, newPage: number) => {
+    setPageOne(newPage);
+  };
+
+  const handleChangeRowsPerPageOne = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPageOne(parseInt(event.target.value, 10));
+    setPageOne(0);
+  };
+
+  const handleChangePageTwo = (event: unknown, newPage: number) => {
+    setPageTwo(newPage);
+  };
+
+  const handleChangeRowsPerPageTwo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPageTwo(parseInt(event.target.value, 10));
+    setPageTwo(0);
   };
 
   return (
@@ -208,7 +236,7 @@ const Directory = () => {
       <TcaPicker tcaRange={tcaRange} onTcaChange={handleTcaChange} />
 
       {/* Search Results Table */}
-      {searchResults.length > 0 && (
+      {events.length > 0 && (
       <Box mt={4}>
         <TableContainer
           component={Paper}
@@ -241,8 +269,8 @@ const Directory = () => {
                 },
               }}
             >
-              {searchResults
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              {events
+                .slice(pageOne * rowsPerPageOne, pageOne * rowsPerPageOne + rowsPerPageOne)
                 .map((eventItem, index) => (
                   <TableRow
                     key={index}
@@ -252,7 +280,7 @@ const Directory = () => {
                         backgroundColor: theme.palette.background.default,
                       },
                     }}
-                    // onClick={() => handleClickMessageId(cdm)}
+                    onClick={() => handleEventClick(eventItem)}
                   >
                     <TableCell>{eventItem.eventName}</TableCell>
                     <TableCell>{eventItem.primaryObjectName}</TableCell>
@@ -268,21 +296,95 @@ const Directory = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={searchResults.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          count={events.length}
+          rowsPerPage={rowsPerPageOne}
+          page={pageOne}
+          onPageChange={handleChangePageOne}
+          onRowsPerPageChange={handleChangeRowsPerPageOne}
+        />
+      </Box>
+    )}
+    
+    {/* CDM table */}
+    {cdms.length > 0 && (
+      <Box mt={4}>
+        <Typography variant="h4" mb={3}>
+          Viewing CDMs for {selectedEvent ? selectedEvent.eventName : ''} : {selectedEvent ? selectedEvent.primaryObjectName : ''} & {selectedEvent ? selectedEvent.secondaryObjectName : ''}
+        </Typography>
+        <TableContainer
+          component={Paper}
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+        >
+          <Table>
+            <TableHead
+              sx={{
+                '& .MuiTableCell-root': {
+                  fontSize: '0.9rem',
+                },
+              }}
+            >
+              <TableRow>
+                <TableCell>Message ID</TableCell>
+                <TableCell>Creation Date [UTC]</TableCell>
+                <TableCell>TCA [UTC]</TableCell>
+                <TableCell>Miss Distance [m]</TableCell>
+                <TableCell>Collision Probability</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody
+              sx={{
+                '& .MuiTableCell-root': {
+                  fontSize: '0.85rem',
+                },
+              }}
+            >
+              {cdms
+                .slice(pageTwo * rowsPerPageTwo, pageTwo * rowsPerPageTwo + rowsPerPageTwo)
+                .map((cdm, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: theme.palette.background.default,
+                      },
+                    }}
+                    onClick={() => handleClickMessageId(cdm)}
+                  >
+                    <TableCell>{cdm.messageId}</TableCell>
+                    <TableCell>{new Date(cdm.creationDate).toISOString()}</TableCell>
+                    <TableCell>{new Date(cdm.tca).toISOString()}</TableCell>
+                    <TableCell>{cdm.missDistance.toFixed(2)}</TableCell>
+                    <TableCell>{cdm.collisionProbability?.toExponential(2)}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={cdms.length}
+          rowsPerPage={rowsPerPageTwo}
+          page={pageTwo}
+          onPageChange={handleChangePageTwo}
+          onRowsPerPageChange={handleChangeRowsPerPageTwo}
         />
       </Box>
     )}
 
       {/* Detailed View for Selected CDM */}
-      {/* {selectedCDM && (
-      <Box display="flex" gap={2} mt={4}> */}
-
+      <Typography variant="h4" mb={3}>
+        {selectedCDM ? `Viewing CDM: ${selectedCDM.messageId}` : ''}
+      </Typography>
+      {selectedCDM && (
+      <Box display="flex" gap={2} mt={4}>
+        
         {/* Object 1 Details */}
-        {/* <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
+        <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
           <Typography variant="h4" fontWeight="bold" mb={2}>
             {selectedCDM.object1.objectName} Details
           </Typography>
@@ -310,10 +412,10 @@ const Directory = () => {
               <Typography sx={{ textAlign: 'right' }}>{item.value}</Typography>
             </Box>
           ))}
-        </Paper> */}
+        </Paper>
 
         {/* Object 2 Details */}
-        {/* <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
+        <Paper sx={{ p: 3, flex: 1, backgroundColor: colors.primary[400] }}>
           <Typography variant="h4" fontWeight="bold" mb={2}>
             {selectedCDM.object2.objectName} Details
           </Typography>
@@ -341,21 +443,16 @@ const Directory = () => {
               <Typography sx={{ textAlign: 'right' }}>{item.value}</Typography>
             </Box>
           ))}
-        </Paper> */}
-      {/* </Box>
-      )} */}
-
-
-
+        </Paper>
+      </Box>
+      )}
 
       {/* Cesium Viewer */}
-      {/* {tles && tles.object1 && tles.object2 && (
+      {tles && tles.object1 && tles.object2 && (
         <Box mt={4}>
           <CesiumViewer tle1={tles.object1} tle2={tles.object2} />
         </Box>
-      )} */}
-
-
+      )}
 
     </Box>
   );
