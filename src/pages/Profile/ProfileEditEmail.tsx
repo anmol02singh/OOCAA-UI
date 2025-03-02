@@ -143,7 +143,12 @@ const ProfileEditEmail = () => {
         if(!invalidInput){
             if (token) {
                 updateGeneralUserData(token, undefined, undefined, processedEmail)
-                    .then(() => {
+                    .then(({ success, message }) => {
+                        if(!success){
+                            invalidInput = true;
+                            setErrorMessageElement('invalidEmailFormat');
+                            return;
+                        }
                         window.location.reload()
                     });
             }

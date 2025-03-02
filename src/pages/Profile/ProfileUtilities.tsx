@@ -14,7 +14,8 @@ export const smWindowWidth = 600;
 
 //Regex
 export const containsExtraSpaces = /\s+/g;
-export const isEmailFormat = /(@)(.+)$/;
+//Don't fix the eslint problems related to this please!
+export const isEmailFormat = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /*############### Functions ###############*/
 //Maintains current page width for changing UI elements with page width.
