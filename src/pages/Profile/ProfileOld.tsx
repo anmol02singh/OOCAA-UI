@@ -1,7 +1,6 @@
-import React, { useContext, useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect} from 'react';
 import { TextField, useTheme } from '@mui/material';
-import { ColorModeContext, themeSettings, tokens } from '../theme.tsx';
-import { useNavigate } from 'react-router-dom';
+import { tokens } from '../../theme.tsx';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -11,9 +10,9 @@ import { IconButton } from '@mui/material';
 import Button from '@mui/material/Button';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
-import { parsePhoneNumberFromString, PhoneNumber, CountryCode, isValidPhoneNumber } from "libphonenumber-js";
+import { parsePhoneNumberFromString, PhoneNumber, CountryCode } from "libphonenumber-js";
 
-import { userdata, updateGeneralUserData } from '../API/account.js';
+import { userdata, updateGeneralUserData } from '../../API/account.js';
 
 
 const Profile = () => {
@@ -56,7 +55,6 @@ const Profile = () => {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const navigate = useNavigate();
     
     const [states] = useState({
         display: 'display',
