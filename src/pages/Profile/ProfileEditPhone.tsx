@@ -5,7 +5,6 @@ import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ErrorIcon from '@mui/icons-material/Error';
-import ClearIcon from '@mui/icons-material/Clear';
 import {
     useNavigation,
     useGeneralStyling,
