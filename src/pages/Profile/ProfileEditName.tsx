@@ -95,6 +95,7 @@ const ProfileEditName = () => {
                     });
                 });
         }
+    //eslint-disable-next-line
     }, []);
 
     useEffect(() => {

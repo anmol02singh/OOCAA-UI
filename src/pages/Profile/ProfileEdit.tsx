@@ -80,6 +80,7 @@ const ProfileEdit = () => {
                     });
                 });
         }
+    //eslint-disable-next-line
     }, []);
 
     useEffect(() => {

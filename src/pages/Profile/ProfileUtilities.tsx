@@ -137,7 +137,7 @@ export const useGeneralStyling = () => {
     };
     
     const fieldLabel: React.CSSProperties = {
-        margin: '0.3rem 0.1rem',
+        margin: '0.1rem 0',
         color: colors.grey[300]
     };
 
@@ -180,13 +180,13 @@ export const useProfileDisplayStyling = () => {
 
     const regProfileInfoContainer = (pageWidth: number): React.CSSProperties => ({
         ...profileItemContainer(pageWidth),
-        width: pageWidth >= mdWindowWidth ? '65%' : '95%',
+        width: pageWidth >= mdWindowWidth ? '58%' : '95%',
         minWidth: '21rem',
     });
 
     const regProfileCardContainer = (pageWidth: number): React.CSSProperties => ({
         ...profileItemContainer(pageWidth),
-        width: pageWidth >= mdWindowWidth ? '35%' : '75%',
+        width: pageWidth >= mdWindowWidth ? '42%' : '75%',
         minWidth: '20rem',
     });
 
@@ -200,28 +200,43 @@ export const useProfileDisplayStyling = () => {
         minHeight: pageWidth >= mdWindowWidth ? '10rem' : '7rem',
     });
 
-    const regProfileCardText: React.CSSProperties = {
+    const regProfileInfoSubheader = (pageWidth: number): React.CSSProperties => ({
+        textAlign: 'center',        
+        width: '100%',
+        minWidth: pageWidth >= mdWindowWidth ? undefined : '16rem',
+        maxWidth: pageWidth >= mdWindowWidth ? '23vw' : '42vw',
+        minHeight: 0,
+        overflow: 'auto',
+        textWrap: 'wrap',
+        wordWrap: 'break-word'
+    });
+    
+    const regProfileCardText = (pageWidth: number): React.CSSProperties => ({
         color: colors.grey[100],
         textAlign: 'center',
-        width: '100%',
-        minWidth: 0,
+        minWidth: pageWidth >= mdWindowWidth ? undefined : '16rem',
+        maxWidth: pageWidth >= mdWindowWidth ? '23vw' : '39vw',
         minHeight: 0,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-    };   
+    });   
 
     const regProfileInfoHeader: React.CSSProperties = {
         color: colors.blueAccent[400],
     };
 
-    const regProfileFieldValue: React.CSSProperties = {
-        margin: '0.3rem 0.1rem',
-        padding: '0 0.2rem 0.3rem',
-        color: colors.grey[100],
+    const regProfileFieldContainer: React.CSSProperties = {
+        padding: '0.1rem',
         borderBottom: `solid 1px ${colors.grey[300]}`,
-        width: '100%',
-        minWidth: 0,
+    }
+
+    const regProfileFieldValue: React.CSSProperties = {
+        padding: '0 0 0 0.2rem',
+        textAlign: 'left',
+        color: colors.grey[100],
+        minWidth: '14rem',
+        maxWidth: '32vw',
         minHeight: 0,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -243,8 +258,10 @@ export const useProfileDisplayStyling = () => {
         regProfileInfoContainer,
         regProfileCardContainer,
         regImageContainer,
+        regProfileInfoSubheader,
         regProfileCardText,
         regProfileInfoHeader,
+        regProfileFieldContainer,
         regProfileFieldValue,
         regButtonContainer,
         regProfileButton,
@@ -279,6 +296,7 @@ export const useEditProfileStyling = () => {
 
     const profileFieldButton: React.CSSProperties = {
         height: '3.5rem',
+        width: '100%',
         cursor: 'pointer',
         borderRadius: '6px',
         color: colors.grey[100],
@@ -291,6 +309,10 @@ export const useEditProfileStyling = () => {
 
     const profileFieldButtonText : React.CSSProperties = {
         fontSize: '16px',
+        minWidth: '15rem',
+        maxWidth: '39vw',
+        minHeight: 0,
+        textAlign: 'left',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',

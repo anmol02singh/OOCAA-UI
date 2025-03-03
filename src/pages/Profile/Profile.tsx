@@ -40,8 +40,10 @@ const Profile = () => {
         regProfileInfoContainer,
         regProfileCardContainer,
         regImageContainer,
+        regProfileInfoSubheader,
         regProfileCardText,
         regProfileInfoHeader,
+        regProfileFieldContainer,
         regProfileFieldValue,
         regButtonContainer,
         regProfileButton,
@@ -82,6 +84,7 @@ const Profile = () => {
                     });
                 });
         }
+    //eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -102,7 +105,7 @@ const Profile = () => {
                     </Typography>
                 </Grid>
                 
-                <Grid size={12}>
+                <Grid size={12} sx={regProfileFieldContainer}>
                     <Typography variant='h6' sx={fieldLabel}>
                         Name
                     </Typography>
@@ -111,7 +114,7 @@ const Profile = () => {
                     </Typography>
                 </Grid> 
                 
-                <Grid size={12}>
+                <Grid size={12} sx={regProfileFieldContainer}>
                     <Typography variant='h6' sx={fieldLabel}>
                         Username
                     </Typography>
@@ -120,7 +123,7 @@ const Profile = () => {
                     </Typography>
                 </Grid>                   
 
-                <Grid size={12}>
+                <Grid size={12} sx={regProfileFieldContainer}>
                     <Typography variant='h6' sx={fieldLabel}>
                         Email
                     </Typography>
@@ -129,7 +132,7 @@ const Profile = () => {
                     </Typography>
                 </Grid>
 
-                <Grid size={12}>
+                <Grid size={12} sx={regProfileFieldContainer}>
                     <Typography variant='h6' sx={fieldLabel}>
                         Phone Number
                     </Typography>
@@ -175,7 +178,7 @@ const Profile = () => {
                             <Typography
                                 variant='h2'
                                 sx={{
-                                    ...regProfileCardText,
+                                    ...regProfileInfoSubheader(pageWidth),
                                     fontWeight: 'bold',
                                 }}
                             >
@@ -184,7 +187,7 @@ const Profile = () => {
                             <Typography
                                 variant='h5'
                                 sx={{
-                                    ...regProfileCardText,
+                                    ...regProfileInfoSubheader(pageWidth),
                                     color: colors.greenAccent[500]
                                 }}
                             >
@@ -196,7 +199,7 @@ const Profile = () => {
                             <Typography
                                 variant='h6'
                                 sx={{
-                                    ...regProfileCardText,
+                                    ...regProfileCardText(pageWidth),
                                     color: colors.grey[300]
                                 }}
                             >

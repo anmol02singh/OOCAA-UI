@@ -96,6 +96,7 @@ const ProfileEditEmail = () => {
                     });
                 });
         }
+    //eslint-disable-next-line
     }, []);
 
     useEffect(() => {

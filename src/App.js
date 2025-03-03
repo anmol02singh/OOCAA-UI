@@ -40,8 +40,6 @@ function App() {
               <div className="app" style={{
                 width: '100vw',
                 height: '100vh',
-                minWidth: 0,
-                minHeight: 0,
               }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
@@ -50,8 +48,6 @@ function App() {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      minWidth: 0,
-                      minHeight: 0,
                     }}>
                       {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
                         <Routes>
