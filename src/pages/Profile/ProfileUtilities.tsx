@@ -65,12 +65,16 @@ export const useGeneralStyling = () => {
 
     const pageContainer: React.CSSProperties = {
         width: '100%',
-        height: '100%',
-        minHeight: '50rem',
+        height: 'auto',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         backgroundColor: colors.primary[500],
+        minWidth: 0,
+        minHeight: 0,
+        overflowX: 'hidden',
+        overflowY: 'auto',
     };
     
     const profileElements: React.CSSProperties = {

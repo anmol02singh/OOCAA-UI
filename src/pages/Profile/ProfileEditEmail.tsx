@@ -77,13 +77,12 @@ const ProfileEditEmail = () => {
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
 
     const updatePageWidth = () => {
-        setPageWidth(getPageWidth(boxRef));
+        const newPageWidth = getPageWidth(boxRef);
+        setPageWidth(newPageWidth);
+        console.log(newPageWidth);
     }
-    
-    useEffect(() => {
-        updatePageWidth();
-        window.addEventListener('resize', updatePageWidth);
 
+    useEffect(() => {
         if (token) {
             userdata(token)
                 .then(json => {
@@ -96,14 +95,17 @@ const ProfileEditEmail = () => {
                         role: json.role,
                     });
                 });
-        }else{
-            navigate('/login');
         }
+    }, []);
+
+    useEffect(() => {
+        updatePageWidth();
+        window.addEventListener('resize', updatePageWidth);
 
         return () => {
             window.removeEventListener('resize', updatePageWidth);
         };
-    }, []);
+    }, [pageWidth]);
 
     useEffect(() => {
         setNewEmail(userData.email);

@@ -63,31 +63,35 @@ const Profile = () => {
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
 
     const updatePageWidth = () => {
-        setPageWidth(getPageWidth(boxRef));
+        const newPageWidth = getPageWidth(boxRef);
+        setPageWidth(newPageWidth);
+        console.log(newPageWidth);
     }
 
     useEffect(() => {
-            updatePageWidth();
-            window.addEventListener('resize', updatePageWidth);
-    
-            if (token) {
-                userdata(token)
-                    .then(json => {
-                        setUserData({
-                            ...userData,                  
-                            name: json.name,
-                            username: json.username,
-                            email: json.email,
-                            phoneNumber: formatPhoneNumber(JSON.stringify(json.phoneNumber)).phoneNumber,
-                            role: json.role,
-                        });
+        if (token) {
+            userdata(token)
+                .then(json => {
+                    setUserData({
+                        ...userData,                  
+                        name: json.name,
+                        username: json.username,
+                        email: json.email,
+                        phoneNumber: formatPhoneNumber(JSON.stringify(json.phoneNumber)).phoneNumber,
+                        role: json.role,
                     });
-            }
-    
-            return () => {
-                window.removeEventListener('resize', updatePageWidth);
-            };
-        }, []);
+                });
+        }
+    }, []);
+
+    useEffect(() => {
+        updatePageWidth();
+        window.addEventListener('resize', updatePageWidth);
+
+        return () => {
+            window.removeEventListener('resize', updatePageWidth);
+        };
+    }, [pageWidth]);
     
     const regProfileInfoElements = (
         <Box sx={regProfileInfoContainer(pageWidth)}>

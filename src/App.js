@@ -37,24 +37,36 @@ function App() {
       <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
               <CssBaseline />
-              <div className="app">
+              <div className="app" style={{
+                width: '100vw',
+                height: '100vh',
+                minWidth: 0,
+                minHeight: 0,
+              }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
-                    <Box sx={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-                        {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                          <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/bar" element={<Bar />} />
-                            <Route path="/pie" element={<Pie />} />
-                            <Route path="/line" element={<Line />} />
-                            <Route path="/geo" element={<Geo />} />
-                            <Route path="/login" element={<UserLogin />} />
-                            <Route path="/signup" element={<UserSignUp />} />
-                            <Route path={routes.profile} element={<Profile />} />
-                            <Route path={routes.editProfile} element={<ProfileEdit />} />
-                            <Route path={routes.editProfileName} element={<ProfileEditName />} />
-                            <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
-                            <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
+                    <Box sx={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      minWidth: 0,
+                      minHeight: 0,
+                    }}>
+                      {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/bar" element={<Bar />} />
+                          <Route path="/pie" element={<Pie />} />
+                          <Route path="/line" element={<Line />} />
+                          <Route path="/geo" element={<Geo />} />
+                          <Route path="/login" element={<UserLogin />} />
+                          <Route path="/signup" element={<UserSignUp />} />
+                          <Route path={routes.profile} element={<Profile />} />
+                          <Route path={routes.editProfile} element={<ProfileEdit />} />
+                          <Route path={routes.editProfileName} element={<ProfileEditName />} />
+                          <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
+                          <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
                         </Routes>
                     </Box>
                   </main>
