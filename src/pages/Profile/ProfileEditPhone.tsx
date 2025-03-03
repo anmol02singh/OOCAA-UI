@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ErrorIcon from '@mui/icons-material/Error';
 // import ClearIcon from '@mui/icons-material/Clear';
 import {
     useNavigation,
@@ -66,7 +67,10 @@ const ProfileEditEmail = () => {
 
     const [disabled, setDisabled] = useState<boolean>(true);
     const [isInvalidInput, setInvalidInput] = useState<boolean>(false);
-    const [errorMessageElement, setErrorMessageElement] = useState<string>('none');
+    const [errorMessageElement, setErrorMessageElement] = useState<{type: string, message: string | undefined}>({
+        type: 'none',
+        message: undefined
+    });
     
     const boxRef = useRef<HTMLDivElement>(null);
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
@@ -124,31 +128,35 @@ const ProfileEditEmail = () => {
         event.preventDefault();
         
         let invalidInput = false;
-        setErrorMessageElement('none');
+        setErrorMessageElement({...errorMessageElement, type: 'none'});
 
         if(newPhoneNumber === userData.phoneNumber.replace(/\D/g, '')){
             invalidInput = true;
-            setErrorMessageElement('unchangedPhone');
+            setErrorMessageElement({...errorMessageElement, type: 'unchangedPhone'});
         }
 
         const {phoneNumber, success} = formatPhoneNumber(newPhoneNumber);
 
         if(!success){
             invalidInput = true;
-            setErrorMessageElement('invalidPhoneFormat');
+            setErrorMessageElement({...errorMessageElement, type: 'invalidPhoneFormat'});
         }
 
         if(!invalidInput){
-            alert(phoneNumber)
             if (token) {
-                updateGeneralUserData(token, undefined, undefined, undefined, phoneNumber.replace(/\D/g, ''))
-                    .then(() => {
-                        window.location.reload()
-                    });
+                updateGeneralUserData(token, undefined, undefined, phoneNumber.replace(/\D/g, ''))
+                .then(({success, message}) => {
+                    if(!success){
+                        setInvalidInput(true);
+                        setErrorMessageElement({...errorMessageElement, type: 'backEndError', message: message});
+                        return;
+                    }
+                    window.location.reload()
+                });
             }
         }
 
-        setInvalidInput(invalidInput);
+        if(!isInvalidInput) setInvalidInput(invalidInput);
         return !(invalidInput);
     };
 
@@ -156,11 +164,15 @@ const ProfileEditEmail = () => {
         none: undefined
         , unchangedPhone:
             <Typography variant='h6' sx={errorMessageStyle}>
-                *Please enter a new phone number.
+                <ErrorIcon/> Please enter a new phone number.
             </Typography>
         , invalidPhoneFormat:
             <Typography variant='h6' sx={errorMessageStyle}>
-                *Please enter a valid phone number.
+                <ErrorIcon/> Please enter a valid phone number.
+            </Typography>
+        , backEndError:
+            <Typography variant='h6' sx={errorMessageStyle}>
+                <ErrorIcon/> {errorMessageElement.message}
             </Typography>
     };
 
@@ -270,7 +282,7 @@ const ProfileEditEmail = () => {
                             }}                            
                         >
                         </PhoneInput>
-                        {errorMessageElements[errorMessageElement]}                 
+                        {errorMessageElements[errorMessageElement.type]}                 
                     </Grid>
 
                     <Grid

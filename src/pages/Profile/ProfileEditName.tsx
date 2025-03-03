@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ErrorIcon from '@mui/icons-material/Error';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
     useNavigation,
@@ -66,7 +67,10 @@ const ProfileEditName = () => {
 
     const [disabled, setDisabled] = useState<boolean>(true);
     const [isInvalidInput, setInvalidInput] = useState<boolean>(false);
-    const [errorMessageElement, setErrorMessageElement] = useState<string>('none');
+    const [errorMessageElement, setErrorMessageElement] = useState<{type: string, message: string | undefined}>({
+        type: 'none',
+        message: undefined
+    });
     
     const boxRef = useRef<HTMLDivElement>(null);
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
@@ -128,23 +132,28 @@ const ProfileEditName = () => {
         const processedName = newName.replace(containsExtraSpaces, ' ').trim()
         
         let invalidInput = false;
-        setErrorMessageElement('none');
+        setErrorMessageElement({...errorMessageElement, type: 'none'});
 
         if(processedName === userData.name){
             invalidInput = true;
-            setErrorMessageElement('unchangedName');
+            setErrorMessageElement({...errorMessageElement, type: 'unchangedName'});
         }
 
         if(!invalidInput){
             if (token) {
                 updateGeneralUserData(token, processedName)
-                    .then(() => {
+                    .then(({success, message}) => {
+                        if(!success){
+                            setInvalidInput(true);
+                            setErrorMessageElement({...errorMessageElement, type: 'backEndError', message: message});
+                            return;
+                        }
                         window.location.reload()
                     });
             }
         }
 
-        setInvalidInput(invalidInput);
+        if(!isInvalidInput) setInvalidInput(invalidInput);
         return !(invalidInput);
     };
 
@@ -152,12 +161,16 @@ const ProfileEditName = () => {
         none: undefined
         , unchangedName:
             <Typography variant='h6' sx={errorMessageStyle}>
-                *Please enter a new name.
+                <ErrorIcon/> Please enter a new name.
             </Typography>
         // , unchangedUsername:            
         //     <Typography variant='h6' sx={errorMessageStyle}>
         //         *Please enter a new username.
         //     </Typography>
+        , backEndError:
+            <Typography variant='h6' sx={errorMessageStyle}>
+                <ErrorIcon/> {errorMessageElement.message}
+            </Typography>
     };
 
     return (
@@ -216,8 +229,17 @@ const ProfileEditName = () => {
                             }}
                         >
                         </TextField> 
-                        {errorMessageElements[errorMessageElement]}                           
-                    </Grid>    
+                        {errorMessageElements[errorMessageElement.type]}                           
+                    </Grid>
+
+                    <Grid
+                        size={12}
+                        sx={{
+                            height: '4rem'
+                        }}
+                    >
+                        {/*Spacing for dropdown*/}
+                    </Grid>   
 
                     <Grid size={12} sx={editItemButtonContainer}>
                         <Button 

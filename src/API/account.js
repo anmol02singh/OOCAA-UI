@@ -70,7 +70,7 @@ export async function register(name, email, phone, username, password) {
 export async function updateGeneralUserData(
     token,
     newName,
-    newUsername,
+    // newUsername,
     newEmail,
     newPhone
 ) {
@@ -80,7 +80,7 @@ export async function updateGeneralUserData(
             body: JSON.stringify({
                 token: token,
                 newName: newName,
-                newUsername: newUsername,
+                // newUsername: newUsername,
                 newEmail: newEmail,
                 newPhone: newPhone
             }),

@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import 'react-phone-input-2/lib/material.css';
-import { parsePhoneNumberFromString, PhoneNumber, CountryCode } from "libphonenumber-js";
+import { parsePhoneNumberFromString, PhoneNumber } from "libphonenumber-js";
 
 import routes from '../../routes.js'
 
@@ -14,7 +14,7 @@ export const smWindowWidth = 600;
 
 //Regex
 export const containsExtraSpaces = /\s+/g;
-//Don't fix the eslint problems related to this please!
+//eslint-disable-next-line no-useless-escape
 export const isEmailFormat = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /*############### Functions ###############*/
@@ -30,10 +30,10 @@ export const getPageWidth = (boxRef: MutableRefObject<HTMLDivElement | null>): n
 }
 
 //Reformats phone numbers.
-export const formatPhoneNumber = (number: string, country: CountryCode = "US"): {phoneNumber: string, success: boolean} => {
-    const phoneNumber: PhoneNumber | undefined = parsePhoneNumberFromString(number, country);
+export const formatPhoneNumber = (number: string): {phoneNumber: string, success: boolean} => {
+    const phoneNumber: PhoneNumber | undefined = parsePhoneNumberFromString(`+${number.replace(/\D/g, '')}`);
     if(!(phoneNumber && phoneNumber.isValid())){
-        return {phoneNumber: "INVALID", success: false}
+        return {phoneNumber: "INVALID", success: false};
     }
     return {phoneNumber: phoneNumber.formatInternational(), success: true};
 };
@@ -353,8 +353,11 @@ export const useEditItemStyling = () => {
     };
 
     const errorMessageStyle: React.CSSProperties = {
-        margin: '0.4rem 0.1rem',
+        margin: '0.3rem 0.1rem',
+        gap: '0.2rem',
         color: '#f44336',
+        display: 'flex',
+        alignItems: 'center',
     };
 
     const editItemSaveButton: React.CSSProperties = {
