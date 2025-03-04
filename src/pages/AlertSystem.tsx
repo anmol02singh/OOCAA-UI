@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,10 +11,15 @@ import {
   Button,
   Stack,
   Grid2,
+  Box,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
 import Heatmap from "../components/HeatMap.tsx";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+
+const API_URL = process.env.API_URL || "http://localhost:3000";
 
 const initialRows = [
   {
@@ -82,8 +87,43 @@ const initialRows = [
   },
 ];
 
+export const fetchCDMs = async (eventId: string) => {
+  try {
+    const response = await fetch(`${API_URL}/cdm-data/by-event/${eventId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch CDMs for event");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching CDMs for event:", error);
+    throw error;
+  }
+};
 const AlertSystem = () => {
+  const [subscribedCDM, setSubscribedCDM] = useState([]);
+
   const [rows, setRows] = useState(initialRows);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Simulate fetching data
+        const result = await fetchCDMs("67bb892779e8e7f667693eeb");
+        setSubscribedCDM(result); // Update state with fetched data
+      } catch (err) {}
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(subscribedCDM[0]);
 
   const getStatusColor = (status) => {
     return status === "New Event" ? "red" : "green";
@@ -107,12 +147,19 @@ const AlertSystem = () => {
     setRows(newRows);
   };
 
-  const handleSort = () => {
-    const updatedRows = [...rows];
+  const handleSort = (arr) => {
+    arr.sort((a, b) => {
+      // Convert the timestamps to Date objects
+      var dateA = new Date(a.timestamp);
+      var dateB = new Date(b.timestamp);
 
-    const sortedRows = updatedRows.sort((a, b) => b.events - a.events);
-
-    setRows(sortedRows);
+      // Compare the dates and return either -1, 0, or 1
+      // depending on whether dateA is before, the same as,
+      // or after dateB
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+      return 0;
+    });
   };
 
   const handleStatusSort = () => {
@@ -123,6 +170,26 @@ const AlertSystem = () => {
     );
 
     setRows(sortedByStatus);
+  };
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const openModal = () => {
+    handleOpen();
   };
 
   return (
@@ -159,9 +226,9 @@ const AlertSystem = () => {
             data-testid="sort-by-events"
             variant="outlined"
             sx={{ padding: "5px", marginBottom: "10px", marginTop: "10px" }}
-            onClick={() => handleSort()}
+            onClick={() => handleSort(subscribedCDM)}
           >
-            Sort By Events
+            Sort By Last Updated
           </Button>
         </Grid2>
 
@@ -189,7 +256,7 @@ const AlertSystem = () => {
                 <strong>Last Update</strong>
               </TableCell>
               <TableCell>
-                <strong>Number of Events</strong>
+                <strong>CDM EVENT</strong>
               </TableCell>
               <TableCell>
                 <strong>Status</strong>
@@ -200,7 +267,62 @@ const AlertSystem = () => {
             </TableRow>
           </TableHead>
           <TableBody data-testid="table-list">
-            {rows.map((row, index) => (
+            {subscribedCDM.map((val: any, index) => (
+              <TableRow key={val._id}>
+                <TableCell>{val._id}</TableCell>
+                <TableCell>This is description</TableCell>
+                <TableCell>{val.creationDate}</TableCell>
+                <TableCell>{val.event}</TableCell>
+                <TableCell>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <CircleIcon
+                      fontSize="small"
+                      style={{ color: getStatusColor("New Event") }}
+                    />
+                    New Event
+                  </Stack>
+                </TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button color="info" onClick={openModal}>
+                      <Edit />
+                    </Button>
+                    <Button color="error" onClick={() => handleDelete(index)}>
+                      <Delete />
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography variant="h2">Add Rationale</Typography>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  multiline
+                  maxRows={6}
+                  sx={{ width: "100%" }}
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleClose}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    mt: 2,
+                  }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Modal>
+            {/* {rows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.description}</TableCell>
@@ -226,7 +348,7 @@ const AlertSystem = () => {
                   </Stack>
                 </TableCell>
               </TableRow>
-            ))}
+            ))} */}
           </TableBody>
         </Table>
       </TableContainer>
