@@ -236,6 +236,7 @@ const UserSignUp = () => {
               value={password}
               label="Password"
               variant="outlined"
+              type="password"
               fullWidth
               required
               sx={{
