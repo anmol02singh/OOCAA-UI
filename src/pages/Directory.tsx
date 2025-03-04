@@ -26,6 +26,7 @@ import { fetchTLEs } from '../API/fetchTLEs.tsx';
 import { fetchCDMs } from '../API/fetchCDMs.tsx';
 import { CDM } from '../types.tsx';
 import { Event } from '../types.tsx';
+import EventCharts from '../components/EventCharts.tsx';
 
 const Directory = () => {
   const theme = useTheme();
@@ -35,7 +36,7 @@ const Directory = () => {
   const [tcaRange, setTcaRange] = useState<[number, number]>([
     new Date('2024-10-05').getTime(), 
     Date.now()
-  ]);
+  ]); 
   const [events, setEvents] = useState<Event[]>([]);
   const [cdms, setCdms] = useState<CDM[]>([]);
   const [pageOne, setPageOne] = useState(0);
@@ -448,9 +449,19 @@ const Directory = () => {
       )}
 
       {/* Cesium Viewer */}
-      {tles && tles.object1 && tles.object2 && (
+      {/* {tles && tles.object1 && tles.object2 && (
         <Box mt={4}>
           <CesiumViewer tle1={tles.object1} tle2={tles.object2} />
+        </Box>
+      )} */}
+
+      {/* Graphs Section */}
+      {cdms.length > 0 && (
+        <Box mt={4}>
+          <Typography variant="h4" mb={3}>
+            Trends for Event: {selectedEvent ? selectedEvent.eventName : ''}
+          </Typography>
+          <EventCharts cdms={cdms} />
         </Box>
       )}
 
@@ -460,7 +471,10 @@ const Directory = () => {
 
 export default Directory;
 
-
-//sort table via creation date? tca?
-//make table a separate component
-//make detailed view a separate component
+//sort and search by miss distance, collision probability and operator organization
+//sort table via tca/creation date
+//try to get orbital paths
+//dont log into spacetrack every single time u want tles
+//fix the date on the cesium widget to be the tca date
+//fix event assignment so no race conditions
+//back and forth buttons for cdms
