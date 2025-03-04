@@ -5,7 +5,7 @@ import Navbar from './Navbar.tsx'; // Import your Navbar component
 const PageContainer: React.CSSProperties = {
     display: 'flex',               // Horizontal alignment of Navbar and main content
     flexDirection: 'row',          // Side-by-side layout
-    height: '100%',               // Full viewport height
+    height: '100vh',               // Full viewport height
     width: '100%',                 // Full width of the page
 };
 

@@ -1,0 +1,159 @@
+import React from 'react';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale,
+} from 'chart.js';
+import 'chartjs-adapter-date-fns';
+import { Box, Typography, useTheme } from '@mui/material';
+import { tokens } from '../theme.tsx';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale);
+
+export interface CDM {
+  creationDate: string; 
+  tca: string;          
+  missDistance: number;
+  collisionProbability: number;
+}
+
+interface EventChartsProps {
+  cdms: CDM[];
+}
+
+const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
+  const sortedCdms = [...cdms].sort(
+    (a, b) => new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime()
+  );
+
+  const labels = sortedCdms.map(cdm => new Date(cdm.creationDate).toISOString());
+
+  //convert TCA to milliseconds
+  //normalize relative to the first tca to keep values manageable
+  const tcaEpochs = sortedCdms.map(cdm => new Date(cdm.tca).getTime());
+  const baseline = tcaEpochs[0] || 0;
+  const normalizedTca = tcaEpochs.map(time => (time - baseline) / 1000); // in seconds
+
+  const tcas = sortedCdms.map(cdm => new Date(cdm.tca).toISOString());
+  const missDistances = sortedCdms.map(cdm => cdm.missDistance);
+  const collisionProbs = sortedCdms.map(cdm => cdm.collisionProbability);
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            const value = context.parsed.y;
+            if (context.dataset.label === 'Collision Probability') {
+              label += value.toPrecision(6);
+            } else {
+              label += value;
+            }
+            return label;
+          },
+        },
+      },
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Creation Date [UTC]',
+        }
+      }
+    }
+  };
+
+  const tcaChartData = {
+    labels,
+    datasets: [
+      {
+        label: 'TCA (seconds since first TCA)',
+        data: normalizedTca,
+        borderColor: 'rgba(255, 159, 64, 1)',
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const missDistanceChartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Miss Distance (m)',
+        data: missDistances,
+        borderColor: 'rgba(153, 102, 255, 1)',
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const collisionChartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Collision Probability',
+        data: collisionProbs,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  return (
+    <Box display="flex" flexDirection="column" gap={3}>
+      <Box display="flex" justifyContent="space-between" gap={2}>
+
+        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+          <Typography variant="h6" gutterBottom>
+            {`TCA (seconds since first TCA): ${tcas[0]}`}
+          </Typography>
+          <Line data={tcaChartData} options={commonOptions} />
+        </Box>
+  
+        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+          <Typography variant="h6" gutterBottom>
+            Miss Distance
+          </Typography>
+          <Line data={missDistanceChartData} options={commonOptions} />
+        </Box>
+      </Box>
+  
+      <Box display="flex" justifyContent="center">
+        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+          <Typography variant="h6" gutterBottom>
+            Collision Probability
+          </Typography>
+          <Line data={collisionChartData} options={commonOptions} />
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default EventCharts;
