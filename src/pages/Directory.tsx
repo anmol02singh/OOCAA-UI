@@ -3,14 +3,6 @@ import {
   Box,
   Typography,
   IconButton,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
   Paper,
   useTheme,
 } from '@mui/material';
@@ -27,8 +19,18 @@ import { fetchCDMs } from '../API/fetchCDMs.tsx';
 import { CDM } from '../types.tsx';
 import { Event } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
+import EventTable from '../components/EventTable.tsx';
+import CDMTable from '../components/CDMTable.tsx';
+//import { useNavigate } from 'react-router-dom';
+
 
 const Directory = () => {
+  // const navigate = useNavigate();
+  // const token = localStorage.getItem("accountToken");
+  // console.log("token", token);
+  // if(!token){
+  //     navigate('/login')
+  // }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -39,17 +41,13 @@ const Directory = () => {
   ]); 
   const [events, setEvents] = useState<Event[]>([]);
   const [cdms, setCdms] = useState<CDM[]>([]);
-  const [pageOne, setPageOne] = useState(0);
-  const [rowsPerPageOne, setRowsPerPageOne] = useState(10);
-  const [pageTwo, setPageTwo] = useState(0);
-  const [rowsPerPageTwo, setRowsPerPageTwo] = useState(10);
   const [tles, setTles] = useState<{
     object1?: { designator: string; tleLine1: string; tleLine2: string };
     object2?: { designator: string; tleLine1: string; tleLine2: string };
   }>({});
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null)
+  const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null);
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
@@ -146,24 +144,6 @@ const Directory = () => {
     }
   };
 
-  const handleChangePageOne = (event: unknown, newPage: number) => {
-    setPageOne(newPage);
-  };
-
-  const handleChangeRowsPerPageOne = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPageOne(parseInt(event.target.value, 10));
-    setPageOne(0);
-  };
-
-  const handleChangePageTwo = (event: unknown, newPage: number) => {
-    setPageTwo(newPage);
-  };
-
-  const handleChangeRowsPerPageTwo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPageTwo(parseInt(event.target.value, 10));
-    setPageTwo(0);
-  };
-
   return (
     <Box
       p={3}
@@ -238,72 +218,7 @@ const Directory = () => {
 
       {/* Search Results Table */}
       {events.length > 0 && (
-      <Box mt={4}>
-        <TableContainer
-          component={Paper}
-          sx={{
-            backgroundColor: colors.primary[400],
-            color: colors.grey[100],
-          }}
-        >
-          <Table>
-            <TableHead
-              sx={{
-                '& .MuiTableCell-root': {
-                  fontSize: '0.9rem',
-                },
-              }}
-            >
-              <TableRow>
-                <TableCell>Event Name</TableCell>
-                <TableCell>Primary Object Name</TableCell>
-                <TableCell>Primary Object Designator</TableCell>
-                <TableCell>Secondary Object Name</TableCell>
-                <TableCell>Secondary Object Designator</TableCell>
-                <TableCell>TCA [UTC]</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody
-              sx={{
-                '& .MuiTableCell-root': {
-                  fontSize: '0.85rem',
-                },
-              }}
-            >
-              {events
-                .slice(pageOne * rowsPerPageOne, pageOne * rowsPerPageOne + rowsPerPageOne)
-                .map((eventItem, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      cursor: 'pointer',
-                      '&:hover': {
-                        backgroundColor: theme.palette.background.default,
-                      },
-                    }}
-                    onClick={() => handleEventClick(eventItem)}
-                  >
-                    <TableCell>{eventItem.eventName}</TableCell>
-                    <TableCell>{eventItem.primaryObjectName}</TableCell>
-                    <TableCell>{eventItem.primaryObjectDesignator}</TableCell>
-                    <TableCell>{eventItem.secondaryObjectName}</TableCell>
-                    <TableCell>{eventItem.secondaryObjectDesignator}</TableCell>
-                    <TableCell>{new Date(eventItem.tca).toISOString()}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={events.length}
-          rowsPerPage={rowsPerPageOne}
-          page={pageOne}
-          onPageChange={handleChangePageOne}
-          onRowsPerPageChange={handleChangeRowsPerPageOne}
-        />
-      </Box>
+      <EventTable events={events} onEventClick={handleEventClick} />
     )}
     
     {/* CDM table */}
@@ -312,68 +227,7 @@ const Directory = () => {
         <Typography variant="h4" mb={3}>
           Viewing CDMs for {selectedEvent ? selectedEvent.eventName : ''} : {selectedEvent ? selectedEvent.primaryObjectName : ''} & {selectedEvent ? selectedEvent.secondaryObjectName : ''}
         </Typography>
-        <TableContainer
-          component={Paper}
-          sx={{
-            backgroundColor: colors.primary[400],
-            color: colors.grey[100],
-          }}
-        >
-          <Table>
-            <TableHead
-              sx={{
-                '& .MuiTableCell-root': {
-                  fontSize: '0.9rem',
-                },
-              }}
-            >
-              <TableRow>
-                <TableCell>Message ID</TableCell>
-                <TableCell>Creation Date [UTC]</TableCell>
-                <TableCell>TCA [UTC]</TableCell>
-                <TableCell>Miss Distance [m]</TableCell>
-                <TableCell>Collision Probability</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody
-              sx={{
-                '& .MuiTableCell-root': {
-                  fontSize: '0.85rem',
-                },
-              }}
-            >
-              {cdms
-                .slice(pageTwo * rowsPerPageTwo, pageTwo * rowsPerPageTwo + rowsPerPageTwo)
-                .map((cdm, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      cursor: 'pointer',
-                      '&:hover': {
-                        backgroundColor: theme.palette.background.default,
-                      },
-                    }}
-                    onClick={() => handleClickMessageId(cdm)}
-                  >
-                    <TableCell>{cdm.messageId}</TableCell>
-                    <TableCell>{new Date(cdm.creationDate).toISOString()}</TableCell>
-                    <TableCell>{new Date(cdm.tca).toISOString()}</TableCell>
-                    <TableCell>{cdm.missDistance.toFixed(2)}</TableCell>
-                    <TableCell>{cdm.collisionProbability?.toExponential(2)}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={cdms.length}
-          rowsPerPage={rowsPerPageTwo}
-          page={pageTwo}
-          onPageChange={handleChangePageTwo}
-          onRowsPerPageChange={handleChangeRowsPerPageTwo}
-        />
+        <CDMTable cdms={cdms} onRowClick={handleClickMessageId} />
       </Box>
     )}
 
@@ -449,11 +303,11 @@ const Directory = () => {
       )}
 
       {/* Cesium Viewer */}
-      {/* {tles && tles.object1 && tles.object2 && (
+      {tles && tles.object1 && tles.object2 && (
         <Box mt={4}>
           <CesiumViewer tle1={tles.object1} tle2={tles.object2} />
         </Box>
-      )} */}
+      )}
 
       {/* Graphs Section */}
       {cdms.length > 0 && (
@@ -472,7 +326,6 @@ const Directory = () => {
 export default Directory;
 
 //sort and search by miss distance, collision probability and operator organization
-//sort table via tca/creation date
 //try to get orbital paths
 //dont log into spacetrack every single time u want tles
 //fix the date on the cesium widget to be the tca date
