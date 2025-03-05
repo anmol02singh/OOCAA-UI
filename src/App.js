@@ -32,7 +32,6 @@ function App() {
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
                       {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                      
                       <Routes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/bar" element={<Bar />} />
