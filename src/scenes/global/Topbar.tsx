@@ -1,5 +1,6 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ColorModeContext, tokens } from  '../../theme.tsx';
 import { userdata } from '../../API/account.js';
 import InputBase from '@mui/material/InputBase';
@@ -18,6 +19,8 @@ const Topbar: FC = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
+    const navigate = useNavigate();
+    
     const [activeUsername, setActiveUsername] = useState<string>('');
 
     if (localStorage.getItem("accountToken")) {
@@ -29,7 +32,7 @@ const Topbar: FC = () => {
     function logout() {
         localStorage.removeItem("accountToken");
         window.location.reload();
-    }
+    }    
 
     return (<Box display = "flex" justifyContent = "space-between" p = {2}> 
     {/* SEARCH BAR */}
@@ -66,7 +69,7 @@ const Topbar: FC = () => {
 
             {activeUsername ? (<>
                 <IconButton>
-                    <PersonOutlinedIcon />
+                    <PersonOutlinedIcon onClick={() => navigate("/profile")}/>
                 </IconButton>
 
                 <IconButton onClick={logout}>

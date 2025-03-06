@@ -4,9 +4,15 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+import Profile from "./pages/Profile/Profile.tsx";
+import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
+import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
+import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx"
+import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx"
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import Box from "@mui/material/Box";
 import Topbar from "./scenes/global/Topbar.tsx";
 import Bar from "./scenes/Bar/index.tsx";
 import Pie from "./scenes/Pie/index.tsx";
@@ -16,6 +22,7 @@ import Dashboard from "./scenes/dashboard/index.tsx";
 import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
+import routes from "./routes.js";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -30,11 +37,20 @@ function App() {
       <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
               <CssBaseline />
-              <div className="app">
+              <div className="app" style={{
+                width: '100vw',
+                height: '100vh',
+              }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
+                    <Box sx={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
                       {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                      <Routes>
+                        <Routes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/bar" element={<Bar />} />
                           <Route path="/pie" element={<Pie />} />
@@ -42,7 +58,13 @@ function App() {
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
-                      </Routes>
+                          <Route path={routes.profile} element={<Profile />} />
+                          <Route path={routes.editProfile} element={<ProfileEdit />} />
+                          <Route path={routes.editProfileName} element={<ProfileEditName />} />
+                          <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
+                          <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
+                        </Routes>
+                    </Box>
                   </main>
               </div>
           </ThemeProvider>
