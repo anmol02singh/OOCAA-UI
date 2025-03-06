@@ -182,7 +182,7 @@ const Profile = () => {
                                     fontWeight: 'bold',
                                 }}
                             >
-                                {userData.name}
+                                {userData.username}
                             </Typography>
                             <Typography
                                 variant='h5'
