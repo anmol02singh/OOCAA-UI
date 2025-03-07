@@ -36,7 +36,10 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
     (a, b) => new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime()
   );
 
-  const labels = sortedCdms.map(cdm => new Date(cdm.creationDate).toISOString());
+  const labels = sortedCdms.map(cdm => {
+    const isoString = new Date(cdm.creationDate).toISOString();
+    return isoString.substring(0, 16);
+  });
 
   //convert TCA to milliseconds
   //normalize relative to the first tca to keep values manageable
@@ -82,9 +85,28 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
           display: true,
           text: 'Creation Date [UTC]',
         }
-      }
-    }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Value',
+        },
+      },
+    },
   };
+
+  const collisionChartOptions = {
+    ...commonOptions,
+    scales: {
+      ...commonOptions.scales,
+      y: {
+        ...commonOptions.scales?.y,
+        ticks: {
+          callback: (tickValue: string | number) => Number(tickValue).toExponential(2),
+        },
+      },
+    },
+  };  
 
   const tcaChartData = {
     labels,
@@ -149,7 +171,7 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
           <Typography variant="h6" gutterBottom>
             Collision Probability
           </Typography>
-          <Line data={collisionChartData} options={commonOptions} />
+          <Line data={collisionChartData} options={collisionChartOptions} />
         </Box>
       </Box>
     </Box>

@@ -77,4 +77,8 @@ export interface Position {
     secondaryObjectName: string;
     secondaryObjectType: string;
     tca: string; // or Date, depending on your API
+    missDistances: [number];
+    collisionProbabilities: [number];
+    primaryOperatorOrganization: string;
+    secondaryOperatorOrganization: string;
   }

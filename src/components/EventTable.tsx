@@ -10,13 +10,16 @@ import {
   TableRow,
   Paper,
   TableSortLabel,
-  useTheme,
+  TextField,
   Button,
+  useTheme,
+  MenuItem,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
 
 type Order = 'asc' | 'desc';
+type NumericOperator = 'lte' | 'gte' | 'eq';
 
 interface EventTableProps {
   events: Event[];
@@ -29,10 +32,28 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = useState<Order>('asc');
 
+  const [order, setOrder] = useState<Order>('asc');
   const handleRequestSort = () => {
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const [filterMissDistance, setFilterMissDistance] = useState<number | ''>('');
+  const [missDistanceOperator, setMissDistanceOperator] = useState<NumericOperator>('lte');
+  
+  const [filterCollisionProbability, setFilterCollisionProbability] = useState<number | ''>('');
+  const [collisionProbabilityOperator, setCollisionProbabilityOperator] = useState<NumericOperator>('lte');
+  
+  const [filterOperatorOrganization, setFilterOperatorOrganization] = useState<string>('');
+
+  const isApproximatelyEqual = (
+    a: number,
+    b: number,
+    tolerance: number = 0.05 // 5% tolerance
+  ): boolean => {
+    // if b is 0, we fall back to an absolute comparison
+    if (b === 0) return Math.abs(a) < tolerance;
+    return Math.abs(a - b) / Math.abs(b) <= tolerance;
   };
 
   const sortedEvents = useMemo(() => {
@@ -45,6 +66,64 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
     return eventsCopy;
   }, [events, order]);
 
+  const filteredEvents = useMemo(() => {
+    return sortedEvents.filter(event => {
+      let valid = true;
+      
+      if (filterMissDistance !== '') {
+        const threshold = Number(filterMissDistance);
+        switch (missDistanceOperator) {
+          case 'lte':
+            valid = valid && event.missDistances.some(val => val <= threshold);
+            break;
+          case 'gte':
+            valid = valid && event.missDistances.some(val => val >= threshold);
+            break;
+          case 'eq':
+            valid = valid && event.missDistances.some(val => val === threshold);
+            break;
+          default:
+            break;
+        }
+      }
+      
+      if (filterCollisionProbability !== '') {
+        const threshold = Number(filterCollisionProbability);
+        switch (collisionProbabilityOperator) {
+          case 'lte':
+            valid = valid && event.collisionProbabilities.some(val => val <= threshold);
+            break;
+          case 'gte':
+            valid = valid && event.collisionProbabilities.some(val => val >= threshold);
+            break;
+          case 'eq': {
+            valid = valid && event.collisionProbabilities.some(val => isApproximatelyEqual(val, threshold));
+            break;
+          }            
+          default:
+            break;
+        }
+      }
+      
+      if (filterOperatorOrganization.trim() !== '') {
+        const orgFilter = filterOperatorOrganization.toLowerCase();
+        valid =
+          valid &&
+          (event.primaryOperatorOrganization.toLowerCase().includes(orgFilter) ||
+            event.secondaryOperatorOrganization.toLowerCase().includes(orgFilter));
+      }
+      
+      return valid;
+    });
+  }, [
+    sortedEvents,
+    filterMissDistance,
+    missDistanceOperator,
+    filterCollisionProbability,
+    collisionProbabilityOperator,
+    filterOperatorOrganization,
+  ]);
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -56,6 +135,116 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
 
   return (
     <Box mt={4}>
+      <Box display="flex" gap={2} mb={2}>
+        <TextField
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          select
+          label="Operator"
+          variant="outlined"
+          size="small"
+          value={missDistanceOperator}
+          onChange={(e) => setMissDistanceOperator(e.target.value as NumericOperator)}
+          slotProps={{
+            select: {
+              MenuProps: {
+                PaperProps: {
+                  sx: { backgroundColor: colors.primary[400], color: colors.grey[100] },
+                },
+              },
+            },
+          }}
+        >
+          <MenuItem value="lte">{"<="}</MenuItem>
+          <MenuItem value="gte">{">="}</MenuItem>
+          <MenuItem value="eq">{"="}</MenuItem>
+        </TextField>
+        <TextField
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          label="Miss Distance"
+          variant="outlined"
+          size="small"
+          type="number"
+          value={filterMissDistance}
+          onChange={(e) => setFilterMissDistance(e.target.value === '' ? '' : Number(e.target.value))}
+        />
+        <TextField
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          select
+          label="Operator"
+          variant="outlined"
+          size="small"
+          value={collisionProbabilityOperator}
+          onChange={(e) => setCollisionProbabilityOperator(e.target.value as NumericOperator)}
+          slotProps={{
+            select: {
+              MenuProps: {
+                PaperProps: {
+                  sx: { backgroundColor: colors.primary[400], color: colors.grey[100] },
+                },
+              },
+            },
+          }}
+        >
+          <MenuItem value="lte">{"<="}</MenuItem>
+          <MenuItem value="gte">{">="}</MenuItem>
+          <MenuItem value="eq">{"="}</MenuItem>
+        </TextField>
+        <TextField
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          label="Collision Probability"
+          variant="outlined"
+          size="small"
+          type="number"
+          value={filterCollisionProbability}
+          onChange={(e) => setFilterCollisionProbability(e.target.value === '' ? '' : Number(e.target.value))}
+        />
+        <TextField
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          label="Operator Organization"
+          variant="outlined"
+          size="small"
+          value={filterOperatorOrganization}
+          onChange={(e) => setFilterOperatorOrganization(e.target.value)}
+        />
+        <Button
+          fullWidth
+          sx={{
+            backgroundColor: colors.primary[400],
+            color: colors.grey[100],
+          }}
+          variant="outlined"
+          onClick={() => {
+            setFilterMissDistance('');
+            setMissDistanceOperator('lte');
+            setFilterCollisionProbability('');
+            setCollisionProbabilityOperator('lte');
+            setFilterOperatorOrganization('');
+          }}
+        >
+          Reset Filters
+        </Button>
+      </Box>
+
       <TableContainer
         component={Paper}
         sx={{
@@ -66,9 +255,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
         <Table>
           <TableHead
             sx={{
-              '& .MuiTableCell-root': {
-                fontSize: '0.9rem',
-              },
+              '& .MuiTableCell-root': { fontSize: '0.9rem' },
             }}
           >
             <TableRow>
@@ -91,12 +278,10 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
           </TableHead>
           <TableBody
             sx={{
-              '& .MuiTableCell-root': {
-                fontSize: '0.85rem',
-              },
+              '& .MuiTableCell-root': { fontSize: '0.85rem' },
             }}
           >
-            {sortedEvents
+            {filteredEvents
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((eventItem, index) => (
                 <TableRow
@@ -117,9 +302,10 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
                   <TableCell>{new Date(eventItem.tca).toISOString()}</TableCell>
                   <TableCell>
                     <Button 
-                    variant="contained"
-                    sx={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}>
-                        Subscribe
+                      variant="contained"
+                      sx={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}
+                    >
+                      Subscribe
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -130,7 +316,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
       <TablePagination
         rowsPerPageOptions={[10, 25, 50]}
         component="div"
-        count={events.length}
+        count={filteredEvents.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -5,6 +5,9 @@ import {
   IconButton,
   Paper,
   useTheme,
+  Button,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -92,7 +95,8 @@ const Directory = () => {
       return;
     }
     try {
-      const data = await fetchEvents(searchBars, tcaRange);
+      const data = await fetchEvents(searchBars, tcaRange, {});
+      console.log('lets see', data);
       setEvents(data);
       setSelectedCDM(null);
       setTles({});
@@ -325,9 +329,7 @@ const Directory = () => {
 
 export default Directory;
 
-//sort and search by miss distance, collision probability and operator organization
 //try to get orbital paths
 //dont log into spacetrack every single time u want tles
 //fix the date on the cesium widget to be the tca date
-//fix event assignment so no race conditions
 //back and forth buttons for cdms
