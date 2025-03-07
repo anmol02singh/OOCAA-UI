@@ -42,7 +42,6 @@ export const preventEnterSubmit = (event) => {
     if(event.keyCode === 13) event.preventDefault();
 }
 
-// const location = useLocation();
 export const useNavigation = () => {
     const navigate = useNavigate();
 
@@ -80,7 +79,7 @@ export const useGeneralStyling = () => {
     const profileElements: React.CSSProperties = {
         width: '100%',
     };
-    
+
     const profileItemContainer = (pageWidth: number): React.CSSProperties => ({
         padding:
             pageWidth >= mdWindowWidth ? '3rem'
@@ -93,6 +92,15 @@ export const useGeneralStyling = () => {
         backgroundColor: colors.primary[400],
         borderRadius: '9px', 
         overflow: 'hidden', 
+    });
+
+    const profileDialogueContainer = (pageWidth: number): React.CSSProperties => ({
+        ...profileItemContainer(pageWidth),
+        width: '60vw',
+        minWidth: '25rem',
+        maxWidth: '35rem',
+        backgroundImage: 'none',
+        gap: '2rem',
     });
     
     const profilePictureContainer: React.CSSProperties = {
@@ -145,6 +153,7 @@ export const useGeneralStyling = () => {
         pageContainer,
         profileElements,
         profileItemContainer,
+        profileDialogueContainer,
         profilePictureContainer,
         imageContainer,
         profilePicture,
@@ -276,6 +285,7 @@ export const useEditProfileStyling = () => {
     const {
         profileItemContainer,
         imageContainer,
+        button,
     } = useGeneralStyling();
     
     const editProfileContainer = (pageWidth: number): React.CSSProperties => ({
@@ -324,12 +334,27 @@ export const useEditProfileStyling = () => {
         height: '7rem',
     };
 
+    const uploadImagebutton: React.CSSProperties = {
+        ...button,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 'inherit',
+        fontSize: '1.25rem',
+        width: '100%',
+        height: '100%',
+        margin: '0',
+        
+    };
+
     return {
         editProfileContainer,
         editProfileHeader,
         profileFieldButton,
         profileFieldButtonText,
         editImageContainer,
+        uploadImagebutton,
     };
 };
 

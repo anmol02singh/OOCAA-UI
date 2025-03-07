@@ -17,6 +17,7 @@ import { userdata } from '../../API/account';
 import { tokens } from '../../theme.tsx';
 import routes from '../../routes.js';
 import placeholderProfilePic from '../../assets/zuc.png';
+import ProfilePictureEditor from '../../components/ProfileImageEditor.tsx';
 
 const ProfileEdit = () => {
     const navigate = useNavigate();
@@ -56,6 +57,14 @@ const ProfileEdit = () => {
         phoneNumber: '',
         role: '',
     });
+
+    const [dialogueOpen, setDialogueOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState('');
+
+    const handleClose = (value: string) => {
+        setDialogueOpen(false);
+        setSelectedValue(value);
+    };
     
     const boxRef = useRef<HTMLDivElement>(null);
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
@@ -94,17 +103,20 @@ const ProfileEdit = () => {
 
     const handleEditItem = (pageName: string) => {
         switch(pageName){
+            case 'editPhoto':
+                setDialogueOpen(true);
+                break;
             case 'editName':
-                navigate(routes.editProfileName)
+                navigate(routes.editProfileName);
                 break;
             // case 'editUsername':
             //     navigate('/profile/edit/username')
             //     break;
             case 'editEmail':
-                navigate(routes.editProfileEmail)
+                navigate(routes.editProfileEmail);
                 break;
             case 'editPhone':
-                navigate(routes.editProfilePhone)
+                navigate(routes.editProfilePhone);
                 break;            
         }
     }
@@ -125,7 +137,9 @@ const ProfileEdit = () => {
                     </Grid>
                     
                     <Grid size={12} sx={profilePictureContainer}>
-                            <Box sx={editImageContainer}>
+                            <Box
+                                onClick={()=>handleEditItem('editPhoto')}
+                                sx={editImageContainer}>
                                 <img
                                     alt='profile-user'
                                     src = {placeholderProfilePic}
@@ -236,6 +250,12 @@ const ProfileEdit = () => {
                         </Button>
                     </Grid> 
                 </Grid>
+                <ProfilePictureEditor
+                    selectedValue={selectedValue}
+                    open={dialogueOpen}
+                    onClose={handleClose}
+                    pageWidth={pageWidth}
+                />
             </Box>
         </Box>
     );
