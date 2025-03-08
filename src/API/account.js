@@ -96,3 +96,27 @@ export async function updateGeneralUserData(
         throw error;
     }
 }
+
+export async function updateProfileImage(
+    token,
+    newImage,
+) {
+    try {
+        const response = await fetch(`${API_URL}/updateProfileImage`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                newImage: newImage 
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user profile image:', error);
+        throw error;
+    }
+}

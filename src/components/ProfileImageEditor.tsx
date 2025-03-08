@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AvatarEditor from 'react-avatar-editor';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { Button, useTheme } from '@mui/material';
+import { Button, IconButton, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
     useGeneralStyling,
     useEditItemStyling,
     useEditProfileStyling,
 
 } from '../pages/Profile/ProfileUtilities.tsx';
-import { userdata } from '../API/account.js';
 import { tokens } from '../theme.tsx';
+import { updateProfileImage } from '../API/account.js';
 
 const ProfileImageEditor = (props: {
     open: boolean;
@@ -24,6 +25,12 @@ const ProfileImageEditor = (props: {
     pageWidth: number;
 }) => {
     
+    const navigate = useNavigate();
+    const token = localStorage.getItem("accountToken");
+    if(!token){
+        navigate('/login')
+    }
+
     const {
         profileDialogueContainer,
         button_hover,
@@ -41,7 +48,9 @@ const ProfileImageEditor = (props: {
     const colors = tokens(theme.palette.mode);
 
     const imageUploadRef = useRef<HTMLInputElement | null>(null);
-    const avatarEditorRef = useRef<HTMLInputElement | null>(null);
+    const editorContainerRef = useRef<HTMLInputElement | null>(null);
+    const editorRef = useRef<AvatarEditor | null>(null);
+    
 
     //Styling
     const profileImageEditor = {
@@ -57,15 +66,14 @@ const ProfileImageEditor = (props: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        width: `${profileImageEditor.width+(profileImageEditor.border*2)}px`,
-        height: `${profileImageEditor.height+(profileImageEditor.border*2)}px`,
+        width: `${profileImageEditor.width + (profileImageEditor.border * 2)}px`,
+        height: `${profileImageEditor.height + (profileImageEditor.border * 2)}px`,
         backgroundColor: profileImageEditor.backgroundColor,
         borderRadius: profileImageEditor.borderRadius,
         padding: 'none',
     }
-    
+
     const { onClose, selectedValue, open } = props;
-    const [disabled, setDisabled] = useState<boolean>(true);
     const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
     const [scale, setScale] = useState<number>(1);
 
@@ -74,7 +82,7 @@ const ProfileImageEditor = (props: {
     const scaleAdjust = 0.1;
 
     useEffect(() => {
-        const editor = avatarEditorRef.current;
+        const editor = editorContainerRef.current;
 
         setProfileImage(undefined);
 
@@ -90,9 +98,9 @@ const ProfileImageEditor = (props: {
     }, []);
 
     useEffect(() => {
-        const editor = avatarEditorRef.current;
+        const editor = editorContainerRef.current;
 
-        if(open){
+        if (open) {
             setProfileImage(undefined);
         }
 
@@ -112,7 +120,7 @@ const ProfileImageEditor = (props: {
     }, [profileImage]);
 
     const handleClickUpload = () => {
-        if(!imageUploadRef || !imageUploadRef.current) return;
+        if (!imageUploadRef || !imageUploadRef.current) return;
         imageUploadRef.current.click();
     };
 
@@ -121,7 +129,7 @@ const ProfileImageEditor = (props: {
 
         if (event.deltaY < 0) {
             // Scroll up: increment the scale
-            setScale((prevScale) =>  Math.min(prevScale + scaleAdjust, maxScale));
+            setScale((prevScale) => Math.min(prevScale + scaleAdjust, maxScale));
         } else {
             // Scroll down: decrement the scale
             setScale((prevScale) => Math.max(prevScale - scaleAdjust, minScale));
@@ -131,37 +139,95 @@ const ProfileImageEditor = (props: {
     const handleChangeImage = (event) => {
         setProfileImage(event.target.files[0]);
     };
-    
-    const handleSubmit = () => {
+
+    const handleClose = () => {
         onClose(selectedValue);
+    }
+
+    const handleSubmit = () => {
+        if (editorRef && editorRef.current) {
+            // This returns a HTMLCanvasElement, it can be made into a data URL or a blob,
+            const canvas = editorRef.current.getImageScaledToCanvas();
+            console.log(canvas.toDataURL());
+            if (token) {
+                updateProfileImage(token, canvas.toDataURL())
+                    .then((success) => {
+                        if(!success){
+                            return;
+                        }
+                        onClose(selectedValue);
+                        window.location.reload()
+                    });
+            }
+        }
     };
 
-    return(
+    return (
         <Dialog
             open={open}
-            onClose={handleSubmit}
+            onClose={handleClose}
             keepMounted
             sx={{
                 '& .MuiPaper-root': {
                     ...profileDialogueContainer(props.pageWidth),
                 },
-                '& .css-kw13he-MuiDialogContent-root':{
+                '& .css-kw13he-MuiDialogContent-root': {
                     padding: 0,
-                }, 
+                },
             }}
         >
-            <DialogTitle>
-                <Typography variant='h3' sx={{color: colors.grey[100]}}>
-                    Edit Profile Picture
-                </Typography>                
-            </DialogTitle>
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: 0
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '10%',
+                    }}
+                >
+                    <IconButton onClick={handleClose}>
+                        <ArrowBackIcon sx={{ fontSize: '1.8rem' }} />
+                    </IconButton>
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '80%',
+                    }}
+                >
+                    <Typography variant='h3' sx={{ color: colors.grey[100] }}>
+                        Edit Profile Picture
+                    </Typography>
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: '10%',
+                    }}
+                >
+                    {/* spacer */}
+                </Box>
+            </Box>
             <DialogContent>
                 <Box
-                    ref={avatarEditorRef}
+                    ref={editorContainerRef}
                     sx={profilePictureContainer}
                 >
                     {profileImage ?
                         <AvatarEditor
+                            ref={editorRef}
                             image={profileImage}
                             width={profileImageEditor.width}
                             height={profileImageEditor.height}
@@ -181,13 +247,22 @@ const ProfileImageEditor = (props: {
                                 onClick={handleClickUpload}
                                 sx={{
                                     ...uploadImagebutton,
-                                    
+
                                     '&:hover': {
-                                        ...button_hover
+                                        ...button_hover,
+                                        '& #addPhotoIcon': {
+                                            color: colors.blueAccent[600],
+                                        },
                                     },
                                 }}
                             >
-                                <AddPhotoAlternateIcon sx={{fontSize: '5rem'}} />
+                                <AddPhotoAlternateIcon
+                                    id="addPhotoIcon"
+                                    sx={{
+                                        color: colors.greenAccent[600],
+                                        fontSize: '5rem',
+                                    }}
+                                />
                                 Upload Image
                             </Button>
                             <input
@@ -202,11 +277,11 @@ const ProfileImageEditor = (props: {
                     }
                 </Box>
             </DialogContent>
-            <DialogActions>
-                {profileImage ?
-                    <Button 
+            {profileImage ?
+                <DialogActions>
+                    <Button
                         type='submit'
-                        disabled={disabled}
+                        onClick={handleSubmit}
                         sx={{
                             ...editItemSaveButton,
                             '&:hover': {
@@ -216,10 +291,10 @@ const ProfileImageEditor = (props: {
                     >
                         Save
                     </Button>
-                    :
-                    undefined
-                }
-            </DialogActions>
+                </DialogActions>
+                :
+                undefined
+            }
         </Dialog>
     );
 }
