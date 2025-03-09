@@ -4,7 +4,7 @@ import AvatarEditor from 'react-avatar-editor';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { Button, IconButton, useTheme } from '@mui/material';
+import { Button, IconButton, Slider, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -128,6 +128,12 @@ const ProfileImageEditor = (props: {
         }
     };
 
+    const handleSlider = (event: Event, newValue: number | number[]) => {
+        const val = newValue as number
+        if(val < minScale || val > maxScale) return;
+        setScale(val);
+    };
+
     const handleRemoveImage = () => {
         if (token) {
             removeProfileImage(token)
@@ -224,7 +230,15 @@ const ProfileImageEditor = (props: {
                     {/* spacer */}
                 </Box>
             </Box>
-            <DialogContent>
+            <DialogContent
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    gap: '1rem',
+                }}
+            >
                 <Box
                     ref={editorContainerRef}
                     sx={profilePictureContainer}
@@ -279,6 +293,19 @@ const ProfileImageEditor = (props: {
                         </>
                     }
                 </Box>
+                {newProfileImage && 
+                    <Slider
+                        value={scale}
+                        onChange={handleSlider}
+                        step={0.01}
+                        min={minScale}
+                        max={maxScale}
+                        sx={{
+                            width: '85%',
+                            color: colors.primary[500],
+                        }}
+                    />
+                }
             </DialogContent>
             <DialogActions>
                 {newProfileImage ?
