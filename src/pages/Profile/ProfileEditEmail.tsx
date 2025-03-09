@@ -79,7 +79,6 @@ const ProfileEditEmail = () => {
     const updatePageWidth = () => {
         const newPageWidth = getPageWidth(boxRef);
         setPageWidth(newPageWidth);
-        console.log(newPageWidth);
     }
 
     useEffect(() => {
@@ -211,11 +210,11 @@ const ProfileEditEmail = () => {
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
-                                    endAdornment: newEmail !== userData.email ? (
+                                    endAdornment: newEmail !== userData.email && (
                                         <IconButton size='small' onClick={(event) => handleinputCancel(event, userData.email)}>
                                             <ClearIcon />
                                         </IconButton>
-                                    ) : undefined
+                                    )
                                 }
                             }}
                             sx={{

@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
 import {
     useNavigation,
     useGeneralStyling,
@@ -16,10 +17,10 @@ import {
 import { userdata } from '../../API/account';
 import { tokens } from '../../theme.tsx';
 import routes from '../../routes.js';
-import placeholderProfilePic from '../../assets/zuc.png';
 import ProfilePictureEditor from '../../components/ProfileImageEditor.tsx';
 
 const ProfileEdit = () => {
+    
     const navigate = useNavigate();
     const token = localStorage.getItem("accountToken");
     if(!token){
@@ -56,14 +57,16 @@ const ProfileEdit = () => {
         email: '',
         phoneNumber: '',
         role: '',
+        profileImage: {
+            publicId: '',
+            url: undefined,
+        },
     });
 
     const [dialogueOpen, setDialogueOpen] = React.useState(false);
-    const [selectedValue, setSelectedValue] = React.useState('');
 
-    const handleClose = (value: string) => {
+    const handleClose = () => {
         setDialogueOpen(false);
-        setSelectedValue(value);
     };
     
     const boxRef = useRef<HTMLDivElement>(null);
@@ -72,7 +75,6 @@ const ProfileEdit = () => {
     const updatePageWidth = () => {
         const newPageWidth = getPageWidth(boxRef);
         setPageWidth(newPageWidth);
-        console.log(newPageWidth);
     }
 
     useEffect(() => {
@@ -86,6 +88,7 @@ const ProfileEdit = () => {
                         email: json.email,
                         phoneNumber: formatPhoneNumber(JSON.stringify(json.phoneNumber)).phoneNumber,
                         role: json.role,
+                        profileImage: json.profileImage,
                     });
                 });
         }
@@ -137,15 +140,55 @@ const ProfileEdit = () => {
                     </Grid>
                     
                     <Grid size={12} sx={profilePictureContainer}>
-                            <Box
-                                onClick={()=>handleEditItem('editPhoto')}
-                                sx={editImageContainer}>
-                                <img
-                                    alt='profile-user'
-                                    src = {placeholderProfilePic}
-                                    style={profilePicture}
-                                />
-                            </Box>
+                            {userData.profileImage.url && (
+                                <Box
+                                    onClick={()=>handleEditItem('editPhoto')}
+                                    sx={{
+                                        ...editImageContainer,
+                                        "&:hover #editProfileImageOverlay": {
+                                            opacity: 1,
+                                        },
+                                        "&:hover .icon": {
+                                            opacity: 1,
+                                        },
+                                    }}
+                                >
+                                    <img
+                                        alt='profile-user'
+                                        src = {userData.profileImage.url}
+                                        style={{
+                                            ...profilePicture,
+                                        }}
+                                    />
+                                    <Box
+                                        id="editProfileImageOverlay"
+                                        sx={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                            backgroundColor: "rgba(0, 0, 0, 0.4)",
+                                            opacity: 0,
+                                            transition: "opacity 0.3s ease",
+                                        }}
+                                    />
+                                   <Box
+                                        className="icon"
+                                        sx={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            left: "50%",
+                                            transform: "translate(-50%, -50%) scale(1)",
+                                            opacity: 0,
+                                            transition: "opacity 0.3s ease, transform 0.3s ease",
+                                            color: colors.greenAccent[500],
+                                        }}
+                                    >
+                                        <EditIcon sx={{fontSize: '3rem'}} />
+                                    </Box>
+                                </Box>
+                            )}
                         </Grid>
 
                     <Grid size={12}>
@@ -251,10 +294,10 @@ const ProfileEdit = () => {
                     </Grid> 
                 </Grid>
                 <ProfilePictureEditor
-                    selectedValue={selectedValue}
                     open={dialogueOpen}
                     onClose={handleClose}
                     pageWidth={pageWidth}
+                    profileImage={userData.profileImage}
                 />
             </Box>
         </Box>

@@ -77,7 +77,6 @@ const ProfileEditEmail = () => {
     const updatePageWidth = () => {
         const newPageWidth = getPageWidth(boxRef);
         setPageWidth(newPageWidth);
-        console.log(newPageWidth);
     }
     
     useEffect(() => {
@@ -276,11 +275,11 @@ const ProfileEditEmail = () => {
                             }}
                             dropdownStyle={editPhoneDropDown}
                             inputProps={{
-                                // endAdornment: formData.phoneNumber!==oPhone ? (
+                                // endAdornment: formData.phoneNumber!==oPhone && (
                                 //     <IconButton size='small' onClick={(event) => handleinputCancel(event, oPhone)}>
                                 //         <ClearIcon />
                                 //     </IconButton>
-                                // ) : undefined
+                                // )
                             }}                            
                         >
                         </PhoneInput>

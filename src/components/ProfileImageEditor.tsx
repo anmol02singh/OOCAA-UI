@@ -8,7 +8,7 @@ import { Button, IconButton, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CloseIcon from '@mui/icons-material/Close';
 import {
     useGeneralStyling,
     useEditItemStyling,
@@ -16,18 +16,21 @@ import {
 
 } from '../pages/Profile/ProfileUtilities.tsx';
 import { tokens } from '../theme.tsx';
-import { updateProfileImage } from '../API/account.js';
+import { removeProfileImage, updateProfileImage } from '../API/account.js';
 
 const ProfileImageEditor = (props: {
     open: boolean;
-    selectedValue: string;
-    onClose: (value: string) => void;
+    onClose: () => void;
     pageWidth: number;
+    profileImage: {
+        publicId: string,
+        url: string | undefined,
+    }
 }) => {
-    
+
     const navigate = useNavigate();
     const token = localStorage.getItem("accountToken");
-    if(!token){
+    if (!token) {
         navigate('/login')
     }
 
@@ -37,6 +40,8 @@ const ProfileImageEditor = (props: {
     } = useGeneralStyling();
 
     const {
+        profileImageEditor,
+        profilePictureContainer,
         uploadImagebutton,
     } = useEditProfileStyling();
 
@@ -50,32 +55,11 @@ const ProfileImageEditor = (props: {
     const imageUploadRef = useRef<HTMLInputElement | null>(null);
     const editorContainerRef = useRef<HTMLInputElement | null>(null);
     const editorRef = useRef<AvatarEditor | null>(null);
-    
 
-    //Styling
-    const profileImageEditor = {
-        width: 200,
-        height: 200,
-        border: 50,
-        backgroundColor: colors.primary[600],
-        avatarBorderRadius: 125,
-        borderRadius: '9px',
-    }
-
-    const profilePictureContainer: React.CSSProperties = {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: `${profileImageEditor.width + (profileImageEditor.border * 2)}px`,
-        height: `${profileImageEditor.height + (profileImageEditor.border * 2)}px`,
-        backgroundColor: profileImageEditor.backgroundColor,
-        borderRadius: profileImageEditor.borderRadius,
-        padding: 'none',
-    }
-
-    const { onClose, selectedValue, open } = props;
-    const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
+    const { open, onClose, pageWidth, profileImage } = props;
+    const [newProfileImage, setNewProfileImage] = useState<string | undefined>(undefined);
     const [scale, setScale] = useState<number>(1);
+    const [disabled, setDisabled] = useState<boolean>(true);
 
     const maxScale = 3;
     const minScale = 1;
@@ -84,10 +68,14 @@ const ProfileImageEditor = (props: {
     useEffect(() => {
         const editor = editorContainerRef.current;
 
-        setProfileImage(undefined);
+        setNewProfileImage(undefined);
 
         if (editor) {
             editor.addEventListener("wheel", handleWheel);
+        }
+
+        if(profileImage){
+            setDisabled(!profileImage.publicId.includes("OOCAA/profileImages/placeholderProfileImage"))
         }
 
         return () => {
@@ -101,7 +89,11 @@ const ProfileImageEditor = (props: {
         const editor = editorContainerRef.current;
 
         if (open) {
-            setProfileImage(undefined);
+            setNewProfileImage(undefined);
+        }
+
+        if(open && profileImage && profileImage.publicId){
+            setDisabled(profileImage.publicId.includes("OOCAA/profileImages/placeholderProfileImage"));
         }
 
         if (open && editor) {
@@ -117,7 +109,7 @@ const ProfileImageEditor = (props: {
 
     useEffect(() => {
         setScale(1);
-    }, [profileImage]);
+    }, [newProfileImage]);
 
     const handleClickUpload = () => {
         if (!imageUploadRef || !imageUploadRef.current) return;
@@ -136,26 +128,38 @@ const ProfileImageEditor = (props: {
         }
     };
 
+    const handleRemoveImage = () => {
+        if (token) {
+            removeProfileImage(token)
+                .then((success) => {
+                    if (!success) {
+                        return;
+                    }
+                    onClose();
+                    window.location.reload()
+                });
+        }
+    };
+    
     const handleChangeImage = (event) => {
-        setProfileImage(event.target.files[0]);
+        setNewProfileImage(event.target.files[0]);
     };
 
     const handleClose = () => {
-        onClose(selectedValue);
+        onClose();
     }
 
     const handleSubmit = () => {
         if (editorRef && editorRef.current) {
-            // This returns a HTMLCanvasElement, it can be made into a data URL or a blob,
             const canvas = editorRef.current.getImageScaledToCanvas();
             console.log(canvas.toDataURL());
             if (token) {
                 updateProfileImage(token, canvas.toDataURL())
                     .then((success) => {
-                        if(!success){
+                        if (!success) {
                             return;
                         }
-                        onClose(selectedValue);
+                        onClose();
                         window.location.reload()
                     });
             }
@@ -169,7 +173,7 @@ const ProfileImageEditor = (props: {
             keepMounted
             sx={{
                 '& .MuiPaper-root': {
-                    ...profileDialogueContainer(props.pageWidth),
+                    ...profileDialogueContainer(pageWidth),
                 },
                 '& .css-kw13he-MuiDialogContent-root': {
                     padding: 0,
@@ -196,7 +200,7 @@ const ProfileImageEditor = (props: {
                     }}
                 >
                     <IconButton onClick={handleClose}>
-                        <ArrowBackIcon sx={{ fontSize: '1.8rem' }} />
+                        <CloseIcon sx={{ fontSize: '1.8rem' }} />
                     </IconButton>
                 </Box>
                 <Box
@@ -225,20 +229,19 @@ const ProfileImageEditor = (props: {
                     ref={editorContainerRef}
                     sx={profilePictureContainer}
                 >
-                    {profileImage ?
+                    {newProfileImage ?
                         <AvatarEditor
                             ref={editorRef}
-                            image={profileImage}
+                            image={newProfileImage}
                             width={profileImageEditor.width}
                             height={profileImageEditor.height}
                             border={profileImageEditor.border}
-                            backgroundColor={profileImageEditor.backgroundColor}
                             scale={scale}
                             rotate={0}
                             borderRadius={profileImageEditor.avatarBorderRadius}
                             style={{
                                 borderRadius: profileImageEditor.borderRadius,
-                                backgroundColor: profileImageEditor.backgroundColor,
+                                backgroundColor: "transparent",
                             }}
                         />
                         :
@@ -277,24 +280,52 @@ const ProfileImageEditor = (props: {
                     }
                 </Box>
             </DialogContent>
-            {profileImage ?
-                <DialogActions>
+            <DialogActions>
+                {newProfileImage ?
+                    <>
+                        <Button
+                            onClick={handleClose}
+                            sx={{
+                                ...editItemSaveButton,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type='submit'
+                            onClick={handleSubmit}
+                            sx={{
+                                ...editItemSaveButton,
+                                '&:hover': {
+                                    ...button_hover,
+                                    color: colors.greenAccent[500],
+                                },
+                            }}
+                        >
+                            Apply
+                        </Button>
+                    </>
+                    :
                     <Button
-                        type='submit'
-                        onClick={handleSubmit}
+                        onClick={handleRemoveImage}
+                        disabled={disabled}
                         sx={{
                             ...editItemSaveButton,
+                            width: '9rem',
                             '&:hover': {
-                                ...button_hover
+                                ...button_hover,
+                                color: colors.redAccent[500],
                             },
                         }}
                     >
-                        Save
+                        Remove Image
                     </Button>
-                </DialogActions>
-                :
-                undefined
-            }
+
+                }
+            </DialogActions>
         </Dialog>
     );
 }

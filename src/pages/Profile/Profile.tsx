@@ -14,7 +14,6 @@ import {
 } from './ProfileUtilities.tsx';
 import { userdata } from '../../API/account';
 import { tokens } from '../../theme.tsx';
-import placeholderProfilePic from '../../assets/zuc.png';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -59,6 +58,10 @@ const Profile = () => {
         email: '',
         phoneNumber: '',
         role: '',
+        profileImage: {
+            publicId: '',
+            url: undefined,
+        },
     });
     
     const boxRef = useRef<HTMLDivElement>(null);
@@ -67,7 +70,6 @@ const Profile = () => {
     const updatePageWidth = () => {
         const newPageWidth = getPageWidth(boxRef);
         setPageWidth(newPageWidth);
-        console.log(newPageWidth);
     }
 
     useEffect(() => {
@@ -81,6 +83,7 @@ const Profile = () => {
                         email: json.email,
                         phoneNumber: formatPhoneNumber(JSON.stringify(json.phoneNumber)).phoneNumber,
                         role: json.role,
+                        profileImage: json.profileImage,
                     });
                 });
         }
@@ -166,11 +169,16 @@ const Profile = () => {
                     <Grid container sx={profileElements} spacing={1}>
                         <Grid size={12} sx={profilePictureContainer}>
                             <Box sx={regImageContainer(pageWidth)}>
-                                <img
-                                    alt='profile-user'
-                                    src = {placeholderProfilePic}
-                                    style={profilePicture}
-                                />
+                                {userData.profileImage.url && (
+                                    <img
+                                        alt='profile-user'
+                                        src = {userData.profileImage.url}
+                                        style={{
+                                            ...profilePicture,
+                                            cursor: "default",
+                                        }}
+                                    />
+                                )}
                             </Box>
                         </Grid>
 

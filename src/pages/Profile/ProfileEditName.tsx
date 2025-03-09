@@ -78,7 +78,6 @@ const ProfileEditName = () => {
     const updatePageWidth = () => {
         const newPageWidth = getPageWidth(boxRef);
         setPageWidth(newPageWidth);
-        console.log(newPageWidth);
     }
 
     useEffect(() => {
@@ -205,11 +204,11 @@ const ProfileEditName = () => {
                             onKeyDown={preventEnterSubmit}
                             slotProps={{
                                 input:{
-                                    endAdornment: newName!==userData.name ? (
+                                    endAdornment: newName!==userData.name && (
                                         <IconButton size='small' onClick={(event) => handleinputCancel(event, userData.name)}>
                                             <ClearIcon />
                                         </IconButton>
-                                    ) : undefined
+                                    )
                                 }
                             }}
                             sx={{

@@ -332,7 +332,28 @@ export const useEditProfileStyling = () => {
         ...imageContainer,
         width: '7rem',
         height: '7rem',
+        position: "relative",
     };
+
+    const profileImageEditor = {
+        width: 200,
+        height: 200,
+        border: 50,
+        backgroundColor: colors.primary[500],
+        avatarBorderRadius: 125,
+        borderRadius: '9px',
+    }
+
+    const profilePictureContainer: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: `${profileImageEditor.width + (profileImageEditor.border * 2)}px`,
+        height: `${profileImageEditor.height + (profileImageEditor.border * 2)}px`,
+        backgroundColor: profileImageEditor.backgroundColor,
+        borderRadius: profileImageEditor.borderRadius,
+        padding: 'none',
+    }
 
     const uploadImagebutton: React.CSSProperties = {
         ...button,
@@ -354,6 +375,8 @@ export const useEditProfileStyling = () => {
         profileFieldButton,
         profileFieldButtonText,
         editImageContainer,
+        profileImageEditor,
+        profilePictureContainer,
         uploadImagebutton,
     };
 };

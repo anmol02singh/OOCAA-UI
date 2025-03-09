@@ -120,3 +120,23 @@ export async function updateProfileImage(
         throw error;
     }
 }
+
+export async function removeProfileImage(token) {
+    try {
+        const response = await fetch(`${API_URL}/removeProfileImage`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                token: token
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error removing user profile image:', error);
+        throw error;
+    }
+}
