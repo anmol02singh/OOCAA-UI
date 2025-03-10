@@ -12,7 +12,7 @@ import {
     useProfileDisplayStyling,
 
 } from './ProfileUtilities.tsx';
-import { userdata } from '../../API/account';
+import { userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 

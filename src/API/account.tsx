@@ -69,10 +69,10 @@ export async function register(name: string, email: string, phone: string, usern
 
 export async function updateGeneralUserData(
     token: string,
-    newName: string,
-    // newUsername: string,
-    newEmail: string,
-    newPhone: string,
+    newName?: string | undefined,
+    // newUsername: string | undefined,
+    newEmail?: string | undefined,
+    newPhone?: string | undefined,
 ) {
     try {
         const response = await fetch(`${API_URL}/updateGeneralUserData`, {
