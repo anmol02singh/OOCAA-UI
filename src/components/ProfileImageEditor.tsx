@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import CloseIcon from '@mui/icons-material/Close';
+import ErrorIcon from '@mui/icons-material/Error';
 import {
     useGeneralStyling,
     useEditItemStyling,
@@ -47,6 +48,7 @@ const ProfileImageEditor = (props: {
 
     const {
         editItemSaveButton,
+        errorMessageStyle,
     } = useEditItemStyling();
 
     const theme = useTheme();
@@ -61,6 +63,7 @@ const ProfileImageEditor = (props: {
     const [newProfileImage, setNewProfileImage] = useState<string | undefined>(undefined);
     const [scale, setScale] = useState<number>(1);
     const [disabled, setDisabled] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
 
     const maxScale = 3;
     const minScale = 1;
@@ -69,7 +72,9 @@ const ProfileImageEditor = (props: {
     useEffect(() => {
         const editor = editorContainerRef.current;
 
-        setNewProfileImage(undefined);
+        if (imageUploadRef.current) imageUploadRef.current.value = ''; //Clear image from input.
+        setNewProfileImage(undefined);            
+        setError(false);
 
         if (editor) {
             editor.addEventListener("wheel", handleWheel);
@@ -90,7 +95,9 @@ const ProfileImageEditor = (props: {
         const editor = editorContainerRef.current;
 
         if (open) {
-            setNewProfileImage(undefined);
+            if (imageUploadRef.current) imageUploadRef.current.value = ''; //Clear image from input.
+            setNewProfileImage(undefined);            
+            setError(false);
         }
 
         if(open && profileImage && profileImage.publicId){
@@ -117,6 +124,32 @@ const ProfileImageEditor = (props: {
         imageUploadRef.current.click();
     };
 
+    const handleChangeImage = (event) => {
+        const file = event.target.files[0];
+        if(!file) return;
+        
+        //Deny file if bigger than 8MB.
+        if((file.size/1024)/1024 > 8){
+            setError(true);
+            return;
+        }
+        setError(false);
+        setNewProfileImage(file);
+    };
+
+    const handleRemoveImage = () => {
+        if (token) {
+            removeProfileImage(token)
+                .then((success) => {
+                    if (!success) {
+                        return;
+                    }
+                    onClose();
+                    window.location.reload()
+                });
+        }
+    };
+
     const handleWheel = (event) => {
         event.preventDefault();
 
@@ -135,31 +168,17 @@ const ProfileImageEditor = (props: {
         setScale(val);
     };
 
-    const handleRemoveImage = () => {
-        if (token) {
-            removeProfileImage(token)
-                .then((success) => {
-                    if (!success) {
-                        return;
-                    }
-                    onClose();
-                    window.location.reload()
-                });
-        }
-    };
-    
-    const handleChangeImage = (event) => {
-        setNewProfileImage(event.target.files[0]);
-    };
-
     const handleClose = () => {
         onClose();
+    }
+
+    const handleCancel = () => {
+        setNewProfileImage(undefined);
     }
 
     const handleSubmit = () => {
         if (editorRef && editorRef.current) {
             const canvas = editorRef.current.getImageScaledToCanvas();
-            console.log(canvas.toDataURL());
             if (token) {
                 updateProfileImage(token, canvas.toDataURL())
                     .then((success) => {
@@ -293,6 +312,11 @@ const ProfileImageEditor = (props: {
                         </>
                     }
                 </Box>
+                {error && (
+                    <Typography variant='h6' sx={errorMessageStyle}>
+                        <ErrorIcon/> File cannot be larger than 8.00MB.
+                    </Typography>
+                )}
                 {newProfileImage && 
                     <Slider
                         value={scale}
@@ -311,7 +335,7 @@ const ProfileImageEditor = (props: {
                 {newProfileImage ?
                     <>
                         <Button
-                            onClick={handleClose}
+                            onClick={handleCancel}
                             sx={{
                                 ...editItemSaveButton,
                                 '&:hover': {
