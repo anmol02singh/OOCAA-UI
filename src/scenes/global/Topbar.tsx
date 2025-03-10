@@ -1,27 +1,28 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext, useState } from 'react';
-import { userdata } from '../../API/account.js';
-import { ColorModeContext, tokens } from '../../theme.tsx';
+import { useNavigate } from 'react-router-dom';
+import { ColorModeContext, tokens } from  '../../theme.tsx';
+import { userdata } from '../../API/account.tsx';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/SearchOutlined';
-import { useNavigate } from 'react-router-dom';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import React, { FC } from 'react';
-import SettingsPopover from '../../pages/SettingsPopover.tsx';
 
+import React, { FC } from 'react';
+import routes from '../../routes.js';
 
 const Topbar: FC = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
-    const [activeUsername, setActiveUsername] = useState<string>('');
     const navigate = useNavigate();
+    
+    const [activeUsername, setActiveUsername] = useState<string>('');
 
     if (localStorage.getItem("accountToken")) {
         userdata(localStorage.getItem("accountToken"))
@@ -32,7 +33,7 @@ const Topbar: FC = () => {
     function logout() {
         localStorage.removeItem("accountToken");
         window.location.reload();
-    }
+    }    
 
     return (<Box display = "flex" justifyContent = "space-between" p = {2}> 
     {/* SEARCH BAR */}
@@ -41,37 +42,35 @@ const Topbar: FC = () => {
          sx = {{ backgroundColor: colors.primary[400], borderRadius: "3px" }}
          >
 
-         <InputBase sx = {{ml: 2, flex: 1}} placeholder="Search" />
+         <InputBase id='search-bar' sx = {{ml: 2, flex: 1}} placeholder="Search" />
          <IconButton type = "button" sx = {{ p : 1}}>
             <SearchIcon/>
          </IconButton>
         </Box>
-    <Box display="flex" justifyContent="space-between" p={2}>
-      {/* SEARCH BAR */}
-      <Box display="flex" sx={{ backgroundColor: colors.primary[400], borderRadius: '3px' }}>
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
-      </Box>
 
-      {/* ICONS */}
-      <Box display="flex">
-        {/* <IconButton onClick={colorMode.toggleColorMode}>
-          {theme.palette.mode === 'dark' ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
-        </IconButton> */}
+        {/* ICONS */}
+         <Box display = "flex"> 
+            <IconButton onClick={colorMode.toggleColorMode}>
+                {theme.palette.mode === 'dark' ? (
+                   <DarkModeOutlinedIcon /> 
+                ) : (
+                    <LightModeOutlinedIcon />
+
+                )}
+                
+            </IconButton>
 
             <IconButton>
                 <NotificationsOutlinedIcon />
             </IconButton>
                 
             <IconButton>
-                <SettingsOutlinedIcon onClick={() => navigate("/settings")}  />
+                <SettingsOutlinedIcon />
             </IconButton>
 
             {activeUsername ? (<>
-                <IconButton>
-                    <PersonOutlinedIcon />
+                <IconButton onClick={() => navigate(routes.profile)}>
+                    <PersonOutlinedIcon/>
                 </IconButton>
 
                 <IconButton onClick={logout}>
@@ -86,10 +85,7 @@ const Topbar: FC = () => {
             )}
          </Box>
         </Box>
-       
-      </Box>
-    )
+    );
 };
 
 export default Topbar;
-

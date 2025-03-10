@@ -1,6 +1,6 @@
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-export async function userdata(token) {
+export async function userdata(token: string) {
     try {
         const response = await fetch(`${API_URL}/userdata`, {
             method: "POST",
@@ -18,7 +18,7 @@ export async function userdata(token) {
     }
 }
 
-export async function login(username, password) {
+export async function login(username: string, password: string) {
     try {
         const response = await fetch(`${API_URL}/login`, {
             method: "POST",
@@ -41,7 +41,7 @@ export async function login(username, password) {
     }
 }
 
-export async function register(name, email, phone, username, password) {
+export async function register(name: string, email: string, phone: string, username: string, password: string) {
     try {
         const response = await fetch(`${API_URL}/register`, {
             method: "POST",
@@ -66,23 +66,77 @@ export async function register(name, email, phone, username, password) {
         throw error;
     }
 }
-export async function changePassword(token, currentPassword, newPassword) {
+
+export async function updateGeneralUserData(
+    token: string,
+    newName?: string | undefined,
+    // newUsername: string | undefined,
+    newEmail?: string | undefined,
+    newPhone?: string | undefined,
+) {
     try {
-        const response = await fetch(`${API_URL}/change-password`, {
-            method: "POST",
-            body: JSON.stringify({ 
+        const response = await fetch(`${API_URL}/updateGeneralUserData`, {
+            method: "PUT",
+            body: JSON.stringify({
                 token: token,
-                currentPassword: currentPassword,
-                newPassword: newPassword
+                newName: newName,
+                // newUsername: newUsername,
+                newEmail: newEmail,
+                newPhone: newPhone
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
+
         return await response.json();
     } catch (error) {
-        console.error('Error changing password:', error);
+        console.error('Error updating user account:', error);
+        throw error;
+    }
+}
+
+export async function updateProfileImage(
+    token: string,
+    newImage: string,
+) {
+    try {
+        const response = await fetch(`${API_URL}/updateProfileImage`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                newImage: newImage 
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user profile image:', error);
+        throw error;
+    }
+}
+
+export async function removeProfileImage(token: string) {
+    try {
+        const response = await fetch(`${API_URL}/removeProfileImage`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                token: token
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error removing user profile image:', error);
         throw error;
     }
 }
