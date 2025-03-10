@@ -1,8 +1,6 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext, useState } from 'react';
-import { ColorModeContext, tokens } from  '../../theme.tsx';
 import { userdata } from '../../API/account.js';
-import { useContext } from 'react';
 import { ColorModeContext, tokens } from '../../theme.tsx';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
@@ -23,6 +21,7 @@ const Topbar: FC = () => {
     const colors = tokens(theme.palette.mode);
     const colorMode = useContext(ColorModeContext);
     const [activeUsername, setActiveUsername] = useState<string>('');
+    const navigate = useNavigate();
 
     if (localStorage.getItem("accountToken")) {
         userdata(localStorage.getItem("accountToken"))
@@ -47,11 +46,6 @@ const Topbar: FC = () => {
             <SearchIcon/>
          </IconButton>
         </Box>
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const colorMode = useContext(ColorModeContext);
-  const navigate = useNavigate();
-  return (
     <Box display="flex" justifyContent="space-between" p={2}>
       {/* SEARCH BAR */}
       <Box display="flex" sx={{ backgroundColor: colors.primary[400], borderRadius: '3px' }}>
@@ -72,7 +66,7 @@ const Topbar: FC = () => {
             </IconButton>
                 
             <IconButton>
-                <SettingsOutlinedIcon />
+                <SettingsOutlinedIcon onClick={() => navigate("/settings")}  />
             </IconButton>
 
             {activeUsername ? (<>
@@ -92,19 +86,9 @@ const Topbar: FC = () => {
             )}
          </Box>
         </Box>
-    );
-        <IconButton>
-          <NotificationsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-        <SettingsOutlinedIcon onClick={() => navigate("/settings")} />
-        </IconButton>
-        <IconButton>
-          <PersonOutlinedIcon />
-        </IconButton>
+       
       </Box>
-    </Box>
-  );
+    )
 };
 
 export default Topbar;

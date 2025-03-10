@@ -18,7 +18,7 @@ import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import profilePic from '../../assets/zuc.png';
+// import profilePic from '../../assets/zuc.png';
 
 interface ItemProps {
   title: string;
@@ -103,7 +103,7 @@ const Navbar: FC = () => {
                     alt="profile-user"
                     width="100px"
                     height="100px"
-                    src = {profilePic}
+                    // src = {profilePic}
                     style={{ cursor: "pointer", borderRadius: "50%" }}
                   />
                 )}
