@@ -273,14 +273,7 @@ const ProfileEditEmail = () => {
                                 ...editItemTextField_input,
                                 width: '100%',
                             }}
-                            dropdownStyle={editPhoneDropDown}
-                            inputProps={{
-                                // endAdornment: formData.phoneNumber!==oPhone && (
-                                //     <IconButton size='small' onClick={(event) => handleinputCancel(event, oPhone)}>
-                                //         <ClearIcon />
-                                //     </IconButton>
-                                // )
-                            }}                            
+                            dropdownStyle={editPhoneDropDown}                           
                         >
                         </PhoneInput>
                         {errorMessageElements[errorMessageElement.type]}                 

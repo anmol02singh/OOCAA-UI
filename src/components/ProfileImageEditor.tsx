@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import AvatarEditor from 'react-avatar-editor';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,10 +27,11 @@ const ProfileImageEditor = (props: {
     }
 }) => {
 
-    const navigate = useNavigate();
+    const { open, onClose, pageWidth, profileImage } = props;
+
     const token = localStorage.getItem("accountToken");
     if (!token) {
-        navigate('/login')
+        onClose();
     }
 
     const {
@@ -54,9 +54,10 @@ const ProfileImageEditor = (props: {
 
     const imageUploadRef = useRef<HTMLInputElement | null>(null);
     const editorContainerRef = useRef<HTMLInputElement | null>(null);
-    const editorRef = useRef<AvatarEditor | null>(null);
-
-    const { open, onClose, pageWidth, profileImage } = props;
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const editorRef = useRef<any>(null);
+        //typescript gets mad if I don't use any and try to call editorRef.current.getImageScaledToCanvas.
+    
     const [newProfileImage, setNewProfileImage] = useState<string | undefined>(undefined);
     const [scale, setScale] = useState<number>(1);
     const [disabled, setDisabled] = useState<boolean>(true);
@@ -165,8 +166,7 @@ const ProfileImageEditor = (props: {
                         if (!success) {
                             return;
                         }
-                        onClose();
-                        window.location.reload()
+                        window.location.reload();
                     });
             }
         }

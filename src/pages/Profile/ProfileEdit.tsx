@@ -20,15 +20,15 @@ import routes from '../../routes.js';
 import ProfilePictureEditor from '../../components/ProfileImageEditor.tsx';
 
 const ProfileEdit = () => {
-    
+
     const navigate = useNavigate();
     const token = localStorage.getItem("accountToken");
-    if(!token){
+    if (!token) {
         navigate('/login')
     }
-    
+
     const { handleCancel } = useNavigation();
-   
+
     const {
         pageContainer,
         profileElements,
@@ -49,7 +49,7 @@ const ProfileEdit = () => {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    
+
     //User data
     const [userData, setUserData] = useState({
         name: '',
@@ -68,7 +68,7 @@ const ProfileEdit = () => {
     const handleClose = () => {
         setDialogueOpen(false);
     };
-    
+
     const boxRef = useRef<HTMLDivElement>(null);
     const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
 
@@ -82,7 +82,7 @@ const ProfileEdit = () => {
             userdata(token)
                 .then(json => {
                     setUserData({
-                        ...userData,                  
+                        ...userData,
                         name: json.name,
                         username: json.username,
                         email: json.email,
@@ -105,7 +105,7 @@ const ProfileEdit = () => {
     }, [pageWidth]);
 
     const handleEditItem = (pageName: string) => {
-        switch(pageName){
+        switch (pageName) {
             case 'editPhoto':
                 setDialogueOpen(true);
                 break;
@@ -120,7 +120,7 @@ const ProfileEdit = () => {
                 break;
             case 'editPhone':
                 navigate(routes.editProfilePhone);
-                break;            
+                break;
         }
     }
 
@@ -130,32 +130,34 @@ const ProfileEdit = () => {
                 <Grid container sx={profileElements} rowSpacing={3} columnSpacing={2}>
                     <Grid size={2}>
                         <IconButton onClick={handleCancel}>
-                            <ArrowBackIcon sx={{fontSize: '1.8rem'}} />
+                            <ArrowBackIcon sx={{ fontSize: '1.8rem' }} />
                         </IconButton>
                     </Grid>
                     <Grid size={8} sx={editProfileHeader}>
-                        <Typography variant='h2' sx={{color: colors.grey[100]}}>
+                        <Typography variant='h2' sx={{ color: colors.grey[100] }}>
                             Edit Profile
                         </Typography>
                     </Grid>
-                    
+
                     <Grid size={12} sx={profilePictureContainer}>
+
+                        <Box
+                            onClick={() => handleEditItem('editPhoto')}
+                            sx={{
+                                ...editImageContainer,
+                                "&:hover #editProfileImageOverlay": {
+                                    opacity: 1,
+                                },
+                                "&:hover .icon": {
+                                    opacity: 1,
+                                },
+                            }}
+                        >
                             {userData.profileImage.url && (
-                                <Box
-                                    onClick={()=>handleEditItem('editPhoto')}
-                                    sx={{
-                                        ...editImageContainer,
-                                        "&:hover #editProfileImageOverlay": {
-                                            opacity: 1,
-                                        },
-                                        "&:hover .icon": {
-                                            opacity: 1,
-                                        },
-                                    }}
-                                >
+                                <>
                                     <img
                                         alt='profile-user'
-                                        src = {userData.profileImage.url}
+                                        src={userData.profileImage.url}
                                         style={{
                                             ...profilePicture,
                                         }}
@@ -173,7 +175,7 @@ const ProfileEdit = () => {
                                             transition: "opacity 0.3s ease",
                                         }}
                                     />
-                                   <Box
+                                    <Box
                                         className="icon"
                                         sx={{
                                             position: "absolute",
@@ -185,11 +187,12 @@ const ProfileEdit = () => {
                                             color: colors.greenAccent[500],
                                         }}
                                     >
-                                        <EditIcon sx={{fontSize: '3rem'}} />
+                                        <EditIcon sx={{ fontSize: '3rem' }} />
                                     </Box>
-                                </Box>
+                                </>
                             )}
-                        </Grid>
+                        </Box>
+                    </Grid>
 
                     <Grid size={12}>
                         <Typography variant='h6' sx={fieldLabel}>
@@ -197,7 +200,7 @@ const ProfileEdit = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={()=>handleEditItem('editName')}
+                            onClick={() => handleEditItem('editName')}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -210,11 +213,11 @@ const ProfileEdit = () => {
                         >
                             <Typography
                                 sx={profileFieldButtonText}
-                                onClick={()=>handleEditItem('editName')}
+                                onClick={() => handleEditItem('editName')}
                             >
                                 {userData.name}
                             </Typography>
-                        </Button>                            
+                        </Button>
                     </Grid>
 
                     {/* <Grid size={12}>
@@ -247,7 +250,7 @@ const ProfileEdit = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={()=>handleEditItem('editEmail')}
+                            onClick={() => handleEditItem('editEmail')}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -260,12 +263,12 @@ const ProfileEdit = () => {
                         >
                             <Typography
                                 sx={profileFieldButtonText}
-                                onClick={()=>handleEditItem('editEmail')}
+                                onClick={() => handleEditItem('editEmail')}
                             >
                                 {userData.email}
                             </Typography>
                         </Button>
-                    </Grid> 
+                    </Grid>
 
                     <Grid size={12}>
                         <Typography variant='h6' sx={fieldLabel}>
@@ -273,7 +276,7 @@ const ProfileEdit = () => {
                         </Typography>
                         <Button
                             fullWidth
-                            onClick={()=>handleEditItem('editPhone')}
+                            onClick={() => handleEditItem('editPhone')}
                             sx={{
                                 ...profileFieldButton,
                                 '&:hover': {
@@ -286,12 +289,12 @@ const ProfileEdit = () => {
                         >
                             <Typography
                                 sx={profileFieldButtonText}
-                                onClick={()=>handleEditItem('editPhone')}
+                                onClick={() => handleEditItem('editPhone')}
                             >
                                 {userData.phoneNumber}
                             </Typography>
                         </Button>
-                    </Grid> 
+                    </Grid>
                 </Grid>
                 <ProfilePictureEditor
                     open={dialogueOpen}

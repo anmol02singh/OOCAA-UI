@@ -191,12 +191,14 @@ export const useProfileDisplayStyling = () => {
         ...profileItemContainer(pageWidth),
         width: pageWidth >= mdWindowWidth ? '58%' : '95%',
         minWidth: '21rem',
+        minHeight: '33rem'
     });
 
     const regProfileCardContainer = (pageWidth: number): React.CSSProperties => ({
         ...profileItemContainer(pageWidth),
         width: pageWidth >= mdWindowWidth ? '42%' : '75%',
         minWidth: '20rem',
+        minHeight: '22rem'
     });
 
     const regImageContainer = (pageWidth: number): React.CSSProperties => ({
@@ -293,6 +295,7 @@ export const useEditProfileStyling = () => {
         width: '90%',
         maxWidth: '50rem',
         minWidth: '21rem',
+        minHeight: '37rem',
         overflow: 'hidden',
         margin: '4rem 0',
     });
@@ -396,6 +399,7 @@ export const useEditItemStyling = () => {
         width: '90%',
         maxWidth: '40rem',
         minWidth: '21rem',
+        minHeight: '26rem',
         overflow: 'hidden',
         margin: '5rem 0'
     });
