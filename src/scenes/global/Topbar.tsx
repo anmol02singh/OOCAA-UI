@@ -69,8 +69,8 @@ const Topbar: FC = () => {
             </IconButton>
 
             {activeUsername ? (<>
-                <IconButton onClick={() => navigate(routes.Profile)}>
-                    <PersonOutlinedIcon />
+                <IconButton onClick={() => navigate(routes.profile)}>
+                    <PersonOutlinedIcon/>
                 </IconButton>
 
                 <IconButton onClick={logout}>
