@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useState } from 'react';
 import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import "react-pro-sidebar/dist/css/styles.css";
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { tokens } from '../../theme.tsx';
 import { userdata } from '../../API/account.js';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
@@ -18,7 +18,7 @@ import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import profilePic from '../../assets/zuc.png';
+import routes from '../../routes.js';
 
 interface ItemProps {
   title: string;
@@ -47,29 +47,41 @@ const Item: FC<ItemProps> = ({ title, to, icon, selected, setSelected }) => {
 const Navbar: FC = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('Dashboard');
-  const [activeUsername, setActiveUsername] = useState<string>('');
-  const [savedRole, setSavedRole] = useState<string>('');
 
-  function setTokenData(json) {
-    setActiveUsername(json.username);
-    if (json.role) {
-      setSavedRole(json.role);
-    } else {
-      setSavedRole("Unknown Role");
+  const [userData, setUserData] = useState({
+    username: '',
+    role: '',
+    profileImage: {
+      publicId: '',
+      url: undefined,
+    },
+  });
+
+  const token = localStorage.getItem("accountToken");
+
+  useEffect(() => {
+    if (token) {
+      userdata(token)
+        .then(json => {
+          setUserData({
+            ...userData,
+            username: json.username,
+            role: json.role,
+            profileImage: json.profileImage,
+          });
+        });
     }
-  }
-
-  if (localStorage.getItem("accountToken")) {
-    userdata(localStorage.getItem("accountToken"))
-      .then(setTokenData);
-  }
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <Box
-      sx={{height:"100vh",
-        '& .pro-sidebar-inner': { background: `${colors.primary[400]} !important`, height:"100%" },
+      sx={{
+        height: "100vh",
+        '& .pro-sidebar-inner': { background: `${colors.primary[400]} !important`, height: "100%" },
         '& .pro-icon-wrapper': { backgroundColor: 'transparent !important' },
         '& .pro-inner-item': { padding: '5px 35px 5px 20px !important' },
         '& .pro-inner-item:hover': { color: '#868dfb !important' },
@@ -85,7 +97,7 @@ const Navbar: FC = () => {
           >
             {!isCollapsed && (
               <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
-                <Typography variant="h3" fontWeight= "bold"color={colors.grey[100]}>
+                <Typography variant="h3" fontWeight="bold" color={colors.grey[100]}>
                   OOCAA
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -97,23 +109,24 @@ const Navbar: FC = () => {
           {!isCollapsed && (
             <Box marginBottom="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                {activeUsername && (
+                {userData.username && userData.profileImage.url && (
                   <img
                     alt="profile-user"
                     width="100px"
                     height="100px"
-                    src = {profilePic}
+                    src={userData.profileImage.url}
                     style={{ cursor: "pointer", borderRadius: "50%" }}
+                    onClick={() => navigate(routes.profile)}
                   />
                 )}
               </Box>
               <Box textAlign="center">
                 <Typography variant="h2" color={colors.grey[100]} fontWeight="bold" sx={{ m: "10px 0 0 0 0" }}>
-                  {activeUsername || "Not logged in"}
+                  {userData.username || "Not logged in"}
                 </Typography>
-                {activeUsername && (
+                {userData.username && (
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    { savedRole.toUpperCase() }
+                    {userData.role.toUpperCase()}
                   </Typography>
                 )}
               </Box>
