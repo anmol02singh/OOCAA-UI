@@ -1,7 +1,7 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useContext, useState } from 'react';
 import { ColorModeContext, tokens } from  '../../theme.tsx';
-import { userdata } from '../../API/account.js';
+import { userdata } from '../../API/account.tsx';
 import InputBase from '@mui/material/InputBase';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
