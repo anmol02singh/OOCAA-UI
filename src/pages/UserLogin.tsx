@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { login } from "../API/account";
-import { Button, Grid2, TextField, Typography } from "@mui/material";
+import { Button, Grid2, TextField, OutlinedInput, Typography, IconButton, InputAdornment, InputLabel, FormLabel, FormControl } from "@mui/material";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import logo from "../assets/logo-2.jpg";
 import spacebg from "../assets/space_bg2.jpg";
@@ -10,6 +12,7 @@ const UserLogin = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginFailed, setLoginFailed] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   async function handleLogin() {
     if (!username || !password) { return; }
@@ -127,37 +130,41 @@ const UserLogin = () => {
           </Grid2>
 
           <Grid2>
-            <TextField
-              id="password"
-              onChange={event => setPassword(event.target.value)}
-              value={password}
-              label="Password"
-              variant="outlined"
-              fullWidth
-              required
+            <FormControl
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#A46EF7",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#A46EF7",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#A46EF7",
-                  },
+                  "& fieldset": { borderColor: "#A46EF7", },
+                  "&:hover fieldset": { borderColor: "#A46EF7", },
+                  "&.Mui-focused fieldset": { borderColor: "#A46EF7", },
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#A46EF7",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#A46EF7",
-                },
-                input: {
-                  color: "#FFFFFF",
-                },
+                "& .MuiInputLabel-root": { color: "#A46EF7", },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#A46EF7", },
+                input: { color: "#FFFFFF", },
               }}
-            />
+            >
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <OutlinedInput
+                id="password"
+                onChange={event => setPassword(event.target.value)}
+                value={password}
+                fullWidth
+                type={showPassword ? 'text' : 'password'}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword ? 'hide password' : 'display password'
+                      }
+                      onClick={() => setShowPassword((show) => !show)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+            </FormControl>
           </Grid2>
 
           <Typography>
