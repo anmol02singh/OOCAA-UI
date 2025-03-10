@@ -1,6 +1,6 @@
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-export async function userdata(token) {
+export async function userdata(token: string) {
     try {
         const response = await fetch(`${API_URL}/userdata`, {
             method: "POST",
@@ -18,7 +18,7 @@ export async function userdata(token) {
     }
 }
 
-export async function login(username, password) {
+export async function login(username: string, password: string) {
     try {
         const response = await fetch(`${API_URL}/login`, {
             method: "POST",
@@ -41,7 +41,7 @@ export async function login(username, password) {
     }
 }
 
-export async function register(name, email, phone, username, password) {
+export async function register(name: string, email: string, phone: string, username: string, password: string) {
     try {
         const response = await fetch(`${API_URL}/register`, {
             method: "POST",
@@ -68,11 +68,11 @@ export async function register(name, email, phone, username, password) {
 }
 
 export async function updateGeneralUserData(
-    token,
-    newName,
-    // newUsername,
-    newEmail,
-    newPhone
+    token: string,
+    newName?: string | undefined,
+    // newUsername: string | undefined,
+    newEmail?: string | undefined,
+    newPhone?: string | undefined,
 ) {
     try {
         const response = await fetch(`${API_URL}/updateGeneralUserData`, {
@@ -98,8 +98,8 @@ export async function updateGeneralUserData(
 }
 
 export async function updateProfileImage(
-    token,
-    newImage,
+    token: string,
+    newImage: string,
 ) {
     try {
         const response = await fetch(`${API_URL}/updateProfileImage`, {
@@ -121,7 +121,7 @@ export async function updateProfileImage(
     }
 }
 
-export async function removeProfileImage(token) {
+export async function removeProfileImage(token: string) {
     try {
         const response = await fetch(`${API_URL}/removeProfileImage`, {
             method: "DELETE",

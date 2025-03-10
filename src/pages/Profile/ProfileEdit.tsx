@@ -14,7 +14,7 @@ import {
     useEditProfileStyling,
 
 } from './ProfileUtilities.tsx';
-import { userdata } from '../../API/account';
+import { userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import routes from '../../routes.js';
 import ProfilePictureEditor from '../../components/ProfileImageEditor.tsx';
