@@ -68,11 +68,11 @@ export async function register(name: string, email: string, phone: string, usern
 }
 
 export async function updateGeneralUserData(
-    token,
-    newName,
-    // newUsername,
-    newEmail,
-    newPhone
+    token: string,
+    newName: string,
+    // newUsername: string,
+    newEmail: string,
+    newPhone: string,
 ) {
     try {
         const response = await fetch(`${API_URL}/updateGeneralUserData`, {
@@ -98,8 +98,8 @@ export async function updateGeneralUserData(
 }
 
 export async function updateProfileImage(
-    token,
-    newImage,
+    token: string,
+    newImage: string,
 ) {
     try {
         const response = await fetch(`${API_URL}/updateProfileImage`, {
@@ -121,7 +121,7 @@ export async function updateProfileImage(
     }
 }
 
-export async function removeProfileImage(token) {
+export async function removeProfileImage(token: string) {
     try {
         const response = await fetch(`${API_URL}/removeProfileImage`, {
             method: "DELETE",
