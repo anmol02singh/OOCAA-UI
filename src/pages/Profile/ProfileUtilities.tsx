@@ -99,11 +99,13 @@ export const useGeneralStyling = () => {
 
     const profileDialogueContainer = (pageWidth: number): React.CSSProperties => ({
         ...profileItemContainer(pageWidth),
+        justifyContent: 'flex-start',
         width: '60vw',
         minWidth: '25rem',
         maxWidth: '35rem',
         backgroundImage: 'none',
-        gap: '2rem',
+        gap: '1rem',
+        overflow: 'auto',
     });
     
     const profilePictureContainer: React.CSSProperties = {

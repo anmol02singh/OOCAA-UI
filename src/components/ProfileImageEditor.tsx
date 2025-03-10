@@ -255,6 +255,8 @@ const ProfileImageEditor = (props: {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'flex-start',
+                    width: '100%',
+                    overflow: 'visible',
                     gap: '1rem',
                 }}
             >
@@ -325,7 +327,7 @@ const ProfileImageEditor = (props: {
                         min={minScale}
                         max={maxScale}
                         sx={{
-                            width: '85%',
+                            width: '16rem',
                             color: colors.primary[500],
                         }}
                     />
