@@ -16,7 +16,7 @@ import {
 
 } from '../pages/Profile/ProfileUtilities.tsx';
 import { tokens } from '../theme.tsx';
-import { removeProfileImage, updateProfileImage } from '../API/account.js';
+import { removeProfileImage, updateProfileImage } from '../API/account.tsx';
 
 const ProfileImageEditor = (props: {
     open: boolean;

@@ -18,7 +18,7 @@ import {
     isEmailFormat,
 
 } from './ProfileUtilities.tsx';
-import { updateGeneralUserData, userdata } from '../../API/account';
+import { updateGeneralUserData, userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 
