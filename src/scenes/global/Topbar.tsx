@@ -14,6 +14,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/SearchOutlined';
 
 import React, { FC } from 'react';
+import routes from '../../routes.js';
 
 const Topbar: FC = () => {
     const theme = useTheme();
@@ -41,7 +42,7 @@ const Topbar: FC = () => {
          sx = {{ backgroundColor: colors.primary[400], borderRadius: "3px" }}
          >
 
-         <InputBase sx = {{ml: 2, flex: 1}} placeholder="Search" />
+         <InputBase id='search-bar' sx = {{ml: 2, flex: 1}} placeholder="Search" />
          <IconButton type = "button" sx = {{ p : 1}}>
             <SearchIcon/>
          </IconButton>
@@ -68,8 +69,8 @@ const Topbar: FC = () => {
             </IconButton>
 
             {activeUsername ? (<>
-                <IconButton>
-                    <PersonOutlinedIcon onClick={() => navigate("/profile")}/>
+                <IconButton onClick={() => navigate(routes.Profile)}>
+                    <PersonOutlinedIcon />
                 </IconButton>
 
                 <IconButton onClick={logout}>
