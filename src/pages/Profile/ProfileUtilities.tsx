@@ -31,6 +31,9 @@ export const getPageWidth = (boxRef: MutableRefObject<HTMLDivElement | null>): n
 
 //Reformats phone numbers.
 export const formatPhoneNumber = (number: string): {phoneNumber: string, success: boolean} => {
+    if(!number) {
+        return {phoneNumber: "INVALID", success: false};
+    }
     const phoneNumber: PhoneNumber | undefined = parsePhoneNumberFromString(`+${number.replace(/\D/g, '')}`);
     if(!(phoneNumber && phoneNumber.isValid())){
         return {phoneNumber: "INVALID", success: false};
