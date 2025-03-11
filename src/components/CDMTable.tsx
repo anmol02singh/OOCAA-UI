@@ -20,9 +20,10 @@ type Order = 'asc' | 'desc';
 interface CDMTableProps {
   cdms: CDM[];
   onRowClick?: (cdm: CDM) => void;
+  selectedCDM?: CDM | null;
 }
 
-const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick }) => {
+const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -132,24 +133,28 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick }) => {
           >
             {sortedCDMs
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((cdm, index) => (
-                <TableRow
-                  key={index}
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': {
-                      backgroundColor: theme.palette.background.default,
-                    },
-                  }}
-                  onClick={() => onRowClick && onRowClick(cdm)}
-                >
-                  <TableCell>{cdm.messageId}</TableCell>
-                  <TableCell>{new Date(cdm.creationDate).toISOString()}</TableCell>
-                  <TableCell>{new Date(cdm.tca).toISOString()}</TableCell>
-                  <TableCell>{cdm.missDistance.toFixed(2)}</TableCell>
-                  <TableCell>{cdm.collisionProbability.toExponential(2)}</TableCell>
-                </TableRow>
-              ))}
+              .map((cdm, index) => {
+                const isSelected = selectedCDM && cdm._id === selectedCDM._id;
+                return (
+                  <TableRow
+                    key={index}
+                    sx={{
+                      cursor: 'pointer',
+                      backgroundColor: isSelected ? theme.palette.background.default : undefined,
+                      '&:hover': {
+                        backgroundColor: theme.palette.background.default,
+                      },
+                    }}
+                    onClick={() => onRowClick && onRowClick(cdm)}
+                  >
+                    <TableCell>{cdm.messageId}</TableCell>
+                    <TableCell>{new Date(cdm.creationDate).toISOString()}</TableCell>
+                    <TableCell>{new Date(cdm.tca).toISOString()}</TableCell>
+                    <TableCell>{cdm.missDistance.toFixed(2)}</TableCell>
+                    <TableCell>{cdm.collisionProbability.toExponential(2)}</TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>

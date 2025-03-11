@@ -167,7 +167,7 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
       </Box>
   
       <Box display="flex" justifyContent="center">
-        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2} mb={4}>
           <Typography variant="h6" gutterBottom>
             Collision Probability
           </Typography>

@@ -14,6 +14,10 @@ import {
   Button,
   useTheme,
   MenuItem,
+  Tooltip,
+  styled,
+  tooltipClasses,
+  TooltipProps,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
@@ -24,9 +28,10 @@ type NumericOperator = 'lte' | 'gte' | 'eq';
 interface EventTableProps {
   events: Event[];
   onEventClick: (eventItem: Event) => void;
+  selectedEvent?: Event | null;
 }
 
-const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
+const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedEvent }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -49,9 +54,8 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
   const isApproximatelyEqual = (
     a: number,
     b: number,
-    tolerance: number = 0.05 // 5% tolerance
+    tolerance: number = 0.05
   ): boolean => {
-    // if b is 0, we fall back to an absolute comparison
     if (b === 0) return Math.abs(a) < tolerance;
     return Math.abs(a - b) / Math.abs(b) <= tolerance;
   };
@@ -65,6 +69,19 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
     });
     return eventsCopy;
   }, [events, order]);
+
+  const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: colors.primary[400],
+      color: 'white',
+      fontSize: '0.75rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: colors.primary[400],
+    },
+  }));
 
   const filteredEvents = useMemo(() => {
     return sortedEvents.filter(event => {
@@ -288,6 +305,10 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
                   key={index}
                   sx={{
                     cursor: 'pointer',
+                    backgroundColor: 
+                      selectedEvent && eventItem._id === selectedEvent._id
+                        ? theme.palette.background.default
+                        : undefined,
                     '&:hover': {
                       backgroundColor: theme.palette.background.default,
                     },
@@ -301,12 +322,14 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick }) => {
                   <TableCell>{eventItem.secondaryObjectDesignator}</TableCell>
                   <TableCell>{new Date(eventItem.tca).toISOString()}</TableCell>
                   <TableCell>
-                    <Button 
-                      variant="contained"
-                      sx={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}
-                    >
-                      Subscribe
-                    </Button>
+                    <CustomTooltip title="Add this event to your watchlist">
+                      <Button 
+                        variant="contained"
+                        sx={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}
+                      >
+                        Subscribe
+                      </Button>
+                    </CustomTooltip>
                   </TableCell>
                 </TableRow>
               ))}

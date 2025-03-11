@@ -7,7 +7,6 @@ import {
   JulianDate,
   SampledPositionProperty,
   Color,
-  LabelGraphics,
 } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import * as satellite from "satellite.js";
@@ -18,19 +17,21 @@ Ion.defaultAccessToken =
 interface CesiumViewerProps {
   tle1: { designator: string; tleLine1: string; tleLine2: string };
   tle2: { designator: string; tleLine1: string; tleLine2: string };
+  tca: string;
 }
 
-const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
+const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2, tca }) => {
   const viewerRef = useRef<HTMLDivElement>(null);
-
-  const computeOrbit = (tleLine1: string, tleLine2: string) => {
+  const computeOrbit = (
+    tleLine1: string,
+    tleLine2: string,
+    startTime: JulianDate,
+    endTime: JulianDate
+  ) => {
     const satrec = satellite.twoline2satrec(tleLine1, tleLine2);
     const positions = new SampledPositionProperty();
 
-    const startTime = JulianDate.now();
-    const endTime = JulianDate.addHours(startTime, 3, new JulianDate());
-
-    const timeStepInSeconds = 60; // Update position every minute
+    const timeStepInSeconds = 60;
     for (
       let time = startTime;
       JulianDate.lessThan(time, endTime);
@@ -40,30 +41,27 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
       const positionAndVelocity = satellite.propagate(satrec, jsDate);
       const gmst = satellite.gstime(jsDate);
 
-      // Ensure position is valid
       if (positionAndVelocity.position) {
         const positionEci = positionAndVelocity.position as satellite.EciVec3<number>;
         const positionEcf = satellite.eciToEcf(positionEci, gmst);
 
-        // Compute longitude, latitude, and altitude
-        const longitude = Math.atan2(positionEcf.y, positionEcf.x) * (180 / Math.PI); // Convert radians to degrees
+        const longitude = Math.atan2(positionEcf.y, positionEcf.x) * (180 / Math.PI);
         const latitude =
           Math.atan2(
             positionEcf.z,
             Math.sqrt(positionEcf.x * positionEcf.x + positionEcf.y * positionEcf.y)
-          ) * (180 / Math.PI); // Convert radians to degrees
+          ) * (180 / Math.PI);
         const altitude = Math.sqrt(
           positionEcf.x * positionEcf.x +
             positionEcf.y * positionEcf.y +
             positionEcf.z * positionEcf.z
-        ) - 6371; // Subtract Earth's radius (6371 km) for altitude in km
+        ) - 6371;
 
-        // Validate calculated coordinates
         if (!isNaN(longitude) && !isNaN(latitude) && !isNaN(altitude)) {
           const cartesian = Cartesian3.fromDegrees(
             longitude,
             latitude,
-            altitude * 1000 // Convert km to meters
+            altitude * 1000 
           );
           positions.addSample(time, cartesian);
         }
@@ -72,7 +70,7 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
 
     return positions;
   };
-  
+
   useEffect(() => {
     (window as any).CESIUM_BASE_URL = "/Cesium";
 
@@ -81,11 +79,15 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
       if (viewerRef.current) {
         viewer = new Viewer(viewerRef.current);
 
-        // Compute and add the orbits of both objects
-        const orbit1 = computeOrbit(tle1.tleLine1, tle1.tleLine2);
-        const orbit2 = computeOrbit(tle2.tleLine1, tle2.tleLine2);
+        const tcaDate = new Date(tca);
+        const tcaJulian = JulianDate.fromDate(tcaDate);
 
-        // Add orbit for object 1
+        const startTime = tcaJulian;
+        const endTime = JulianDate.addHours(tcaJulian, 3, new JulianDate());
+
+        const orbit1 = computeOrbit(tle1.tleLine1, tle1.tleLine2, startTime, endTime);
+        const orbit2 = computeOrbit(tle2.tleLine1, tle2.tleLine2, startTime, endTime);
+
         viewer.entities.add({
           id: tle1.designator,
           name: tle1.designator,
@@ -109,7 +111,6 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
           },
         });
 
-        // Add orbit for object 2
         viewer.entities.add({
           id: tle2.designator,
           name: tle2.designator,
@@ -133,29 +134,40 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
           },
         });
 
-        // Set viewer clock to match the orbital timeline
-        viewer.clock.startTime = JulianDate.now();
-        viewer.clock.stopTime = JulianDate.addHours(JulianDate.now(), 3, new JulianDate());
-        viewer.clock.currentTime = JulianDate.now();
+        viewer.clock.startTime = startTime;
+        viewer.clock.stopTime = endTime;
+        viewer.clock.currentTime = startTime;
         viewer.clock.clockRange = ClockRange.LOOP_STOP;
-        viewer.clock.multiplier = 60; // Fast forward 60x
+        viewer.clock.multiplier = 60;
+
+        viewer.timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime);
       }
     } catch (error) {
       console.error("Error initializing Cesium Viewer:", error);
     }
 
+    const handleResize = () => {
+      if (viewer) {
+        viewer.resize();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
     return () => {
+      window.removeEventListener("resize", handleResize);
       if (viewer) {
         viewer.destroy();
       }
     };
-  }, [tle1, tle2]);
+  }, [tle1, tle2, tca]);
 
   return (
     <div
       ref={viewerRef}
       style={{
         width: "100%",
+        minWidth: "500px",
         height: "400px",
         borderRadius: "8px",
       }}
@@ -164,3 +176,4 @@ const CesiumViewer: React.FC<CesiumViewerProps> = ({ tle1, tle2 }) => {
 };
 
 export default CesiumViewer;
+

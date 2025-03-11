@@ -52,6 +52,8 @@ const Directory = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null);
 
+  const [tca, setTca] = useState(new Date().toISOString());
+
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
       setSearchBars([...searchBars, { id: searchBars.length + 1, criteria: 'objectName', value: '' }]);
@@ -110,8 +112,9 @@ const Directory = () => {
   const handleClickMessageId = async (cdm: CDM) => {
     try {
       const { object1, object2, tca } = cdm;
-
       const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
+      setTca(tca);
+      
       if (data && data.length === 2) {
         setTles({
           object1: {
@@ -222,7 +225,7 @@ const Directory = () => {
 
       {/* Search Results Table */}
       {events.length > 0 && (
-      <EventTable events={events} onEventClick={handleEventClick} />
+      <EventTable events={events} selectedEvent={selectedEvent} onEventClick={handleEventClick} />
     )}
     
     {/* CDM table */}
@@ -231,7 +234,7 @@ const Directory = () => {
         <Typography variant="h4" mb={3}>
           Viewing CDMs for {selectedEvent ? selectedEvent.eventName : ''} : {selectedEvent ? selectedEvent.primaryObjectName : ''} & {selectedEvent ? selectedEvent.secondaryObjectName : ''}
         </Typography>
-        <CDMTable cdms={cdms} onRowClick={handleClickMessageId} />
+        <CDMTable cdms={cdms} selectedCDM={selectedCDM} onRowClick={handleClickMessageId} />
       </Box>
     )}
 
@@ -309,7 +312,7 @@ const Directory = () => {
       {/* Cesium Viewer */}
       {tles && tles.object1 && tles.object2 && (
         <Box mt={4}>
-          <CesiumViewer tle1={tles.object1} tle2={tles.object2} />
+          <CesiumViewer tle1={tles.object1} tle2={tles.object2} tca={tca}/>
         </Box>
       )}
 
@@ -331,5 +334,3 @@ export default Directory;
 
 //try to get orbital paths
 //dont log into spacetrack every single time u want tles
-//fix the date on the cesium widget to be the tca date
-//back and forth buttons for cdms
