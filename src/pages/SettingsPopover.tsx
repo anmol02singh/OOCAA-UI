@@ -9,7 +9,7 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import { SettingsOutlined as SettingsOutlinedIcon } from "@mui/icons-material";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import { userdata, changePassword } from "../API/account.js";
+import { userdata, changePassword } from "../API/account.tsx";
 
 const SettingsPopover = () => {
   const { textSize, setTextSize, toggleColorMode } = useContext(ColorModeContext);
@@ -46,22 +46,23 @@ const SettingsPopover = () => {
   const [notificationEnabled, setNotificationEnabled] = useState(true);
   const [notificationChannels, setNotificationChannels] = useState(["SMS", "Email"]);
 
-  const handleUsernameUpdate = () => {
-    setError("");
-    setSuccess("");
-    if (!newUsername) {
-      setError("Please enter a new username.");
-      setTimeout(() => setError(""), 3000);
+  // const handleUsernameUpdate = () => {
+  //   setError("");
+  //   setSuccess("");
+  //   if (!newUsername) {
+  //     setError("Please enter a new username.");
+  //     setTimeout(() => setError(""), 3000);
 
-      return;
-    }
-    setSuccess("Username updated successfully!");
-    setShowUsernameField(false);
-    setNewUsername("");
+  //     return;
+  //   }
+  //   setSuccess("Username updated successfully!");
+  //   setShowUsernameField(false);
+  //   setNewUsername("");
    
-  };
+  // };
 
   const handlePasswordUpdate = async(e: React.FormEvent) => {
+    
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -92,7 +93,9 @@ const SettingsPopover = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("accountToken");
-      if (!token) throw new Error("Authentication required");
+      if (!token) throw new Error("Login");
+      setTimeout(() => Error(""), 3000);
+
 
       await changePassword(token, curPassword, newPass);
       
