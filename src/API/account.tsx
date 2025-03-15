@@ -140,23 +140,28 @@ export async function removeProfileImage(token: string) {
         throw error;
     }
 }
-export async function changePassword(token, currentPassword, newPassword) {
+export async function changePassword(token: string, currentPassword: string, newPassword: string) {
     try {
         const response = await fetch(`${API_URL}/change-password`, {
             method: "POST",
-            body: JSON.stringify({ 
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
                 token: token,
                 currentPassword: currentPassword,
                 newPassword: newPassword
-            }),
-            headers: { "Content-type": "application/json; charset=UTF-8" }
+            })
         });
+
         if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+            const errorData = await response.json();
+            throw new Error(errorData.message);
         }
+
         return await response.json();
     } catch (error) {
-        console.error('Error changing password:', error);
+        console.error('Password change failed:', error);
         throw error;
     }
 }

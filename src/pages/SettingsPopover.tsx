@@ -61,57 +61,50 @@ const SettingsPopover = () => {
    
   // };
 
-  const handlePasswordUpdate = async(e: React.FormEvent) => {
-    
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (!curPassword || !newPass || !confirmNewPass) {
-      setError("Please fill in all password fields.");
-      setTimeout(() => setError(""), 3000);
 
-      return;
-    }
-    if (newPass !== confirmNewPass) {
-      setError("New passwords do not match.");
-      setTimeout(() => setError(""), 3000);
-
-      return;
-    }
-    if (curPassword == newPass) {
-      setError("Enter New Password.");
-      setTimeout(() => setError(""), 3000);
-
-      return;
-    }
-    setSuccess("Password updated successfully!");
-    setTimeout(() => setSuccess(""), 3000);
-    setShowPasswordField(false);
-    setCurPassword("");
-    setNewPass("");
-    setConfirmNewPass("");
     try {
-      setLoading(true);
-      const token = localStorage.getItem("accountToken");
-      if (!token) throw new Error("Login");
-      setTimeout(() => Error(""), 3000);
+        // Basic validation
+        if (!curPassword || !newPass || !confirmNewPass) {
+            throw new Error("All fields are required");
+        }
+        if (newPass !== confirmNewPass) {
+            throw new Error("New passwords do not match");
+        }
+        if (curPassword === newPass) {
+            throw new Error("New password must be different");
+        }
 
+        setLoading(true);
+        const token = localStorage.getItem("accountToken");
+        if (!token) throw new Error("Authentication required");
 
-      await changePassword(token, curPassword, newPass);
-      
-      setSuccess("Password updated successfully!");
-      setTimeout(() => {
-        setShowPasswordField(false);
-        setCurPassword("");
-        setNewPass("");
-        setConfirmNewPass("");
-      }, 2000);
+        const result = await changePassword(token, curPassword, newPass);
+        
+        if (result.success) {
+            setSuccess(result.message);
+            // Update token if needed
+            if (result.token) {
+                localStorage.setItem("accountToken", result.token);
+            }
+            setTimeout(() => {
+                setShowPasswordField(false);
+                setCurPassword("");
+                setNewPass("");
+                setConfirmNewPass("");
+            }, 2000);
+        } else {
+            throw new Error(result.message);
+        }
     } catch (error) {
-      setError(error.message || "Failed to update password");
+        setError(error.message);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
   
   const toggleNotificationChannel = (channel: string) => {
     if (notificationChannels.includes(channel)) {
