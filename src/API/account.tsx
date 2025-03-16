@@ -35,6 +35,7 @@ export async function userdata(token: string) {
                     name: json.name,
                     username: json.username,
                     role: roleString,
+                    roleNum: json.role,
                     email: json.email,
                     phoneNumber: json.phoneNumber,
                     profileImage: json.profileImage

@@ -54,6 +54,7 @@ const Navbar: FC = () => {
   const [userData, setUserData] = useState({
     username: '',
     role: '',
+    roleNum: 1,
     profileImage: {
       publicId: '',
       url: undefined,
@@ -70,6 +71,7 @@ const Navbar: FC = () => {
             ...userData,
             username: json.username,
             role: json.role,
+            roleNum: json.roleNum,
             profileImage: json.profileImage,
           });
         });
@@ -152,6 +154,14 @@ const Navbar: FC = () => {
             <Item title="Pie Chart" to="/pie" icon={<PieChartOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Line Chart" to="/line" icon={<TimelineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Geo Chart" to="/geo" icon={<MapOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            {userData.roleNum < 1 &&
+              <>
+                <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
+                  Admin
+                </Typography>
+                <Item title="Manage Accounts" to={routes.manageAccounts} icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
+              </>
+            }
           </Box>
         </Menu>
       </ProSidebar>
