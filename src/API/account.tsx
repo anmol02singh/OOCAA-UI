@@ -10,8 +10,36 @@ export async function userdata(token: string) {
         if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
-
-        return await response.json();
+        
+        return await response.json()
+            .then(json => {
+                if(!json || Object.keys(json).length < 1) return json;
+                
+                let roleString = ''
+                switch(json.role) {
+                    case 0: {
+                        roleString = "Admin"
+                        break;
+                    }
+                    case 1: {
+                        roleString = "Level 1 Operator"
+                        break;
+                    }
+                    case 2: {
+                        roleString = "Level 2 Operator"
+                        break;
+                    }
+                }
+                
+                return {
+                    name: json.name,
+                    username: json.username,
+                    role: roleString,
+                    email: json.email,
+                    phoneNumber: json.phoneNumber,
+                    profileImage: json.profileImage
+                }
+            });
     } catch (error) {
         console.error('Error obtaining role:', error);
         throw error;
