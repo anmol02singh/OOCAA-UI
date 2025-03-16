@@ -76,18 +76,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
           }}
         />
       </SearchBox>
-      <Button
-        variant="contained"
-        sx={{
-          height: '2.5rem',
-          backgroundColor: backgroundColor,
-          color: textColor,
-          boxShadow: 'none',
-        }}
-        onClick={onSearch}
-      >
-        Search
-      </Button>
     </Box>
   );
 };

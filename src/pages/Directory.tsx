@@ -175,11 +175,11 @@ const Directory = () => {
       {/* Stat Cards */}
       <Box display="flex" justifyContent="space-between" gap={2} mb={3}>
         {[
-          { label: 'On-orbit total', value: '31,086' },
-          { label: 'Debris', value: '15,797' },
-          { label: 'Payload', value: '13,585' },
-          { label: 'Analyst/Experimental', value: '764' },
-          { label: 'Unknown/Unidentified', value: '619' },
+          { label: 'On-orbit total', value: '15' },
+          { label: 'Debris', value: '5' },
+          { label: 'Payload', value: '10' },
+          { label: 'Rocket Body', value: '0' },
+          { label: 'Unknown/Other', value: '0' },
         ].map((stat, index) => (
           <StatCard
             key={index}
@@ -221,7 +221,11 @@ const Directory = () => {
       </Box>
 
       {/* TCA Picker */}
-      <TcaPicker tcaRange={tcaRange} onTcaChange={handleTcaChange} />
+      <TcaPicker 
+        tcaRange={tcaRange} 
+        onTcaChange={handleTcaChange} 
+        onSearch={handleSearch} 
+      />
 
       {/* Search Results Table */}
       {events.length > 0 && (

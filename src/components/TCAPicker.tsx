@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme, Button } from '@mui/material';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
@@ -11,9 +11,10 @@ dayjs.extend(utc);
 interface TcaPickerProps {
   tcaRange: [number, number]; 
   onTcaChange: (newRange: [number, number]) => void;
+  onSearch: () => void;
 }
 
-const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange }) => {
+const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange, onSearch }) => {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -94,6 +95,19 @@ const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange }) => {
                         },
                     }}
                 />
+                <Button
+                  variant="contained"
+                  sx={{
+                    height: '3.3rem',
+                    backgroundColor: colors.primary[400],
+                    color: colors.grey[100],
+                    boxShadow: 'none',
+                    width: '15%',
+                  }}
+                  onClick={onSearch}
+                >
+                  Search
+                </Button>
             </Box>
         </Box>
     </LocalizationProvider>

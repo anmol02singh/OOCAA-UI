@@ -21,6 +21,8 @@ import {
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
+import { subsribeToEvent } from '../API/watchlist.tsx';
+import { userdata } from '../API/account.tsx';
 
 type Order = 'asc' | 'desc';
 type NumericOperator = 'lte' | 'gte' | 'eq';
@@ -150,6 +152,23 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
     setPage(0);
   };
 
+  const handleSubscribe = async (eventItem: Event) => {
+    const token = localStorage.getItem("accountToken");
+    if (!token) {
+      alert("Please log in to subscribe to events");
+      return;
+    }
+    const user = await userdata(token);
+    const userId = user._id;
+    try {
+      await subsribeToEvent(userId, eventItem._id);
+      alert("Successfully subscribed to event");
+    } catch (error) {
+      console.error('Error subscribing to event:', error);
+      alert("You have already subscribed to this event");
+    }
+  };
+
   return (
     <Box mt={4}>
       <Box display="flex" gap={2} mb={2}>
@@ -248,6 +267,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
           sx={{
             backgroundColor: colors.primary[400],
             color: colors.grey[100],
+            width: '50%',
           }}
           variant="outlined"
           onClick={() => {
@@ -325,6 +345,10 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
                     <CustomTooltip title="Add this event to your watchlist">
                       <Button 
                         variant="contained"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSubscribe(eventItem);
+                        }}
                         sx={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}
                       >
                         Subscribe
