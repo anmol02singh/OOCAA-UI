@@ -23,7 +23,6 @@ import { tokens } from '../theme.tsx';
 import { userdata } from '../API/account.tsx';
 
 type Order = 'asc' | 'desc';
-type NumericOperator = 'lte' | 'gte' | 'eq';
 
 interface EventTableProps {
     events: Event[];
@@ -42,14 +41,6 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
     const handleRequestSort = () => {
         setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
     };
-
-    const [filterMissDistance, setFilterMissDistance] = useState<number | ''>('');
-    const [missDistanceOperator, setMissDistanceOperator] = useState<NumericOperator>('lte');
-
-    const [filterCollisionProbability, setFilterCollisionProbability] = useState<number | ''>('');
-    const [collisionProbabilityOperator, setCollisionProbabilityOperator] = useState<NumericOperator>('lte');
-
-    const [filterOperatorOrganization, setFilterOperatorOrganization] = useState<string>('');
 
     // const isApproximatelyEqual = (
     //     a: number,
@@ -152,117 +143,6 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
 
     return (
         <Box>
-            <Box display="flex" gap={2} mb={2}>
-                <TextField
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                    }}
-                    select
-                    label="Operator"
-                    variant="outlined"
-                    size="small"
-                    value={missDistanceOperator}
-                    onChange={(e) => setMissDistanceOperator(e.target.value as NumericOperator)}
-                    slotProps={{
-                        select: {
-                            MenuProps: {
-                                PaperProps: {
-                                    sx: { backgroundColor: colors.primary[400], color: colors.grey[100] },
-                                },
-                            },
-                        },
-                    }}
-                >
-                    <MenuItem value="lte">{"<="}</MenuItem>
-                    <MenuItem value="gte">{">="}</MenuItem>
-                    <MenuItem value="eq">{"="}</MenuItem>
-                </TextField>
-                <TextField
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                    }}
-                    label="Miss Distance"
-                    variant="outlined"
-                    size="small"
-                    type="number"
-                    value={filterMissDistance}
-                    onChange={(e) => setFilterMissDistance(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-                <TextField
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                    }}
-                    select
-                    label="Operator"
-                    variant="outlined"
-                    size="small"
-                    value={collisionProbabilityOperator}
-                    onChange={(e) => setCollisionProbabilityOperator(e.target.value as NumericOperator)}
-                    slotProps={{
-                        select: {
-                            MenuProps: {
-                                PaperProps: {
-                                    sx: { backgroundColor: colors.primary[400], color: colors.grey[100] },
-                                },
-                            },
-                        },
-                    }}
-                >
-                    <MenuItem value="lte">{"<="}</MenuItem>
-                    <MenuItem value="gte">{">="}</MenuItem>
-                    <MenuItem value="eq">{"="}</MenuItem>
-                </TextField>
-                <TextField
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                    }}
-                    label="Collision Probability"
-                    variant="outlined"
-                    size="small"
-                    type="number"
-                    value={filterCollisionProbability}
-                    onChange={(e) => setFilterCollisionProbability(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-                <TextField
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                    }}
-                    label="Operator Organization"
-                    variant="outlined"
-                    size="small"
-                    value={filterOperatorOrganization}
-                    onChange={(e) => setFilterOperatorOrganization(e.target.value)}
-                />
-                <Button
-                    fullWidth
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                        width: '50%',
-                    }}
-                    variant="outlined"
-                    onClick={() => {
-                        setFilterMissDistance('');
-                        setMissDistanceOperator('lte');
-                        setFilterCollisionProbability('');
-                        setCollisionProbabilityOperator('lte');
-                        setFilterOperatorOrganization('');
-                    }}
-                >
-                    Reset Filters
-                </Button>
-            </Box>
-
             <TableContainer
                 component={Paper}
                 sx={{
@@ -361,4 +241,4 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
     );
 };
 
-export default EventTable;
+export default AdminAccountsTable;

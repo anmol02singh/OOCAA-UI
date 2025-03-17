@@ -73,38 +73,18 @@ const AdminManageAccount = () => {
         };
     }, [pageWidth]);
 
-    const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'objectName', value: '' }]);
+    const [searchBar, setSearchBar] = useState({ criterion: 'Username', value: '' });
 
-    const handleAddSearchBar = () => {
-        if (searchBars.length < 2) {
-            setSearchBars([...searchBars, { id: searchBars.length + 1, criteria: 'objectName', value: '' }]);
-        }
-    };
-
-    const handleRemoveSearchBar = () => {
-        if (searchBars.length > 1) {
-            setSearchBars(searchBars.slice(0, -1));
-        }
-    };
-
-    const handleCriteriaChange = (id: number, criteria: string) => {
-        setSearchBars((prev) =>
-            prev.map((bar) =>
-                bar.id === id ? { ...bar, criteria } : bar
-            )
-        );
+    const handleCriterionChange = (criterion: string) => {
+        setSearchBar({ ...searchBar, criterion: criterion });
     };
 
     // const handleTcaChange = (newRange: [number, number]) => {
     //     setTcaRange(newRange);
     // };
 
-    const handleValueChange = (id: number, value: string) => {
-        setSearchBars((prev) =>
-            prev.map((bar) =>
-                bar.id === id ? { ...bar, value } : bar
-            )
-        );
+    const handleValueChange = (value: string) => {
+        setSearchBar({ ...searchBar, value: value });
     };
 
     const handleSearch = async () => {
@@ -175,45 +155,17 @@ const AdminManageAccount = () => {
     return (
         <Box ref={boxRef} sx={pageContainer}>
             <Box sx={adminSettingsContainer(pageWidth)}>
-                {/* Search Bars */}
-                {searchBars.map((bar) => (
-                    <AdminAccountSearchBar
-                        key={bar.id}
-                        criteria={bar.criteria}
-                        value={bar.value}
-                        onCriteriaChange={(value) => handleCriteriaChange(bar.id, value)}
-                        onValueChange={(value) => handleValueChange(bar.id, value)}
-                        onSearch={handleSearch}
-                        backgroundColor={colors.primary[400]}
-                        textColor={colors.grey[100]}
-                    />
-                ))}
-
-                {/* Add/Remove Search Bars */}
-                <Box display="flex" justifyContent="center" mt={2}>
-                    {searchBars.length === 1 && (
-                        <IconButton onClick={handleAddSearchBar} sx={{ color: colors.grey[100] }}>
-                            <AddCircleOutlineOutlinedIcon />
-                        </IconButton>
-                    )}
-                    {searchBars.length === 2 && (
-                        <IconButton onClick={handleRemoveSearchBar} sx={{ color: colors.grey[100] }}>
-                            <RemoveCircleOutlineOutlinedIcon />
-                        </IconButton>
-                    )}
-                </Box>
-
-                {/* TCA Picker */}
-                {/* <TcaPicker
-                    tcaRange={tcaRange}
-                    onTcaChange={handleTcaChange}
+                {/* Search Bar */}
+                <AdminAccountSearchBar
+                    criterion={searchBar.criterion}
+                    value={searchBar.value}
+                    onCriteriaChange={(criterion) => handleCriterionChange(criterion)}
+                    onValueChange={(value) => handleValueChange(value)}
                     onSearch={handleSearch}
-                /> */}
+                />
 
                 {/* Search Results Table */}
-                {/* {events.length > 0 && ( */}
-                    <AdminAccountsTable events={Event[1]} selectedEvent={new Event('a')} onEventClick={handleEventClick} />
-                {/* )} */}
+                <AdminAccountsTable events={Event[1]} selectedEvent={new Event('a')} onEventClick={handleEventClick} />
             </Box>
         </Box>
     );

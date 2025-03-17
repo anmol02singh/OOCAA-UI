@@ -96,6 +96,69 @@ export async function register(name: string, email: string, phone: string, usern
     }
 }
 
+export async function getAccounts(
+    token: string,
+    name?: string,
+    username?: string,
+    role?: number,
+    email?: string,
+    phoneNumber?: string,
+) {
+    try {
+        const response = await fetch(`${API_URL}/userdata`, {
+            method: "POST",
+            body: JSON.stringify({
+                token: token,
+                name: name,
+                username: username,
+                role: role,
+                email: email,
+                phoneNumber: phoneNumber,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+        
+        return await response.json()
+            .then(json => {
+                json.ForEach(account => {
+                    if(!json || Object.keys(json).length < 1) return json;
+                
+                let roleString = ''
+                switch(account.role) {
+                    case 0: {
+                        roleString = "Admin"
+                        break;
+                    }
+                    case 1: {
+                        roleString = "Level 1 Operator"
+                        break;
+                    }
+                    case 2: {
+                        roleString = "Level 2 Operator"
+                        break;
+                    }
+                }
+                
+                return {
+                    name: account.name,
+                    username: account.username,
+                    role: roleString,
+                    roleNum: account.role,
+                    email: account.email,
+                    phoneNumber: account.phoneNumber,
+                    profileImage: account.profileImage
+                }
+                })
+            });
+    } catch (error) {
+        console.error('Error obtaining role:', error);
+        throw error;
+    }
+}
+
 export async function updateGeneralUserData(
     token: string,
     newName?: string | undefined,
