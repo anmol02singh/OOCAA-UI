@@ -20,7 +20,7 @@ import {
     TooltipProps,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
-import { userdata } from '../API/account.tsx';
+import { getAccounts, userdata } from '../API/account.tsx';
 import { Account } from '../types.tsx';
 
 interface EventTableProps {
@@ -56,15 +56,15 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
         const column = columnClassNames.find((columnClassName) =>
             event.currentTarget.className.includes(columnClassName)
         ) as string | undefined;
-        if(!column) return;
-        setOrder({...order, [column]: order[column] === 'asc' ? 'desc' : 'asc'});
+        if (!column) return;
+        setOrder({ ...order, [column]: order[column] === 'asc' ? 'desc' : 'asc' });
     };
 
     useEffect(() => {
         if (token) {
-            userdata(token)
-                .then(json => {
-                    setAccounts(json);
+            getAccounts(token)
+                .then(accounts => {
+                    setAccounts(accounts);
                 });
         }
         //eslint-disable-next-line
@@ -258,26 +258,30 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                                     <TableCell>f</TableCell>
                                 </TableRow>
                             ))} */}
-                        <TableRow
-                            // key={index}
-                            sx={{
-                                cursor: 'pointer',
-                                // backgroundColor: 
-                                //   selectedEvent && eventItem._id === selectedEvent._id
-                                //     ? theme.palette.background.default
-                                //     : undefined,
-                                '&:hover': {
-                                    backgroundColor: theme.palette.background.default,
-                                },
-                            }}
-                        // onClick={() => onEventClick(eventItem)}
-                        >
-                            <TableCell>a</TableCell>
-                            <TableCell>b</TableCell>
-                            <TableCell>c</TableCell>
-                            <TableCell>d</TableCell>
-                            <TableCell>e</TableCell>
-                        </TableRow>
+                        {/* {accounts
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((account, index) => ( */}
+                                <TableRow
+                                    //key={index}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        // backgroundColor: 
+                                        //   selectedEvent && eventItem._id === selectedEvent._id
+                                        //     ? theme.palette.background.default
+                                        //     : undefined,
+                                        '&:hover': {
+                                            backgroundColor: theme.palette.background.default,
+                                        },
+                                    }}
+                                // onClick={() => onEventClick(eventItem)}
+                                >
+                                    <TableCell>a</TableCell>
+                                    <TableCell>b</TableCell>
+                                    <TableCell>c</TableCell>
+                                    <TableCell>d</TableCell>
+                                    <TableCell>e</TableCell>
+                                </TableRow>
+                            {/* ))} */}
                     </TableBody>
                 </Table>
             </TableContainer>
