@@ -46,25 +46,6 @@ const AdminManageAccount = () => {
     }
 
     useEffect(() => {
-        if (token) {
-            userdata(token)
-                .then(json => {
-                    if (json.roleNum && json.roleNum >= 1) {
-                        navigate('/')
-                    }
-
-                    setUserData({
-                        ...userData,
-                        name: json.name,
-                        username: json.username,
-                        role: json.role,
-                    });
-                });
-        }
-        //eslint-disable-next-line
-    }, []);
-
-    useEffect(() => {
         updatePageWidth();
         window.addEventListener('resize', updatePageWidth);
 
@@ -157,6 +138,7 @@ const AdminManageAccount = () => {
             <Box sx={adminSettingsContainer(pageWidth)}>
                 {/* Search Bar */}
                 <AdminAccountSearchBar
+                    pageWidth={pageWidth}
                     criterion={searchBar.criterion}
                     value={searchBar.value}
                     onCriteriaChange={(criterion) => handleCriterionChange(criterion)}
@@ -165,7 +147,7 @@ const AdminManageAccount = () => {
                 />
 
                 {/* Search Results Table */}
-                <AdminAccountsTable events={Event[1]} selectedEvent={new Event('a')} onEventClick={handleEventClick} />
+                <AdminAccountsTable token={token} selectedEvent={new Event('a')} onEventClick={handleEventClick} />
             </Box>
         </Box>
     );

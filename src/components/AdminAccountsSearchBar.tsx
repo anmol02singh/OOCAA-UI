@@ -3,9 +3,10 @@ import { Box, Button, InputBase, MenuItem, Select, TextField, useTheme } from '@
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/system';
 import { tokens } from '../theme.tsx';
-import { useGeneralStyling, getPageWidth } from '../pages/Admin/AdminUtilities.tsx';
+import { useGeneralStyling } from '../pages/Admin/AdminUtilities.tsx';
 
 interface SearchBarProps {
+    pageWidth: number;
     criterion: string;
     value: string;
     onCriteriaChange: (value: string) => void;
@@ -26,6 +27,7 @@ const SearchBox = styled(Box)<{ backgroundColor: string; }>(
 
 
 const AccountSearchBar: React.FC<SearchBarProps> = ({
+    pageWidth,
     criterion,
     onCriteriaChange,
     value,
@@ -48,27 +50,11 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
+    //Accounts
     const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
         min: '',
         max: '',
     });
-
-    const boxRef = useRef<HTMLDivElement>(null);
-    const [pageWidth, setPageWidth] = useState(getPageWidth(boxRef));
-
-    const updatePageWidth = () => {
-        const newPageWidth = getPageWidth(boxRef);
-        setPageWidth(newPageWidth);
-    }
-
-    useEffect(() => {
-        updatePageWidth();
-        window.addEventListener('resize', updatePageWidth);
-
-        return () => {
-            window.removeEventListener('resize', updatePageWidth);
-        };
-    }, [pageWidth]);
 
     const handleReset = () => {
         setFilterRole({ min: '', max: '' });
@@ -81,7 +67,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     }
 
     return (
-        <Box ref={boxRef} sx={searchAndFilterContainer(pageWidth)}>
+        <Box sx={searchAndFilterContainer(pageWidth)}>
             <Box sx={searchContainer}>
                 <Select
                     value={criterion}

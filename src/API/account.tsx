@@ -1,3 +1,5 @@
+import { formatPhoneNumber } from "../pages/Profile/ProfileUtilities";
+
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 export async function userdata(token: string) {
@@ -105,7 +107,7 @@ export async function getAccounts(
     phoneNumber?: string,
 ) {
     try {
-        const response = await fetch(`${API_URL}/userdata`, {
+        const response = await fetch(`${API_URL}/getAccounts`, {
             method: "POST",
             body: JSON.stringify({
                 token: token,
@@ -148,8 +150,8 @@ export async function getAccounts(
                     role: roleString,
                     roleNum: account.role,
                     email: account.email,
-                    phoneNumber: account.phoneNumber,
-                    profileImage: account.profileImage
+                    phoneNumber: formatPhoneNumber(JSON.stringify(account.phoneNumber)).phoneNumber,
+                    profileImage: account.profileImage,
                 }
                 })
             });

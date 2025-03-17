@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Box,
     Table,
@@ -21,18 +21,21 @@ import {
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { userdata } from '../API/account.tsx';
+import { Account } from '../types.tsx';
 
 type Order = 'asc' | 'desc';
 
 interface EventTableProps {
-    events: Event[];
+    token: string | null;
     onEventClick: (eventItem: Event) => void;
     selectedEvent?: Event | null;
 }
 
-const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedEvent }) => {
+const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, selectedEvent }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
+    const [accounts, setAccounts] = useState<Account[]>([]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -41,6 +44,16 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
     const handleRequestSort = () => {
         setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
     };
+
+    useEffect(() => {
+        if (token) {
+            userdata(token)
+                .then(json => {
+                    setAccounts(json);
+                });
+        }
+        //eslint-disable-next-line
+    }, []);
 
     // const isApproximatelyEqual = (
     //     a: number,
@@ -204,27 +217,27 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
                                     <TableCell>f</TableCell>
                                 </TableRow>
                             ))} */}
-                            <TableRow
-                                    // key={index}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        // backgroundColor: 
-                                        //   selectedEvent && eventItem._id === selectedEvent._id
-                                        //     ? theme.palette.background.default
-                                        //     : undefined,
-                                        '&:hover': {
-                                            backgroundColor: theme.palette.background.default,
-                                        },
-                                    }}
-                                    // onClick={() => onEventClick(eventItem)}
-                                >
-                                    <TableCell>a</TableCell>
-                                    <TableCell>b</TableCell>
-                                    <TableCell>c</TableCell>
-                                    <TableCell>d</TableCell>
-                                    <TableCell>e</TableCell>
-                                    <TableCell>f</TableCell>
-                                </TableRow>
+                        <TableRow
+                            // key={index}
+                            sx={{
+                                cursor: 'pointer',
+                                // backgroundColor: 
+                                //   selectedEvent && eventItem._id === selectedEvent._id
+                                //     ? theme.palette.background.default
+                                //     : undefined,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.background.default,
+                                },
+                            }}
+                        // onClick={() => onEventClick(eventItem)}
+                        >
+                            <TableCell>a</TableCell>
+                            <TableCell>b</TableCell>
+                            <TableCell>c</TableCell>
+                            <TableCell>d</TableCell>
+                            <TableCell>e</TableCell>
+                            <TableCell>f</TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
             </TableContainer>
