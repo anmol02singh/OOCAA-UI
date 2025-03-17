@@ -64,6 +64,7 @@ export const useGeneralStyling = () => {
         alignItems: 'center',
         width: '90%',
         minWidth: pageWidth >= mdWindowWidth ? '30rem' : '10rem',
+        gap: '2rem',
         border: '1px solid red',
     });
 
