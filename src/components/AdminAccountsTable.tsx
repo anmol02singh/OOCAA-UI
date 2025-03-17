@@ -22,13 +22,13 @@ import {
 import { tokens } from '../theme.tsx';
 import { userdata } from '../API/account.tsx';
 
-type Order = 'asc' | 'desc';
-
 interface EventTableProps {
     events: Event[];
     onEventClick: (eventItem: Event) => void;
     selectedEvent?: Event | null;
 }
+
+type OrderLabel = 'asc' | 'desc';
 
 const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedEvent }) => {
     const theme = useTheme();
@@ -37,9 +37,24 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [order, setOrder] = useState<Order>('asc');
-    const handleRequestSort = () => {
-        setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    const [order, setOrder] = useState<{
+        username: OrderLabel,
+        name: OrderLabel,
+        role: OrderLabel,
+        email: OrderLabel,
+    }>({
+        username: 'asc',
+        name: 'asc',
+        role: 'asc',
+        email: 'asc',
+    });
+    const handleRequestSort = (event) => {
+        const columnClassNames = Object.keys(order);
+        const column = columnClassNames.find((columnClassName) =>
+            event.currentTarget.className.includes(columnClassName)
+        ) as string | undefined;
+        if(!column) return;
+        setOrder({...order, [column]: order[column] === 'asc' ? 'desc' : 'asc'});
     };
 
     // const isApproximatelyEqual = (
@@ -157,21 +172,47 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
                         }}
                     >
                         <TableRow>
-                            <TableCell>Event Name</TableCell>
-                            <TableCell>Primary Object Name</TableCell>
-                            <TableCell>Primary Object Designator</TableCell>
-                            <TableCell>Secondary Object Name</TableCell>
-                            <TableCell>Secondary Object Designator</TableCell>
                             <TableCell>
                                 <TableSortLabel
+                                    className='username'
                                     active
-                                    direction={order}
+                                    direction={order.username}
                                     onClick={handleRequestSort}
                                 >
-                                    TCA [UTC]
+                                    Username
                                 </TableSortLabel>
                             </TableCell>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <TableSortLabel
+                                    className='name'
+                                    active
+                                    direction={order.name}
+                                    onClick={handleRequestSort}
+                                >
+                                    Name
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel
+                                    className='role'
+                                    active
+                                    direction={order.role}
+                                    onClick={handleRequestSort}
+                                >
+                                    Role
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel
+                                    className='email'
+                                    active
+                                    direction={order.email}
+                                    onClick={handleRequestSort}
+                                >
+                                    Email
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell>Phone Number</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody
@@ -204,27 +245,26 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ events, onEventClick, s
                                     <TableCell>f</TableCell>
                                 </TableRow>
                             ))} */}
-                            <TableRow
-                                    // key={index}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        // backgroundColor: 
-                                        //   selectedEvent && eventItem._id === selectedEvent._id
-                                        //     ? theme.palette.background.default
-                                        //     : undefined,
-                                        '&:hover': {
-                                            backgroundColor: theme.palette.background.default,
-                                        },
-                                    }}
-                                    // onClick={() => onEventClick(eventItem)}
-                                >
-                                    <TableCell>a</TableCell>
-                                    <TableCell>b</TableCell>
-                                    <TableCell>c</TableCell>
-                                    <TableCell>d</TableCell>
-                                    <TableCell>e</TableCell>
-                                    <TableCell>f</TableCell>
-                                </TableRow>
+                        <TableRow
+                            // key={index}
+                            sx={{
+                                cursor: 'pointer',
+                                // backgroundColor: 
+                                //   selectedEvent && eventItem._id === selectedEvent._id
+                                //     ? theme.palette.background.default
+                                //     : undefined,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.background.default,
+                                },
+                            }}
+                        // onClick={() => onEventClick(eventItem)}
+                        >
+                            <TableCell>a</TableCell>
+                            <TableCell>b</TableCell>
+                            <TableCell>c</TableCell>
+                            <TableCell>d</TableCell>
+                            <TableCell>e</TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
             </TableContainer>

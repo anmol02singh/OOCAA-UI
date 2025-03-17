@@ -193,6 +193,16 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                         '& input[type=number]': {
                             '-moz-appearance': 'textfield',
                         },
+                        '& .MuiInputLabel-root': {
+                            display: 'flex',
+                            flex: 'none',
+                            justifyContent: 'left',
+                            alignItems: 'center',
+                            width: '100%',
+                            height: '100%',
+                            top: '50%',
+                            transform: 'translateX(0.5rem) translateY(-50%)',
+                        },
                     }}
                 />
                 <Button
