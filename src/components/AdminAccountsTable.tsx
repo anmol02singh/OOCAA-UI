@@ -10,161 +10,147 @@ import {
     TableRow,
     Paper,
     TableSortLabel,
-    TextField,
-    Button,
     useTheme,
-    MenuItem,
-    Tooltip,
-    styled,
-    tooltipClasses,
-    TooltipProps,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
-import { getAccounts, userdata } from '../API/account.tsx';
+import { getAccounts } from '../API/account.tsx';
 import { Account } from '../types.tsx';
 
 interface EventTableProps {
     token: string | null;
-    onEventClick: (eventItem: Event) => void;
-    selectedEvent?: Event | null;
+    filterRole: {
+        min: number | '',
+        max: number | '',
+    };
+    setFilterRole: React.Dispatch<React.SetStateAction<{
+        min: number | "";
+        max: number | "";
+    }>>
+    searchBar: {
+        criterion: string;
+        value: string;
+    };
 }
 
-type OrderLabel = 'asc' | 'desc';
+type SortDirection = 'asc' | 'desc';
+type SortColumn = 'username' | 'name' | 'role' | 'email';
 
-const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, selectedEvent }) => {
+const AdminAccountsTable: React.FC<EventTableProps> = ({
+    token,
+    filterRole,
+    setFilterRole,
+    searchBar,
+}) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
+    const [allAccounts, setAllAccounts] = useState<Account[]>([]);
     const [accounts, setAccounts] = useState<Account[]>([]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [order, setOrder] = useState<{
-        username: OrderLabel,
-        name: OrderLabel,
-        role: OrderLabel,
-        email: OrderLabel,
-    }>({
-        username: 'asc',
-        name: 'asc',
-        role: 'asc',
-        email: 'asc',
-    });
+    const [order, setOrder] = useState<SortDirection>('asc');
+    const [orderBy, setOrderBy] = useState<SortColumn>('username');
+    const columns: SortColumn[] = ['username', 'name', 'role', 'email'];
+
     const handleRequestSort = (event) => {
-        const columnClassNames = Object.keys(order);
-        const column = columnClassNames.find((columnClassName) =>
+        const column = columns.find((columnClassName) =>
             event.currentTarget.className.includes(columnClassName)
-        ) as string | undefined;
+        ) as SortColumn | undefined;
         if (!column) return;
-        setOrder({ ...order, [column]: order[column] === 'asc' ? 'desc' : 'asc' });
+        setOrder(order === 'asc' ? 'desc' : 'asc');
+        setOrderBy(column);
     };
 
     useEffect(() => {
         if (token) {
             getAccounts(token)
                 .then(accounts => {
+                    accounts.sort((a, b) => {
+                        const aValue = a[orderBy];
+                        const bValue = b[orderBy];
+                        if (aValue === undefined || bValue === undefined) return 0;
+
+                        return aValue.localeCompare(bValue);
+                    });
+                    setAllAccounts(accounts);
                     setAccounts(accounts);
                 });
         }
         //eslint-disable-next-line
     }, []);
 
-    // const isApproximatelyEqual = (
-    //     a: number,
-    //     b: number,
-    //     tolerance: number = 0.05
-    // ): boolean => {
-    //     if (b === 0) return Math.abs(a) < tolerance;
-    //     return Math.abs(a - b) / Math.abs(b) <= tolerance;
-    // };
+    useEffect(() => {
+        setFilterRole({ min: '', max: '' });
+        setAccounts(sortedAccounts(searchedAccounts()));
+    }, [searchBar.value]);
 
-    // const sortedEvents = useMemo(() => {
-    //     const eventsCopy = [...events];
-    //     eventsCopy.sort((a, b) => {
-    //         const dateA = new Date(a.tca).getTime();
-    //         const dateB = new Date(b.tca).getTime();
-    //         return order === 'asc' ? dateA - dateB : dateB - dateA;
-    //     });
-    //     return eventsCopy;
-    // }, [events, order]);
+    useEffect(() => {
+        setAccounts(sortedAccounts());
+    }, [order]);
 
-    // const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
-    //     <Tooltip {...props} arrow classes={{ popper: className }} />
-    // ))(({ theme }) => ({
-    //     [`& .${tooltipClasses.tooltip}`]: {
-    //         backgroundColor: colors.primary[400],
-    //         color: 'white',
-    //         fontSize: '0.75rem',
-    //     },
-    //     [`& .${tooltipClasses.arrow}`]: {
-    //         color: colors.primary[400],
-    //     },
-    // }));
+    const searchedAccounts = () => {
+        return allAccounts.filter(account => {
+            if (!account
+                || !account.username
+                || !account.email) return false;
+            if (!account.name || !account.phoneNumber) return true;
+            const value = searchBar.value.toLowerCase().trim();
+            if (searchBar.criterion === '' || value === '') return true;
+            switch (searchBar.criterion) {
+                case ('username'): {
+                    if (account.username.toLowerCase().includes(value)) return true;
+                    break;
+                }
+                case ('name'): {
+                    if (account.name.toLowerCase().includes(value)) return true;
+                    break;
+                }
+                case ('email'): {
+                    if (account.email.toLowerCase().includes(value)) return true;
+                    break;
+                }
+                case ('phoneNumber'): {
+                    if (account.phoneNumber.toLowerCase().includes(value)) return true;
+                    break;
+                }
+            }
+            return false;
+        })
+    };
 
-    // const filteredEvents = useMemo(() => {
-    //     return sortedEvents.filter(event => {
-    //         let valid = true;
+    const filteredAccounts = useMemo(() => {
+        return accounts.filter(account => {
+            if (!account || account.roleNum === undefined) return false;
+            if (filterRole.min === '' && filterRole.max === '') return true;
+            if (filterRole.min !== '' && account.roleNum < filterRole.min) return false;
+            if (filterRole.max !== '' && account.roleNum > filterRole.max) return false;
+            return true;
+        });
+    }, [
+        accounts,
+        filterRole,
+    ]);
 
-    //         if (filterMissDistance !== '') {
-    //             const threshold = Number(filterMissDistance);
-    //             switch (missDistanceOperator) {
-    //                 case 'lte':
-    //                     valid = valid && event.missDistances.some(val => val <= threshold);
-    //                     break;
-    //                 case 'gte':
-    //                     valid = valid && event.missDistances.some(val => val >= threshold);
-    //                     break;
-    //                 case 'eq':
-    //                     valid = valid && event.missDistances.some(val => val === threshold);
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-    //         }
+    const sortedAccounts = (prevAccounts?: Account[]) => {
+        const newAccounts = prevAccounts ? prevAccounts : [...accounts];        
+        return newAccounts.sort((a, b) => {
+            const aValue = a[orderBy];
+            const bValue = b[orderBy];
+            if (aValue === undefined || bValue === undefined) return 0;
 
-    //         if (filterCollisionProbability !== '') {
-    //             const threshold = Number(filterCollisionProbability);
-    //             switch (collisionProbabilityOperator) {
-    //                 case 'lte':
-    //                     valid = valid && event.collisionProbabilities.some(val => val <= threshold);
-    //                     break;
-    //                 case 'gte':
-    //                     valid = valid && event.collisionProbabilities.some(val => val >= threshold);
-    //                     break;
-    //                 case 'eq': {
-    //                     valid = valid && event.collisionProbabilities.some(val => isApproximatelyEqual(val, threshold));
-    //                     break;
-    //                 }
-    //                 default:
-    //                     break;
-    //             }
-    //         }
+            return order === 'asc'
+                ? aValue.localeCompare(bValue)
+                : bValue.localeCompare(aValue);
+        });
+    }
 
-    //         if (filterOperatorOrganization.trim() !== '') {
-    //             const orgFilter = filterOperatorOrganization.toLowerCase();
-    //             valid =
-    //                 valid &&
-    //                 (event.primaryOperatorOrganization.toLowerCase().includes(orgFilter) ||
-    //                     event.secondaryOperatorOrganization.toLowerCase().includes(orgFilter));
-    //         }
-
-    //         return valid;
-    //     });
-    // }, [
-    //     sortedEvents,
-    //     filterMissDistance,
-    //     missDistanceOperator,
-    //     filterCollisionProbability,
-    //     collisionProbabilityOperator,
-    //     filterOperatorOrganization,
-    // ]);
-
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage: number) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
@@ -188,8 +174,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                             <TableCell>
                                 <TableSortLabel
                                     className='username'
-                                    active
-                                    direction={order.username}
+                                    active={orderBy === 'username'}
+                                    direction={orderBy === 'username' ? order : 'asc'}
                                     onClick={handleRequestSort}
                                 >
                                     Username
@@ -198,8 +184,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                             <TableCell>
                                 <TableSortLabel
                                     className='name'
-                                    active
-                                    direction={order.name}
+                                    active={orderBy === 'name'}
+                                    direction={orderBy === 'name' ? order : 'asc'}
                                     onClick={handleRequestSort}
                                 >
                                     Name
@@ -208,8 +194,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                             <TableCell>
                                 <TableSortLabel
                                     className='role'
-                                    active
-                                    direction={order.role}
+                                    active={orderBy === 'role'}
+                                    direction={orderBy === 'role' ? order : 'asc'}
                                     onClick={handleRequestSort}
                                 >
                                     Role
@@ -218,8 +204,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                             <TableCell>
                                 <TableSortLabel
                                     className='email'
-                                    active
-                                    direction={order.email}
+                                    active={orderBy === 'email'}
+                                    direction={orderBy === 'email' ? order : 'asc'}
                                     onClick={handleRequestSort}
                                 >
                                     Email
@@ -233,9 +219,9 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                             '& .MuiTableCell-root': { fontSize: '0.85rem' },
                         }}
                     >
-                        {/* {filteredEvents
+                        {filteredAccounts
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((eventItem, index) => (
+                            .map((account, index) => (
                                 <TableRow
                                     key={index}
                                     sx={{
@@ -248,40 +234,15 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({ token, onEventClick, se
                                             backgroundColor: theme.palette.background.default,
                                         },
                                     }}
-                                    onClick={() => onEventClick(eventItem)}
-                                >
-                                    <TableCell>a</TableCell>
-                                    <TableCell>b</TableCell>
-                                    <TableCell>c</TableCell>
-                                    <TableCell>d</TableCell>
-                                    <TableCell>e</TableCell>
-                                    <TableCell>f</TableCell>
-                                </TableRow>
-                            ))} */}
-                        {/* {accounts
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((account, index) => ( */}
-                                <TableRow
-                                    //key={index}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        // backgroundColor: 
-                                        //   selectedEvent && eventItem._id === selectedEvent._id
-                                        //     ? theme.palette.background.default
-                                        //     : undefined,
-                                        '&:hover': {
-                                            backgroundColor: theme.palette.background.default,
-                                        },
-                                    }}
                                 // onClick={() => onEventClick(eventItem)}
                                 >
-                                    <TableCell>a</TableCell>
-                                    <TableCell>b</TableCell>
-                                    <TableCell>c</TableCell>
-                                    <TableCell>d</TableCell>
-                                    <TableCell>e</TableCell>
+                                    <TableCell>{account.username}</TableCell>
+                                    <TableCell>{account.name}</TableCell>
+                                    <TableCell>{account.role}</TableCell>
+                                    <TableCell>{account.email}</TableCell>
+                                    <TableCell>{account.phoneNumber}</TableCell>
                                 </TableRow>
-                            {/* ))} */}
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

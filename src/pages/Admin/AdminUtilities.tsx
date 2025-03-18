@@ -1,13 +1,10 @@
 import React, { MutableRefObject } from 'react';
 import { useTheme } from '@mui/material';
 import { tokens } from '../../theme.tsx';
-import { useNavigate } from 'react-router-dom';
 import 'react-phone-input-2/lib/material.css';
 import {
     getPageWidth as profileGetPageWidth
 } from '../Profile/ProfileUtilities.tsx';
-
-import routes from '../../routes.js'
 
 /*############### Constants ###############*/
 //Window resizing thresholds
@@ -21,8 +18,8 @@ export const getPageWidth = (boxRef: MutableRefObject<HTMLDivElement | null>): n
 }
 
 /*############### Styling ###############*/
-/*==========General Styling==========*/
-export const useGeneralStyling = () => {
+/*==========Styling==========*/
+export const useStyling = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -76,6 +73,16 @@ export const useGeneralStyling = () => {
         width: '40%',
         gap: '0.5rem',
         border: '1px solid red',
+    };
+
+    const searchField: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: colors.primary[400],
+        borderRadius: '4px',
+        padding: '0 10px',
+        height: '2.5rem',
     };
 
     const filterContainer: React.CSSProperties = {
@@ -158,6 +165,7 @@ export const useGeneralStyling = () => {
         adminSettingsContainer,
         searchAndFilterContainer,
         searchContainer,
+        searchField,
         filterContainer,
         filterTextField,
         fixFilterTextField,
@@ -168,7 +176,7 @@ export const useGeneralStyling = () => {
         button_click,
 
         imageContainer,
-        profilePicture,        
+        profilePicture,
         fieldLabel,
     };
 };

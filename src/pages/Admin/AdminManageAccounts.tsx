@@ -1,19 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, IconButton, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
 import {
     getPageWidth,
-    useGeneralStyling,
+    useStyling,
 } from './AdminUtilities.tsx';
-import { userdata } from '../../API/account.tsx';
-import { tokens } from '../../theme.tsx';
 import AdminAccountSearchBar from '../../components/AdminAccountsSearchBar.tsx';
 import AdminAccountsTable from '../../components/AdminAccountsTable.tsx';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 const AdminManageAccount = () => {
     const navigate = useNavigate();
@@ -25,16 +18,11 @@ const AdminManageAccount = () => {
     const {
         pageContainer,
         adminSettingsContainer,
-    } = useGeneralStyling();
+    } = useStyling();
 
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
-
-    //User data
-    const [userData, setUserData] = useState({
-        name: '',
-        username: '',
-        role: '',
+    const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
+        min: '',
+        max: '',
     });
 
     const boxRef = useRef<HTMLDivElement>(null);
@@ -54,84 +42,7 @@ const AdminManageAccount = () => {
         };
     }, [pageWidth]);
 
-    const [searchBar, setSearchBar] = useState({ criterion: 'Username', value: '' });
-
-    const handleCriterionChange = (criterion: string) => {
-        setSearchBar({ ...searchBar, criterion: criterion });
-    };
-
-    // const handleTcaChange = (newRange: [number, number]) => {
-    //     setTcaRange(newRange);
-    // };
-
-    const handleValueChange = (value: string) => {
-        setSearchBar({ ...searchBar, value: value });
-    };
-
-    const handleSearch = async () => {
-        // const hasEmptySearch = searchBars.some((bar) => bar.value.trim() === '');
-        // if (hasEmptySearch) {
-        //     setEvents([]);
-        //     setCdms([]);
-        //     setSelectedEvent(null);
-        //     setSelectedCDM(null);
-        //     setTles({});
-        //     return;
-        // }
-        // try {
-        //     const data = await fetchEvents(searchBars, tcaRange, {});
-        //     console.log('lets see', data);
-        //     setEvents(data);
-        //     setSelectedCDM(null);
-        //     setTles({});
-        //     setSelectedEvent(null);
-        //     setCdms([]);
-        // } catch (error) {
-        //     console.error('Search failed:', error);
-        // }
-    };
-
-    // const handleClickMessageId = async (cdm: CDM) => {
-    //     try {
-    //         const { object1, object2, tca } = cdm;
-    //         const data = await fetchTLEs([object1.objectDesignator, object2.objectDesignator], tca);
-    //         setTca(tca);
-
-    //         if (data && data.length === 2) {
-    //             setTles({
-    //                 object1: {
-    //                     designator: data[0].designator,
-    //                     tleLine1: data[0].tleLine1,
-    //                     tleLine2: data[0].tleLine2,
-    //                 },
-    //                 object2: {
-    //                     designator: data[1].designator,
-    //                     tleLine1: data[1].tleLine1,
-    //                     tleLine2: data[1].tleLine2,
-    //                 },
-    //             });
-    //         } else {
-    //             console.error('Unexpected TLE data format:', data);
-    //         }
-    //         console.log('Fetched TLEs:', tles.object1);
-    //         setSelectedCDM(cdm);
-    //     } catch (error) {
-    //         console.error('Failed to fetch TLEs:', error);
-    //     }
-    // };
-
-    const handleEventClick = async (eventItem: Event) => {
-        // try {
-        //     const data = await fetchCDMs(eventItem._id);
-        //     setSelectedEvent(eventItem);
-        //     setCdms(data);
-        //     setSelectedCDM(null);
-        //     setTles({});
-        //     console.log("CDMs", data);
-        // } catch (error) {
-        //     console.error('Failed to fetch CDMs for event:', error);
-        // }
-    };
+    const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
 
     return (
         <Box ref={boxRef} sx={pageContainer}>
@@ -139,15 +50,19 @@ const AdminManageAccount = () => {
                 {/* Search Bar */}
                 <AdminAccountSearchBar
                     pageWidth={pageWidth}
-                    criterion={searchBar.criterion}
-                    value={searchBar.value}
-                    onCriteriaChange={(criterion) => handleCriterionChange(criterion)}
-                    onValueChange={(value) => handleValueChange(value)}
-                    onSearch={handleSearch}
+                    filterRole={filterRole}
+                    setFilterRole={setFilterRole}
+                    searchBar={searchBar}
+                    setSearchBar={setSearchBar}
                 />
 
                 {/* Search Results Table */}
-                <AdminAccountsTable token={token} selectedEvent={new Event('a')} onEventClick={handleEventClick} />
+                <AdminAccountsTable
+                    token={token}
+                    filterRole={filterRole}
+                    setFilterRole={setFilterRole}
+                    searchBar={searchBar}
+                />
             </Box>
         </Box>
     );

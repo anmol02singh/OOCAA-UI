@@ -1,43 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Button, InputBase, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled } from '@mui/system';
 import { tokens } from '../theme.tsx';
-import { useGeneralStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
-    criterion: string;
-    value: string;
-    onCriteriaChange: (value: string) => void;
-    onValueChange: (value: string) => void;
-    onSearch: () => void;
+    filterRole: {
+        min: number | '',
+        max: number | '',
+    };
+    setFilterRole: React.Dispatch<React.SetStateAction<{
+        min: number | "";
+        max: number | "";
+    }>>
+    searchBar: {
+        criterion: string;
+        value: string;
+    };
+    setSearchBar: React.Dispatch<React.SetStateAction<{
+        criterion: string;
+        value: string;
+    }>>
 }
-
-const SearchBox = styled(Box)<{ backgroundColor: string; }>(
-    ({ backgroundColor }) => ({
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor,
-        borderRadius: '4px',
-        padding: '0 10px',
-        height: '2.5rem',
-    })
-);
-
 
 const AccountSearchBar: React.FC<SearchBarProps> = ({
     pageWidth,
-    criterion,
-    onCriteriaChange,
-    value,
-    onValueChange,
-    onSearch,
+    filterRole,
+    setFilterRole,
+    searchBar,
+    setSearchBar,
 }) => {
 
     const {
         searchAndFilterContainer,
         searchContainer,
+        searchField,
         filterContainer,
         filterTextField,
         fixFilterTextField,
@@ -45,37 +43,51 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         filterTextField_outline,
         button,
         button_hover,
-    } = useGeneralStyling();
+    } = useStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    //Accounts
-    const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
-        min: '',
-        max: '',
-    });
+    const handleCriterionChange = (criterion: string) => {
+        setSearchBar({ ...searchBar, criterion: criterion });
+    };
 
-    const handleReset = () => {
-        setFilterRole({ min: '', max: '' });
-    }
+    const handleValueChange = (value: string) => {
+        setSearchBar({ ...searchBar, value: value });
+    };
 
     const handleFilterChange = (event) => {
         const filterName = event.target.name;
-        if (filterName !== 'min' || filterName !== 'max') return;
-        setFilterRole({ ...filterRole, [filterName]: (event.target.value === '') ? '' : event.target.value })
+        if (filterName !== 'min' && filterName !== 'max') return;
+
+        const filterValue = event.target.value;
+        if (Number.isNaN(filterValue) || filterValue < 0 || filterValue > 2) return;
+        if (filterValue !== ''
+            && filterName === 'min'
+            && filterRole.max !== ''
+            && filterValue > filterRole.max) return;
+        if (filterValue !== ''
+            && filterName === 'max'
+            && filterRole.min !== ''
+            && filterValue < filterRole.min) return;
+        setFilterRole({ ...filterRole, [filterName]: (filterValue === '') ? '' : filterValue })
+    }
+
+    const handleReset = () => {
+        setFilterRole({ min: '', max: '' });
     }
 
     return (
         <Box sx={searchAndFilterContainer(pageWidth)}>
             <Box sx={searchContainer}>
                 <Select
-                    value={criterion}
-                    onChange={(event) => onCriteriaChange(event.target.value)}
+                    value={searchBar.criterion}
+                    onChange={(event) => handleCriterionChange(event.target.value)}
                     sx={{
                         backgroundColor: colors.primary[400],
                         color: colors.grey[100],
                         height: '2.5rem',
+                        width: '9rem',
                         borderRadius: '4px',
                     }}
                     MenuProps={{
@@ -86,17 +98,17 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                         },
                     }}
                 >
-                    <MenuItem value='Username'>Username</MenuItem>
-                    <MenuItem value='Name'>Name</MenuItem>
-                    <MenuItem value='Email'>Email</MenuItem>
-                    <MenuItem value='PhoneNumber'>Phone Number</MenuItem>
+                    <MenuItem value='username'>Username</MenuItem>
+                    <MenuItem value='name'>Name</MenuItem>
+                    <MenuItem value='email'>Email</MenuItem>
+                    <MenuItem value='phoneNumber'>Phone Number</MenuItem>
                 </Select>
-                <SearchBox flex={1} backgroundColor={colors.primary[400]}>
+                <Box sx={searchField}>
                     <SearchIcon sx={{ color: colors.grey[100] }} />
                     <InputBase
                         placeholder='Search accounts here'
-                        value={value}
-                        onChange={(e) => onValueChange(e.target.value)}
+                        value={searchBar.value}
+                        onChange={(e) => handleValueChange(e.target.value)}
                         sx={{
                             marginLeft: 1,
                             flex: 1,
@@ -104,12 +116,12 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                             height: '100%',
                         }}
                     />
-                </SearchBox>
+                </Box>
             </Box>
             <Box sx={filterContainer}>
                 <TextField
                     name='min'
-                    label='Min'
+                    label='Min (0-2)'
                     type='number'
                     value={filterRole.min}
                     onChange={handleFilterChange}
@@ -151,7 +163,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 />
                 <TextField
                     name='max'
-                    label='Max'
+                    label='Max (0-2)'
                     type='number'
                     value={filterRole.max}
                     onChange={handleFilterChange}
