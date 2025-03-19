@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, InputBase, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { Box, Button, InputBase, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -44,6 +44,9 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         searchAndFilterContainer,
         searchContainer,
         searchField,
+        searchField_outline,
+        searchField_hover,
+        searchField_focused,
         filterContainer,
         filterDropdown,
         filterTextField,
@@ -52,6 +55,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         filterTextField_outline,
         button,
         button_hover,
+        fieldLabel,
     } = useStyling();
 
     const theme = useTheme();
@@ -121,10 +125,13 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                         value={searchBar.value}
                         onChange={(e) => handleValueChange(e.target.value)}
                         sx={{
-                            marginLeft: 1,
-                            flex: 1,
-                            color: colors.grey[100],
-                            height: '100%',
+                            ...searchField_outline,
+                            '&:hover': {
+                                ...searchField_hover,
+                            },
+                            '&.Mui-focused': {
+                                ...searchField_focused,
+                            }
                         }}
                     />
                 </Box>
@@ -141,6 +148,9 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 </Button>
             </Box>
             <Box sx={filterContainer}>
+                <Typography variant='h6' sx={fieldLabel}>
+                    Role =
+                </Typography>
                 <TextField
                     name='min'
                     label='Min (0-2)'

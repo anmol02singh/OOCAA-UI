@@ -143,7 +143,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
 
         const value = searchBar.value.toLowerCase().trim();
         if (searchBar.criterion === '') return searchedAccounts;
-        
+
         const params: {
             name?: string,
             username?: string,
@@ -207,22 +207,35 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     };
 
     return (
-        <Box>
+        <Box
+            sx={{
+                width: '100%',
+            }}
+        >
             <TableContainer
                 component={Paper}
                 sx={{
                     backgroundColor: colors.primary[400],
                     color: colors.grey[100],
                     marginTop: '1rem',
+                    borderRadius: '4px',
                 }}
             >
                 <Table>
                     <TableHead
                         sx={{
-                            '& .MuiTableCell-root': { fontSize: '0.9rem' },
+                            '& .MuiTableCell-root': {
+                                fontSize: '0.9rem',
+                                color: colors.blueAccent[400],
+                                fontWeight: 'bold',
+                            },
                         }}
                     >
-                        <TableRow>
+                        <TableRow
+                            sx={{
+                                textWrap: 'nowrap',
+                            }}
+                        >
                             <TableCell />
                             <TableCell>
                                 <TableSortLabel
@@ -230,6 +243,23 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     active={orderBy === 'username'}
                                     direction={orderBy === 'username' ? order : 'asc'}
                                     onClick={handleRequestSort}
+                                    sx={{
+                                        '&:hover': {
+                                            color: colors.blueAccent[500],
+                                        },
+                                        '& .MuiTableSortLabel-icon': {
+                                            color: 'inherit',
+                                        },
+                                        '&.MuiButtonBase-root.MuiTableSortLabel-root.Mui-active': {
+                                            color: colors.blueAccent[400],
+                                            '&:hover': {
+                                                color: colors.blueAccent[500],
+                                            },
+                                            '& .MuiTableSortLabel-icon': {
+                                                color: 'inherit',
+                                            }
+                                        }
+                                    }}
                                 >
                                     Username
                                 </TableSortLabel>
@@ -240,6 +270,23 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     active={orderBy === 'name'}
                                     direction={orderBy === 'name' ? order : 'asc'}
                                     onClick={handleRequestSort}
+                                    sx={{
+                                        '&:hover': {
+                                            color: colors.blueAccent[500],
+                                        },
+                                        '& .MuiTableSortLabel-icon': {
+                                            color: 'inherit',
+                                        },
+                                        '&.MuiButtonBase-root.MuiTableSortLabel-root.Mui-active': {
+                                            color: colors.blueAccent[400],
+                                            '&:hover': {
+                                                color: colors.blueAccent[500],
+                                            },
+                                            '& .MuiTableSortLabel-icon': {
+                                                color: 'inherit',
+                                            }
+                                        }
+                                    }}
                                 >
                                     Name
                                 </TableSortLabel>
@@ -250,6 +297,23 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     active={orderBy === 'role'}
                                     direction={orderBy === 'role' ? order : 'asc'}
                                     onClick={handleRequestSort}
+                                    sx={{
+                                        '&:hover': {
+                                            color: colors.blueAccent[500],
+                                        },
+                                        '& .MuiTableSortLabel-icon': {
+                                            color: 'inherit',
+                                        },
+                                        '&.MuiButtonBase-root.MuiTableSortLabel-root.Mui-active': {
+                                            color: colors.blueAccent[400],
+                                            '&:hover': {
+                                                color: colors.blueAccent[500],
+                                            },
+                                            '& .MuiTableSortLabel-icon': {
+                                                color: 'inherit',
+                                            }
+                                        }
+                                    }}
                                 >
                                     Role
                                 </TableSortLabel>
@@ -260,6 +324,23 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     active={orderBy === 'email'}
                                     direction={orderBy === 'email' ? order : 'asc'}
                                     onClick={handleRequestSort}
+                                    sx={{
+                                        '&:hover': {
+                                            color: colors.blueAccent[500],
+                                        },
+                                        '& .MuiTableSortLabel-icon': {
+                                            color: 'inherit',
+                                        },
+                                        '&.MuiButtonBase-root.MuiTableSortLabel-root.Mui-active': {
+                                            color: colors.blueAccent[400],
+                                            '&:hover': {
+                                                color: colors.blueAccent[500],
+                                            },
+                                            '& .MuiTableSortLabel-icon': {
+                                                color: 'inherit',
+                                            }
+                                        }
+                                    }}
                                 >
                                     Email
                                 </TableSortLabel>
@@ -269,7 +350,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                     </TableHead>
                     <TableBody
                         sx={{
-                            '& .MuiTableCell-root': { fontSize: '0.85rem' },
+                            '& .MuiTableCell-root': { fontSize: '0.9rem' },
                         }}
                     >
                         {filteredAccounts
@@ -284,7 +365,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                         //     ? theme.palette.background.default
                                         //     : undefined,
                                         '&:hover': {
-                                            backgroundColor: theme.palette.background.default,
+                                            backgroundColor: colors.primary[500],
                                         },
                                     }}
                                 // onClick={() => onEventClick(eventItem)}

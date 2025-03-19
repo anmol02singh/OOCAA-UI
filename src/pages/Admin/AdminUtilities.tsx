@@ -41,13 +41,14 @@ export const useStyling = () => {
     const adminSettingsContainer = (pageWidth: number): React.CSSProperties => ({
         width: '95%',
         minWidth: pageWidth >= mdWindowWidth ? '50rem' : '16rem',
+        minHeight: '75vh',
         padding:
             pageWidth >= mdWindowWidth ? '3rem'
                 : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
                     : '2rem',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: colors.primary[400],
         borderRadius: '9px',
@@ -59,10 +60,9 @@ export const useStyling = () => {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '90%',
+        width: '100%',
         minWidth: pageWidth >= mdWindowWidth ? '30rem' : '10rem',
         gap: '2rem',
-        border: '1px solid red',
     });
 
     const searchContainer: React.CSSProperties = {
@@ -72,7 +72,6 @@ export const useStyling = () => {
         alignItems: 'center',
         width: '60%',
         gap: '0.5rem',
-        border: '1px solid red',
     };
 
     const searchField: React.CSSProperties = {
@@ -80,9 +79,27 @@ export const useStyling = () => {
         justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: colors.primary[400],
-        borderRadius: '4px',
-        padding: '0 10px',
+        padding: 0,
+        flex: '1',
         height: '2.5rem',
+    };
+
+    const searchField_outline: React.CSSProperties = {
+        flex: '1',
+        color: colors.grey[100],
+        width: '100%',
+        height: '100%',
+        paddingLeft: '0.5rem',
+        borderRadius: '4px',
+        border: '1px solid ' + colors.grey[600],
+    };
+
+    const searchField_hover: React.CSSProperties = {
+        border: '1px solid ' + colors.grey[100],
+    };
+
+    const searchField_focused: React.CSSProperties = {
+        border: '1px solid ' + colors.primary[400],
     };
 
     const filterContainer: React.CSSProperties = {
@@ -91,8 +108,8 @@ export const useStyling = () => {
         justifyContent: 'right',
         alignItems: 'center',
         width: '40%',
+        minWidth: '23rem',
         gap: '0.5rem',
-        border: '1px solid red',
     };
 
     const filterDropdown: React.CSSProperties = {
@@ -107,7 +124,6 @@ export const useStyling = () => {
         width: '6rem',
         height: '2.5rem',
         cursor: 'pointer',
-        borderRadius: '4px',
         color: colors.grey[100],
         backgroundColor: colors.primary[500],
         padding: '0',
@@ -148,24 +164,9 @@ export const useStyling = () => {
         color: colors.blueAccent[500],
     };
 
-    const imageContainer: React.CSSProperties = {
-        cursor: 'pointer',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
-
-    const profilePicture: React.CSSProperties = {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-    };
-
     const fieldLabel: React.CSSProperties = {
-        margin: '0.1rem 0',
-        color: colors.grey[300]
+        textWrap: 'nowrap',
+        color: colors.grey[100]
     };
 
     return {
@@ -174,6 +175,9 @@ export const useStyling = () => {
         searchAndFilterContainer,
         searchContainer,
         searchField,
+        searchField_outline,
+        searchField_hover,
+        searchField_focused,
         filterContainer,
         filterDropdown,
         filterTextField,
@@ -183,9 +187,6 @@ export const useStyling = () => {
         button,
         button_hover,
         button_click,
-
-        imageContainer,
-        profilePicture,
         fieldLabel,
     };
 };
