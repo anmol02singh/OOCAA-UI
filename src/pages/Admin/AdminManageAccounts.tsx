@@ -43,6 +43,9 @@ const AdminManageAccount = () => {
     }, [pageWidth]);
 
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
+    const [submitSearch, setSubmitSearch] = useState<boolean>(false);
+    const [submitFilter, setSubmitFilter] = useState<boolean>(false);
+    const [submitReset, setSubmitReset] = useState<boolean>(false);
 
     return (
         <Box ref={boxRef} sx={pageContainer}>
@@ -54,6 +57,9 @@ const AdminManageAccount = () => {
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
                     setSearchBar={setSearchBar}
+                    setSubmitSearch={setSubmitSearch}
+                    setSubmitFilter={setSubmitFilter}
+                    setSubmitReset={setSubmitReset}
                 />
 
                 {/* Search Results Table */}
@@ -62,6 +68,12 @@ const AdminManageAccount = () => {
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
+                    submitSearch={submitSearch}
+                    setSubmitSearch={setSubmitSearch}
+                    submitFilter={submitFilter}
+                    setSubmitFilter={setSubmitFilter}
+                    submitReset={submitReset}
+                    setSubmitReset={setSubmitReset}
                 />
             </Box>
         </Box>

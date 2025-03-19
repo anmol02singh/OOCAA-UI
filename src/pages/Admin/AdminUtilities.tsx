@@ -70,7 +70,7 @@ export const useStyling = () => {
         flexDirection: 'row',
         justifyContent: 'left',
         alignItems: 'center',
-        width: '40%',
+        width: '60%',
         gap: '0.5rem',
         border: '1px solid red',
     };
@@ -90,12 +90,21 @@ export const useStyling = () => {
         flexDirection: 'row',
         justifyContent: 'right',
         alignItems: 'center',
-        width: '60%',
+        width: '40%',
         gap: '0.5rem',
         border: '1px solid red',
     };
 
+    const filterDropdown: React.CSSProperties = {
+        backgroundColor: colors.primary[500],
+        color: colors.grey[100],
+        height: '2.5rem',
+        width: '9rem',
+        borderRadius: '4px',
+    }
+
     const filterTextField: React.CSSProperties = {
+        width: '6rem',
         height: '2.5rem',
         cursor: 'pointer',
         borderRadius: '4px',
@@ -127,8 +136,7 @@ export const useStyling = () => {
         backgroundColor: colors.primary[500],
         textTransform: 'none',
         fontSize: '14px',
-        margin: '0.5rem',
-        width: '7rem',
+        width: '4em',
     };
 
     const button_hover: React.CSSProperties = {
@@ -167,6 +175,7 @@ export const useStyling = () => {
         searchContainer,
         searchField,
         filterContainer,
+        filterDropdown,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,

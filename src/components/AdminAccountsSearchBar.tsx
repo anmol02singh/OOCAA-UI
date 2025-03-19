@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Button, InputBase, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { tokens } from '../theme.tsx';
 import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
 
@@ -13,7 +15,7 @@ interface SearchBarProps {
     setFilterRole: React.Dispatch<React.SetStateAction<{
         min: number | "";
         max: number | "";
-    }>>
+    }>>;
     searchBar: {
         criterion: string;
         value: string;
@@ -21,7 +23,10 @@ interface SearchBarProps {
     setSearchBar: React.Dispatch<React.SetStateAction<{
         criterion: string;
         value: string;
-    }>>
+    }>>;
+    setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
+    setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
+    setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AccountSearchBar: React.FC<SearchBarProps> = ({
@@ -30,6 +35,9 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     setFilterRole,
     searchBar,
     setSearchBar,
+    setSubmitSearch,
+    setSubmitFilter,
+    setSubmitReset,
 }) => {
 
     const {
@@ -37,6 +45,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         searchContainer,
         searchField,
         filterContainer,
+        filterDropdown,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,
@@ -55,6 +64,14 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     const handleValueChange = (value: string) => {
         setSearchBar({ ...searchBar, value: value });
     };
+
+    const handleSearch = () => {
+        setSubmitSearch(true);
+    }
+
+    const handleFilter = () => {
+        setSubmitFilter(true);
+    }
 
     const handleFilterChange = (event) => {
         const filterName = event.target.name;
@@ -75,6 +92,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
     const handleReset = () => {
         setFilterRole({ min: '', max: '' });
+        setSubmitReset(true);
     }
 
     return (
@@ -83,13 +101,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 <Select
                     value={searchBar.criterion}
                     onChange={(event) => handleCriterionChange(event.target.value)}
-                    sx={{
-                        backgroundColor: colors.primary[400],
-                        color: colors.grey[100],
-                        height: '2.5rem',
-                        width: '9rem',
-                        borderRadius: '4px',
-                    }}
+                    sx={filterDropdown}
                     MenuProps={{
                         PaperProps: {
                             sx: {
@@ -104,7 +116,6 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                     <MenuItem value='phoneNumber'>Phone Number</MenuItem>
                 </Select>
                 <Box sx={searchField}>
-                    <SearchIcon sx={{ color: colors.grey[100] }} />
                     <InputBase
                         placeholder='Search accounts here'
                         value={searchBar.value}
@@ -117,6 +128,17 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                         }}
                     />
                 </Box>
+                <Button
+                    onClick={handleSearch}
+                    sx={{
+                        ...button,
+                        '&:hover': {
+                            ...button_hover
+                        },
+                    }}
+                >
+                    <SearchIcon sx={{ color: colors.grey[100] }} />
+                </Button>
             </Box>
             <Box sx={filterContainer}>
                 <TextField
@@ -204,6 +226,17 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                     }}
                 />
                 <Button
+                    onClick={handleFilter}
+                    sx={{
+                        ...button,
+                        '&:hover': {
+                            ...button_hover
+                        },
+                    }}
+                >
+                    <FilterListIcon sx={{ color: colors.grey[100] }} />
+                </Button>
+                <Button
                     onClick={handleReset}
                     sx={{
                         ...button,
@@ -212,7 +245,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                         },
                     }}
                 >
-                    Reset Filters
+                    <RestartAltIcon sx={{ color: colors.grey[100] }} />
                 </Button>
             </Box>
         </Box>
