@@ -16,9 +16,11 @@ import {
 import { tokens } from '../theme.tsx';
 import { getAccounts } from '../API/account.tsx';
 import { Account } from '../types.tsx';
+import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
 
 interface EventTableProps {
     token: string | null;
+    pageWidth: number;
     filterRole: {
         min: number | '',
         max: number | '',
@@ -44,6 +46,7 @@ type SortColumn = 'username' | 'name' | 'role' | 'email';
 
 const AdminAccountsTable: React.FC<EventTableProps> = ({
     token,
+    pageWidth,
     filterRole,
     setFilterRole,
     searchBar,
@@ -54,6 +57,11 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     submitReset,
     setSubmitReset,
 }) => {
+
+    const {
+        accountsTableContainer,
+    } = useStyling();
+
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -209,23 +217,27 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     return (
         <Box
             sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
                 width: '100%',
+                display: 'flex',
+                flexGrow: '1',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                mx: "auto",
+                minWidth: 0,
             }}
         >
             <TableContainer
                 component={Paper}
-                sx={{
-                    backgroundColor: colors.primary[400],
-                    color: colors.grey[100],
-                    marginTop: '1rem',
-                    borderRadius: '4px',
-                }}
+                sx={accountsTableContainer(pageWidth)}
             >
-                <Table>
+                <Table
+                    sx={{
+                        borderRadius: '4px',
+                        minWidth: '30rem',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
                     <TableHead
                         sx={{
                             '& .MuiTableCell-root': {
@@ -235,11 +247,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                             },
                         }}
                     >
-                        <TableRow
-                            sx={{
-                                textWrap: 'nowrap',
-                            }}
-                        >
+                        <TableRow>
                             <TableCell />
                             <TableCell>
                                 <TableSortLabel
@@ -364,7 +372,6 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     key={index}
                                     sx={{
                                         cursor: 'pointer',
-                                        textWrap: 'nowrap',
                                         // backgroundColor: 
                                         //   selectedEvent && eventItem._id === selectedEvent._id
                                         //     ? theme.palette.background.default

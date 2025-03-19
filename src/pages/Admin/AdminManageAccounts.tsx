@@ -65,6 +65,7 @@ const AdminManageAccount = () => {
                 {/* Search Results Table */}
                 <AdminAccountsTable
                     token={token}
+                    pageWidth={pageWidth}
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}

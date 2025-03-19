@@ -101,7 +101,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
     return (
         <Box sx={searchAndFilterContainer(pageWidth)}>
-            <Box sx={searchContainer}>
+            <Box sx={searchContainer(pageWidth)}>
                 <Select
                     value={searchBar.criterion}
                     onChange={(event) => handleCriterionChange(event.target.value)}
@@ -147,7 +147,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                     <SearchIcon sx={{ color: colors.grey[100] }} />
                 </Button>
             </Box>
-            <Box sx={filterContainer}>
+            <Box sx={filterContainer(pageWidth)}>
                 <Typography variant='h6' sx={fieldLabel}>
                     Role =
                 </Typography>

@@ -40,7 +40,7 @@ export const useStyling = () => {
 
     const adminSettingsContainer = (pageWidth: number): React.CSSProperties => ({
         width: '95%',
-        minWidth: pageWidth >= mdWindowWidth ? '50rem' : '16rem',
+        minWidth: '21rem',
         minHeight: '75vh',
         padding:
             pageWidth >= mdWindowWidth ? '3rem'
@@ -57,22 +57,25 @@ export const useStyling = () => {
 
     const searchAndFilterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
-        flexDirection: pageWidth >= mdWindowWidth ? 'row': 'column',
+        flexDirection: pageWidth >= mdWindowWidth ? 'row' : 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '100%',
-        minWidth: pageWidth >= mdWindowWidth ? '30rem' : '10rem',
+        width:
+            pageWidth >= mdWindowWidth ? '65vw'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
+                    : '44vw',
+        minWidth: '100%',
         gap: '2rem',
     });
 
-    const searchContainer: React.CSSProperties = {
+    const searchContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'left',
         alignItems: 'center',
-        width: '60%',
+        width: pageWidth > mdWindowWidth ? '60%' : '100%',
         gap: '0.5rem',
-    };
+    });
 
     const searchField: React.CSSProperties = {
         display: 'flex',
@@ -102,15 +105,14 @@ export const useStyling = () => {
         border: '1px solid ' + colors.primary[400],
     };
 
-    const filterContainer: React.CSSProperties = {
+    const filterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'right',
         alignItems: 'center',
-        width: '40%',
-        minWidth: '23rem',
+        width: pageWidth > mdWindowWidth ? '40%' : '100%',
         gap: '0.5rem',
-    };
+    });
 
     const filterDropdown: React.CSSProperties = {
         backgroundColor: colors.primary[500],
@@ -141,6 +143,19 @@ export const useStyling = () => {
         border: `1px solid ${colors.grey[500]}`,
         borderRadius: '4px',
     };
+
+    const accountsTableContainer = (pageWidth: number): React.CSSProperties => ({
+        backgroundColor: colors.primary[400],
+        color: colors.grey[100],
+        marginTop: '1rem',
+        width:
+            pageWidth >= mdWindowWidth ? '65vw'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
+                    : '44vw',
+        minWidth: '100%',
+        overflowX: "auto",
+        display: "inline-block",
+    });
 
     const button: React.CSSProperties = {
         display: 'flex',
@@ -184,6 +199,7 @@ export const useStyling = () => {
         fixFilterTextField,
         filterTextField_input,
         filterTextField_outline,
+        accountsTableContainer,
         button,
         button_hover,
         button_click,
