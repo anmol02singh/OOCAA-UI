@@ -209,6 +209,10 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     return (
         <Box
             sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
                 width: '100%',
             }}
         >
@@ -360,6 +364,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                                     key={index}
                                     sx={{
                                         cursor: 'pointer',
+                                        textWrap: 'nowrap',
                                         // backgroundColor: 
                                         //   selectedEvent && eventItem._id === selectedEvent._id
                                         //     ? theme.palette.background.default

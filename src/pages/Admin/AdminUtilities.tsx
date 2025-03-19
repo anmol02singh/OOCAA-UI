@@ -57,7 +57,7 @@ export const useStyling = () => {
 
     const searchAndFilterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: pageWidth >= mdWindowWidth ? 'row': 'column',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
