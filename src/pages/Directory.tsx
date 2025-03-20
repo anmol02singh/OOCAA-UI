@@ -9,6 +9,7 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import StatCard from '../components/StatCard.tsx';
@@ -24,16 +25,16 @@ import { Event } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
 import EventTable from '../components/EventTable.tsx';
 import CDMTable from '../components/CDMTable.tsx';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const Directory = () => {
-  // const navigate = useNavigate();
-  // const token = localStorage.getItem("accountToken");
-  // console.log("token", token);
-  // if(!token){
-  //     navigate('/login')
-  // }
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accountToken");
+  console.log("token", token);
+  if(!token){
+      navigate('/login')
+  }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -53,6 +54,8 @@ const Directory = () => {
   const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null);
 
   const [tca, setTca] = useState(new Date().toISOString());
+
+  const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
@@ -89,16 +92,22 @@ const Directory = () => {
   const handleSearch = async () => {
     const hasEmptySearch = searchBars.some((bar) => bar.value.trim() === '');
     if (hasEmptySearch) {
-      setEvents([]);
-      setCdms([]);
-      setSelectedEvent(null);
-      setSelectedCDM(null);
-      setTles({});
+      setErrMsg('Please fill in all search fields');
+      setTimeout(() => setErrMsg(null), 2900);
+      // setEvents([]);
+      // setCdms([]);
+      // setSelectedEvent(null);
+      // setSelectedCDM(null);
+      // setTles({});
       return;
     }
+    setErrMsg(null);
     try {
       const data = await fetchEvents(searchBars, tcaRange, {});
-      console.log('lets see', data);
+      if (data.length == 0) {
+        setErrMsg('No search results found');
+        setTimeout(() => setErrMsg(null), 2900);
+      }
       setEvents(data);
       setSelectedCDM(null);
       setTles({});
@@ -131,7 +140,6 @@ const Directory = () => {
       } else {
         console.error('Unexpected TLE data format:', data);
       } 
-      console.log('Fetched TLEs:', tles.object1);
       setSelectedCDM(cdm);
     } catch (error) {
       console.error('Failed to fetch TLEs:', error);
@@ -145,7 +153,6 @@ const Directory = () => {
       setCdms(data);
       setSelectedCDM(null);
       setTles({});
-      console.log("CDMs", data);
     } catch (error) {
       console.error('Failed to fetch CDMs for event:', error);
     }
@@ -160,7 +167,6 @@ const Directory = () => {
         minHeight: '100vh',
       }}
     >
-      
       {/* Header */}
       <Typography variant="body1" sx={{ color: colors.grey[300], fontFamily: 'Arial, sans-serif' }}>
         62,998 searchable objects
@@ -226,6 +232,13 @@ const Directory = () => {
         onTcaChange={handleTcaChange} 
         onSearch={handleSearch} 
       />
+
+      {errMsg && (
+        <Box display="flex" alignItems="center" gap={1} mt={2}>
+          <ErrorOutlineIcon color="error" />
+          <Typography color="error">{errMsg}</Typography>
+        </Box>
+      )}
 
       {/* Search Results Table */}
       {events.length > 0 && (

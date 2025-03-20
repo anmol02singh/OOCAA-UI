@@ -49,7 +49,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
   const [missDistanceOperator, setMissDistanceOperator] = useState<NumericOperator>('lte');
   
   const [filterCollisionProbability, setFilterCollisionProbability] = useState<number | ''>('');
-  const [collisionProbabilityOperator, setCollisionProbabilityOperator] = useState<NumericOperator>('lte');
+  const [collisionProbabilityOperator, setCollisionProbabilityOperator] = useState<NumericOperator>('gte');
   
   const [filterOperatorOrganization, setFilterOperatorOrganization] = useState<string>('');
 
@@ -194,8 +194,8 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
             },
           }}
         >
-          <MenuItem value="lte">{"<="}</MenuItem>
-          <MenuItem value="gte">{">="}</MenuItem>
+          <MenuItem value="lte">{"≤"}</MenuItem>
+          <MenuItem value="gte">{"≥"}</MenuItem>
           <MenuItem value="eq">{"="}</MenuItem>
         </TextField>
         <TextField
@@ -203,8 +203,15 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
           sx={{
             backgroundColor: colors.primary[400],
             color: colors.grey[100],
+            '& input[type=number]': {
+              '-moz-appearance': 'textfield',
+            },
+            '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+              '-webkit-appearance': 'none',
+              margin: 0,
+            },
           }}
-          label="Miss Distance"
+          label="Miss Distance (m)"
           variant="outlined"
           size="small"
           type="number"
@@ -233,8 +240,8 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
             },
           }}
         >
-          <MenuItem value="lte">{"<="}</MenuItem>
-          <MenuItem value="gte">{">="}</MenuItem>
+          <MenuItem value="lte">{"≤"}</MenuItem>
+          <MenuItem value="gte">{"≥"}</MenuItem>
           <MenuItem value="eq">{"="}</MenuItem>
         </TextField>
         <TextField
@@ -268,6 +275,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
             backgroundColor: colors.primary[400],
             color: colors.grey[100],
             width: '50%',
+            whiteSpace: 'nowrap',
           }}
           variant="outlined"
           onClick={() => {

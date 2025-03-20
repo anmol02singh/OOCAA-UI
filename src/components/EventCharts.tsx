@@ -18,6 +18,7 @@ import { tokens } from '../theme.tsx';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale);
 
 export interface CDM {
+  messageId: string;
   creationDate: string; 
   tca: string;          
   missDistance: number;
@@ -57,18 +58,23 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
     plugins: {
       tooltip: {
         callbacks: {
+          title: (tooltipItems: any[]) => {
+            return tooltipItems.map(item => {
+              const messageId = sortedCdms[item.dataIndex]?.messageId || 'N/A';
+              return `Message ID: ${messageId}`;
+            });
+          },
           label: (context: any) => {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';
             }
             const value = context.parsed.y;
-            if (context.dataset.label === 'Collision Probability') {
-              label += value.toPrecision(6);
-            } else {
-              label += value;
-            }
-            return label;
+            const formattedValue =
+              context.dataset.label === 'Collision Probability'
+                ? value.toPrecision(6)
+                : value;
+            return label + formattedValue;
           },
         },
       },
@@ -85,11 +91,31 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
           display: true,
           text: 'Creation Date [UTC]',
         }
-      },
+      }
+    },
+  };
+
+  const tcaChartOptions = {
+    ...commonOptions,
+    scales: {
+      ...commonOptions.scales,
       y: {
         title: {
           display: true,
-          text: 'Value',
+          text: 'Seconds since first TCA',
+        },
+      },
+    },
+  };
+
+  const missDistanceChartOptions = {
+    ...commonOptions,
+    scales: {
+      ...commonOptions.scales,
+      y: {
+        title: {
+          display: true,
+          text: 'Miss Distance (m)',
         },
       },
     },
@@ -100,13 +126,16 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
     scales: {
       ...commonOptions.scales,
       y: {
-        ...commonOptions.scales?.y,
         ticks: {
           callback: (tickValue: string | number) => Number(tickValue).toExponential(2),
         },
+        title: {
+          display: true,
+          text: 'Collision Probability',
+        },
       },
     },
-  };  
+  };
 
   const tcaChartData = {
     labels,
@@ -149,27 +178,27 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>
-      <Box display="flex" justifyContent="space-between" gap={2}>
+      <Box display="flex" gap={2} justifyContent="center">
 
         <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
           <Typography variant="h6" gutterBottom>
             {`TCA (seconds since first TCA): ${tcas[0]}`}
           </Typography>
-          <Line data={tcaChartData} options={commonOptions} />
+          <Line data={tcaChartData} options={tcaChartOptions} />
         </Box>
   
         <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
           <Typography variant="h6" gutterBottom>
-            Miss Distance
+            Miss Distance Progression
           </Typography>
-          <Line data={missDistanceChartData} options={commonOptions} />
+          <Line data={missDistanceChartData} options={missDistanceChartOptions} />
         </Box>
       </Box>
   
       <Box display="flex" justifyContent="center">
         <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2} mb={4}>
           <Typography variant="h6" gutterBottom>
-            Collision Probability
+            Collision Probability Progression
           </Typography>
           <Line data={collisionChartData} options={collisionChartOptions} />
         </Box>

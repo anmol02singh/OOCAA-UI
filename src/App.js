@@ -38,6 +38,7 @@ function App() {
               <div className="app" style={{
                 width: '100vw',
                 height: '100vh',
+                "overflow-x": "hidden",
               }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
