@@ -149,6 +149,7 @@ export async function getAccounts(
                     }
 
                     const account: Account = {
+                        _id: item._id,
                         name: item.name,
                         username: item.username,
                         role: roleString,

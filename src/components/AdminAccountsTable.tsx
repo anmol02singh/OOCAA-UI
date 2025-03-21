@@ -67,6 +67,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
 
     const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
     const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
+    const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -204,6 +205,22 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
             return true;
         });
     };
+
+    const handleSetSelected = (account: Account) => {
+        if (!account) return;
+
+        if (selectedAccounts.some(
+            selectedAccount => selectedAccount._id === account._id
+        )) {
+            const newSelectedAccounts = selectedAccounts.filter(selectedAccount => {
+                if (selectedAccount._id === account._id) return false;
+                return true;
+            })
+            setSelectedAccounts(newSelectedAccounts);
+        } else {
+            setSelectedAccounts([...selectedAccounts, account]);
+        }
+    }
 
     const handleChangePage = (event, newPage: number) => {
         setPage(newPage);
@@ -370,23 +387,25 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                             .map((account, index) => (
                                 <TableRow
                                     key={index}
+                                    onClick={() => handleSetSelected(account)}
                                     sx={{
                                         cursor: 'pointer',
-                                        // backgroundColor: 
-                                        //   selectedEvent && eventItem._id === selectedEvent._id
-                                        //     ? theme.palette.background.default
-                                        //     : undefined,
+                                        backgroundColor:
+                                            selectedAccounts && selectedAccounts.some(
+                                                selectedAccount => selectedAccount._id === account._id
+                                            )
+                                                ? colors.primary[500]
+                                                : undefined,
                                         '&:hover': {
                                             backgroundColor: colors.primary[500],
                                         },
                                     }}
-                                // onClick={() => onEventClick(eventItem)}
                                 >
                                     <TableCell>
                                         <Checkbox
                                             key={index}
                                             // checked={checked}
-                                            // onChange={handleChange}
+                                            // onChange={handleChecked}
                                             sx={{
                                                 color: colors.grey[100],
                                                 '&.Mui-checked': {
