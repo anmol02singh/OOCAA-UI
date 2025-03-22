@@ -24,12 +24,12 @@ const Topbar: FC = () => {
     
     const [activeUsername, setActiveUsername] = useState<string>('');
 
-    // if (localStorage.getItem("accountToken")) {
-    //     userdata(localStorage.getItem("accountToken"))
-    //         .then(json => json.username)
-    //         .then(setActiveUsername);
-    // }
-
+    const accountToken = localStorage.getItem("accountToken");
+    if (accountToken) {
+        userdata(accountToken)
+            .then(json => json.username)
+            .then(setActiveUsername);
+    }
     function logout() {
         localStorage.removeItem("accountToken");
         window.location.reload();
