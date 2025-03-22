@@ -96,6 +96,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
     const handleReset = () => {
         setFilterRole({ min: '', max: '' });
+        setSearchBar({criterion: 'username', value: ''})
         setSubmitReset(true);
     }
 

@@ -155,6 +155,8 @@ export const useStyling = () => {
         minWidth: '100%',
         overflowX: "auto",
         display: "inline-block",
+        border: 'none',
+        fontSize: '14px'
     });
 
     const button: React.CSSProperties = {
