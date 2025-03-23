@@ -197,6 +197,30 @@ export async function updateGeneralUserData(
     }
 }
 
+export async function deleteAccounts(
+    token: string,
+    usernames: string[],
+) {
+    try {
+        const response = await fetch(`${API_URL}/deleteAccounts`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                usernames: usernames,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user account:', error);
+        throw error;
+    }
+}
+
 export async function updateProfileImage(
     token: string,
     newImage: string,

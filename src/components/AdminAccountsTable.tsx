@@ -3,9 +3,9 @@ import {
     Box,
     useTheme,
 } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 import { tokens } from '../theme.tsx';
-import { getAccounts } from '../API/account.tsx';
+import { getAccounts, deleteAccounts } from '../API/account.tsx';
 import { Account } from '../types.tsx';
 import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
 
@@ -65,7 +65,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
 
     const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
     const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
-    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+    const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
     useEffect(() => {
         if (token) {
@@ -79,21 +79,21 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     }, []);
 
     useEffect(() => {
-        console.log(selectedRows)
         updateButtons(selectedRows);
     }, [selectedRows]);
 
-    //When you submit a search, reset filtering, then list the matching accounts.
     useEffect(() => {
         handleSearch();
     }, [submitSearch]);
 
-    //When you submit filtering, filter the current account list. 
     useEffect(() => {
         handleFilter();
     }, [submitFilter]);
 
-    //When you reset filtering, search and the original account list again.
+    useEffect(() => {
+        handleDelete();
+    }, [submitDelete]);
+
     useEffect(() => {
         handleReset();
     }, [submitReset]);
@@ -130,6 +130,22 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
         }
     }
 
+    const handleDelete = () => {
+        if (submitDelete) {
+            if (token) {
+                deleteAccounts(token, selectedRows.filter(username => filteredAccounts.map(account => {
+                    if (!account || !account.username) return false;
+                    return account.username.includes(username);
+                })))
+                    .then(result => {
+                        if(!result) return;
+                        setSubmitReset(true);
+                    });
+            }
+            setSubmitDelete(false);
+        }
+    }
+    
     const handleReset = () => {
         if (submitReset) {
             if (token) {
@@ -232,8 +248,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
         },
     ];
 
-    const getRowId = (row: Account) => {
-        return filteredAccounts.indexOf(row)
+    const getRowId = (row: Account): GridRowId => {
+        return (row && row.username) ? row.username : filteredAccounts.indexOf(row);
     }
 
     return (
@@ -254,7 +270,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                 getRowId={getRowId}
                 columns={columns}
                 rowSelectionModel={selectedRows}
-                onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as number[])}
+                onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as string[])}
                 pageSizeOptions={[5, 10, 25, 50, 100]}
                 initialState={{
                     pagination: {
