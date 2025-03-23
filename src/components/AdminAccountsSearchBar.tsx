@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, ClickAwayListener, InputBase, MenuItem, Popper, Select, TextField, Typography, useTheme } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, InputBase, MenuItem, Select, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { tokens } from '../theme.tsx';
-import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../pages/Admin/AdminUtilities.tsx';
 import AdminFilterPopper from './AdminFilterPopper.tsx';
+import AdminEditRoleDialogue from './AdminEditRoleDialogue.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
@@ -28,6 +29,8 @@ interface SearchBarProps {
         value: string;
     }>>;
     disabled: boolean;
+    newRole: number;
+    setNewRole: React.Dispatch<React.SetStateAction<number>>;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmitEdit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,6 +45,8 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     searchBar,
     setSearchBar,
     disabled,
+    newRole,
+    setNewRole,
     setSubmitSearch,
     setSubmitFilter,
     setSubmitEdit,
@@ -51,19 +56,27 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
     const {
         searchAndFilterContainer,
+        button,
+        button_hover,
+    } = useGeneralStyling();
+
+    const {
         searchContainer,
         searchField,
         searchField_outline,
         searchField_hover,
         searchField_focused,
+    } = useSearchStyling();
+
+    const {
         filterContainer,
         filterDropdown,
-        button,
-        button_hover,
-    } = useStyling();
+    } = useFilterStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
+    const [dialogueOpen, setDialogueOpen] = React.useState(false);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null)
     const open = Boolean(anchorEl);
@@ -85,8 +98,12 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     }
 
     const handleEdit = () => {
-        setSubmitEdit(true);
+        setDialogueOpen(true);
     }
+
+    const handleClose = () => {
+        setDialogueOpen(false);
+    };
 
     const handleDelete = () => {
         setSubmitDelete(true);
@@ -166,9 +183,6 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
                     setSubmitFilter={setSubmitFilter}
-                    setSubmitEdit={setSubmitEdit}
-                    setSubmitDelete={setSubmitDelete}
-                    setSubmitReset={setSubmitReset}
                 />
 
                 {!disabled && (
@@ -211,6 +225,14 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                     <RestartAltIcon sx={{ color: colors.grey[100] }} />
                 </Button>
             </Box>
+            <AdminEditRoleDialogue
+                open={dialogueOpen}
+                onClose={handleClose}
+                pageWidth={pageWidth}
+                newRole={newRole}
+                setNewRole={setNewRole}
+                setSubmitEdit={setSubmitEdit}
+            />
         </Box>
     );
 };

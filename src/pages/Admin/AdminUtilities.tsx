@@ -19,7 +19,7 @@ export const getPageWidth = (boxRef: MutableRefObject<HTMLDivElement | null>): n
 
 /*############### Styling ###############*/
 /*==========Styling==========*/
-export const useStyling = () => {
+export const useGeneralStyling = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -36,6 +36,10 @@ export const useStyling = () => {
         minHeight: 0,
         overflowX: 'hidden',
         overflowY: 'auto',
+    };
+
+    const adminElements: React.CSSProperties = {
+        width: '100%',
     };
 
     const adminSettingsContainer = (pageWidth: number): React.CSSProperties => ({
@@ -67,6 +71,59 @@ export const useStyling = () => {
         minWidth: '100%',
         gap: '2rem',
     });
+
+    const accountsTableContainer = (pageWidth: number): React.CSSProperties => ({
+        backgroundColor: colors.primary[400],
+        color: colors.grey[100],
+        marginTop: '1rem',
+        width:
+            pageWidth >= mdWindowWidth ? '65vw'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
+                    : '44vw',
+        minWidth: '100%',
+        overflowX: "auto",
+        display: "inline-block",
+        border: 'none',
+        fontSize: '14px'
+    });
+
+    const button: React.CSSProperties = {
+        display: 'flex',
+        flex: 'none',
+        padding: '0.5rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '14px',
+        width: '4em',
+    };
+
+    const button_hover: React.CSSProperties = {
+        backgroundColor: colors.primary[600],
+        color: colors.blueAccent[500],
+    };
+
+    const button_click: React.CSSProperties = {
+        color: colors.blueAccent[500],
+    };
+
+    return {
+        pageContainer,
+        adminElements,
+        adminSettingsContainer,
+        searchAndFilterContainer,
+        accountsTableContainer,
+        button,
+        button_hover,
+        button_click,
+    };
+};
+
+export const useSearchStyling = () => {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
 
     const searchContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
@@ -104,6 +161,20 @@ export const useStyling = () => {
     const searchField_focused: React.CSSProperties = {
         border: '1px solid ' + colors.primary[400],
     };
+
+    return {
+        searchContainer,
+        searchField,
+        searchField_outline,
+        searchField_hover,
+        searchField_focused,
+    }
+}
+
+export const useFilterStyling = () => {
+
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
 
     const filterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
@@ -145,67 +216,104 @@ export const useStyling = () => {
         borderRadius: '4px',
     };
 
-    const accountsTableContainer = (pageWidth: number): React.CSSProperties => ({
-        backgroundColor: colors.primary[400],
-        color: colors.grey[100],
-        marginTop: '1rem',
-        width:
-            pageWidth >= mdWindowWidth ? '65vw'
-                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
-                    : '44vw',
-        minWidth: '100%',
-        overflowX: "auto",
-        display: "inline-block",
-        border: 'none',
-        fontSize: '14px'
-    });
-
-    const button: React.CSSProperties = {
-        display: 'flex',
-        flex: 'none',
-        padding: '0.5rem',
-        cursor: 'pointer',
-        borderRadius: '6px',
-        color: colors.grey[100],
-        backgroundColor: colors.primary[500],
-        textTransform: 'none',
-        fontSize: '14px',
-        width: '4em',
-    };
-
-    const button_hover: React.CSSProperties = {
-        backgroundColor: colors.primary[600],
-        color: colors.blueAccent[500],
-    };
-
-    const button_click: React.CSSProperties = {
-        color: colors.blueAccent[500],
-    };
-
     const fieldLabel: React.CSSProperties = {
         textWrap: 'nowrap',
         color: colors.grey[100]
     };
 
     return {
-        pageContainer,
-        adminSettingsContainer,
-        searchAndFilterContainer,
-        searchContainer,
-        searchField,
-        searchField_outline,
-        searchField_hover,
-        searchField_focused,
         filterContainer,
         filterDropdown,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,
         filterTextField_outline,
-        accountsTableContainer,
-        button,
-        button_hover,
-        button_click,
         fieldLabel,
     };
-};
+}
+
+export const useEditItemStyling = () => {
+
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+
+    const {filterDropdown} = useFilterStyling();
+
+    const adminDialogueContainer = (pageWidth: number): React.CSSProperties => ({
+        padding:
+            pageWidth >= mdWindowWidth ? '3rem'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
+                    : '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '50vw',
+        minWidth: '22rem',
+        maxWidth: '33rem',
+        backgroundColor: colors.primary[400],
+        borderRadius: '9px',
+        backgroundImage: 'none',
+        gap: '1rem',
+        overflow: 'auto',
+    });
+
+    const editItemHeader: React.CSSProperties = {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minWidth: '13.1rem',
+    };
+
+    const editItemContainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+    };
+
+    const editItemDropdown: React.CSSProperties = {
+        ...filterDropdown,
+        width: '23vw',
+        minWidth: '11rem',
+        maxWidth: '17rem',
+        height: '2.5rem',
+        fontSize: '16px',
+    }
+
+    const editItemMenu: React.CSSProperties = {
+        width: '23vw',
+        minWidth: '11rem !important',
+        maxWidth: '17rem',
+        backgroundColor: colors.primary[400],
+    }
+
+    const editItemButtonContainer: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+    };
+
+    const editItemSaveButton: React.CSSProperties = {
+        padding: '0.8rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '1rem',
+        margin: '0.5rem',
+        width: '6rem',
+    };
+
+    return {
+        adminDialogueContainer,
+        editItemHeader,
+        editItemContainer,
+        editItemDropdown,
+        editItemMenu,
+        editItemButtonContainer,
+        editItemSaveButton,
+    };
+}

@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import {
     getPageWidth,
-    useStyling,
+    useGeneralStyling,
 } from './AdminUtilities.tsx';
 import AdminAccountSearchBar from '../../components/AdminAccountsSearchBar.tsx';
 import AdminAccountsTable from '../../components/AdminAccountsTable.tsx';
+import { userdata } from '../../API/account.tsx';
 
 const AdminManageAccount = () => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const AdminManageAccount = () => {
     const {
         pageContainer,
         adminSettingsContainer,
-    } = useStyling();
+    } = useGeneralStyling();
 
     const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
         min: '',
@@ -34,6 +35,17 @@ const AdminManageAccount = () => {
     }
 
     useEffect(() => {
+        if (token) {
+            userdata(token)
+                .then(account => {
+                    if(account && account.roleNum > 0){
+                        navigate('/');
+                    }
+                });
+        }
+    }, []);
+
+    useEffect(() => {
         updatePageWidth();
         window.addEventListener('resize', updatePageWidth);
 
@@ -44,6 +56,7 @@ const AdminManageAccount = () => {
 
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
     const [disabled, setDisabled] = useState<boolean>(true);
+    const [newRole, setNewRole] = useState<number>(1);
     const [submitSearch, setSubmitSearch] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
     const [submitEdit, setSubmitEdit] = useState<boolean>(false);
@@ -60,6 +73,8 @@ const AdminManageAccount = () => {
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
                     disabled={disabled}
+                    newRole={newRole}
+                    setNewRole={setNewRole}
                     setSearchBar={setSearchBar}
                     setSubmitSearch={setSubmitSearch}
                     setSubmitFilter={setSubmitFilter}
@@ -76,6 +91,7 @@ const AdminManageAccount = () => {
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
                     setDisabled={setDisabled}
+                    newRole={newRole}
                     submitSearch={submitSearch}
                     setSubmitSearch={setSubmitSearch}
                     submitFilter={submitFilter}

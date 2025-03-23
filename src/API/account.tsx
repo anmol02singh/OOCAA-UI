@@ -10,7 +10,9 @@ export async function userdata(token: string) {
             body: JSON.stringify({ token: token }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
@@ -121,7 +123,11 @@ export async function getAccounts(
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
@@ -186,7 +192,9 @@ export async function updateGeneralUserData(
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
@@ -197,26 +205,60 @@ export async function updateGeneralUserData(
     }
 }
 
+export async function updateAccountsRole(
+    token: string,
+    usernames: string[],
+    role: number,
+) {
+    try {
+        const response = await fetch(`${API_URL}/updateAccountsRole`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                usernames: usernames,
+                role: role,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user accounts:', error);
+        throw error;
+    }
+}
+
 export async function deleteAccounts(
     token: string,
     usernames: string[],
 ) {
     try {
         const response = await fetch(`${API_URL}/deleteAccounts`, {
-            method: "PUT",
+            method: "DELETE",
             body: JSON.stringify({
                 token: token,
                 usernames: usernames,
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
         return await response.json();
     } catch (error) {
-        console.error('Error updating user account:', error);
+        console.error('Error deleting user accounts:', error);
         throw error;
     }
 }
@@ -234,7 +276,9 @@ export async function updateProfileImage(
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
@@ -254,7 +298,9 @@ export async function removeProfileImage(token: string) {
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 

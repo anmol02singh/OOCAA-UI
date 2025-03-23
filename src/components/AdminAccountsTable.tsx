@@ -5,11 +5,11 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 import { tokens } from '../theme.tsx';
-import { getAccounts, deleteAccounts } from '../API/account.tsx';
+import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../API/account.tsx';
 import { Account } from '../types.tsx';
-import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { useGeneralStyling } from '../pages/Admin/AdminUtilities.tsx';
 
-interface EventTableProps {
+interface AccountTableProps {
     token: string | null;
     pageWidth: number;
     filterRole: {
@@ -25,6 +25,7 @@ interface EventTableProps {
         value: string;
     };
     setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+    newRole: number;
     submitSearch: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     submitFilter: boolean;
@@ -37,13 +38,14 @@ interface EventTableProps {
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AdminAccountsTable: React.FC<EventTableProps> = ({
+const AdminAccountsTable: React.FC<AccountTableProps> = ({
     token,
     pageWidth,
     filterRole,
     setFilterRole,
     searchBar,
     setDisabled,
+    newRole,
     submitSearch,
     setSubmitSearch,
     submitFilter,
@@ -58,7 +60,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
 
     const {
         accountsTableContainer,
-    } = useStyling();
+    } = useGeneralStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -66,9 +68,14 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
     const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
+    const [currentUser, setCurrentUser] = useState<Account>();
 
     useEffect(() => {
         if (token) {
+            userdata(token)
+                .then(account => {
+                    setCurrentUser(account);
+                });
             getAccounts(token)
                 .then(accounts => {
                     setSearchedAccounts(accounts);
@@ -91,6 +98,10 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     }, [submitFilter]);
 
     useEffect(() => {
+        handleEdit();
+    }, [submitEdit]);
+
+    useEffect(() => {
         handleDelete();
     }, [submitDelete]);
 
@@ -99,9 +110,9 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     }, [submitReset]);
 
     const updateButtons = (selectedRows) => {
-        if(selectedRows.length > 0){
+        if (selectedRows.length > 0) {
             setDisabled(false);
-        }else{
+        } else {
             setDisabled(true);
         }
     }
@@ -130,6 +141,26 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
         }
     }
 
+    const handleEdit = () => {
+        if (submitEdit) {
+            if (token) {
+                updateAccountsRole(
+                    token,
+                    selectedRows.filter(username => filteredAccounts.map(account => {
+                        if (!account || !account.username) return false;
+                        return account.username.includes(username);
+                    })),
+                    newRole,
+                )
+                    .then(result => {
+                        if (!result) return;
+                        setSubmitReset(true);
+                    });
+            }
+            setSubmitEdit(false);
+        }
+    }
+
     const handleDelete = () => {
         if (submitDelete) {
             if (token) {
@@ -138,14 +169,14 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                     return account.username.includes(username);
                 })))
                     .then(result => {
-                        if(!result) return;
+                        if (!result) return;
                         setSubmitReset(true);
                     });
             }
             setSubmitDelete(false);
         }
     }
-    
+
     const handleReset = () => {
         if (submitReset) {
             if (token) {
@@ -271,6 +302,11 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                 columns={columns}
                 rowSelectionModel={selectedRows}
                 onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as string[])}
+                getRowClassName={(params) =>
+                    currentUser !== undefined && params.row.username === currentUser.username
+                        ? 'currentUser'
+                        : ''
+                }
                 pageSizeOptions={[5, 10, 25, 50, 100]}
                 initialState={{
                     pagination: {
@@ -312,6 +348,9 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                     },
                     "& .MuiDataGrid-row": {
                         cursor: 'pointer',
+                        '&.currentUser': {
+                            color: '#f44336',
+                        },
                         '&.Mui-selected': {
                             backgroundColor: colors.primary[500],
                             '&:hover': {

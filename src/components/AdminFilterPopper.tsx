@@ -3,7 +3,7 @@ import { Box, ClickAwayListener, IconButton, Popper, TextField, Typography, useT
 import CheckIcon from '@mui/icons-material/Check';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { tokens } from '../theme.tsx';
-import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { useFilterStyling } from '../pages/Admin/AdminUtilities.tsx';
 
 interface FilterPopperProps {
     pageWidth: number;
@@ -36,7 +36,7 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
         filterTextField_input,
         filterTextField_outline,
         fieldLabel,
-    } = useStyling();
+    } = useFilterStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
