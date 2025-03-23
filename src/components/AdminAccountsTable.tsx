@@ -24,10 +24,15 @@ interface EventTableProps {
         criterion: string;
         value: string;
     };
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
     submitSearch: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     submitFilter: boolean;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
+    submitEdit: boolean;
+    setSubmitEdit: React.Dispatch<React.SetStateAction<boolean>>;
+    submitDelete: boolean;
+    setSubmitDelete: React.Dispatch<React.SetStateAction<boolean>>;
     submitReset: boolean;
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -38,10 +43,15 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
     filterRole,
     setFilterRole,
     searchBar,
+    setDisabled,
     submitSearch,
     setSubmitSearch,
     submitFilter,
     setSubmitFilter,
+    submitEdit,
+    setSubmitEdit,
+    submitDelete,
+    setSubmitDelete,
     submitReset,
     setSubmitReset,
 }) => {
@@ -55,6 +65,7 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
 
     const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
     const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
     useEffect(() => {
         if (token) {
@@ -67,8 +78,35 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
         //eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        console.log(selectedRows)
+        updateButtons(selectedRows);
+    }, [selectedRows]);
+
     //When you submit a search, reset filtering, then list the matching accounts.
     useEffect(() => {
+        handleSearch();
+    }, [submitSearch]);
+
+    //When you submit filtering, filter the current account list. 
+    useEffect(() => {
+        handleFilter();
+    }, [submitFilter]);
+
+    //When you reset filtering, search and the original account list again.
+    useEffect(() => {
+        handleReset();
+    }, [submitReset]);
+
+    const updateButtons = (selectedRows) => {
+        if(selectedRows.length > 0){
+            setDisabled(false);
+        }else{
+            setDisabled(true);
+        }
+    }
+
+    const handleSearch = () => {
         if (submitSearch) {
             //Reset filtering
             setFilterRole({ min: '', max: '' });
@@ -82,19 +120,17 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
             //Disable submit flag.
             setSubmitSearch(false);
         }
-    }, [submitSearch]);
+    }
 
-    //When you submit filtering, filter the current account list. 
-    useEffect(() => {
+    const handleFilter = () => {
         if (submitFilter) {
             //Filter current account list and disable submit flag.
             setFilteredAccounts(getFilteredAccounts(searchedAccounts));
             setSubmitFilter(false);
         }
-    }, [submitFilter]);
+    }
 
-    //When you reset filtering, search and the original account list again.
-    useEffect(() => {
+    const handleReset = () => {
         if (submitReset) {
             if (token) {
                 getAccounts(token)
@@ -103,9 +139,10 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                         setFilteredAccounts(accounts);
                     });
             }
+            setSelectedRows([]);
             setSubmitReset(false);
         }
-    }, [submitReset]);
+    }
 
     const getSearchedAccounts = async (): Promise<Account[]> => {
         if (!token) return searchedAccounts;
@@ -216,6 +253,8 @@ const AdminAccountsTable: React.FC<EventTableProps> = ({
                 rows={filteredAccounts}
                 getRowId={getRowId}
                 columns={columns}
+                rowSelectionModel={selectedRows}
+                onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as number[])}
                 pageSizeOptions={[5, 10, 25, 50, 100]}
                 initialState={{
                     pagination: {

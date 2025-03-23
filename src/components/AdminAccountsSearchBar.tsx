@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, InputBase, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, ClickAwayListener, InputBase, MenuItem, Popper, Select, TextField, Typography, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { tokens } from '../theme.tsx';
 import { useStyling } from '../pages/Admin/AdminUtilities.tsx';
+import AdminFilterPopper from './AdminFilterPopper.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
@@ -24,8 +27,11 @@ interface SearchBarProps {
         criterion: string;
         value: string;
     }>>;
+    disabled: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
+    setSubmitEdit: React.Dispatch<React.SetStateAction<boolean>>;
+    setSubmitDelete: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -35,8 +41,11 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     setFilterRole,
     searchBar,
     setSearchBar,
+    disabled,
     setSubmitSearch,
     setSubmitFilter,
+    setSubmitEdit,
+    setSubmitDelete,
     setSubmitReset,
 }) => {
 
@@ -49,17 +58,15 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         searchField_focused,
         filterContainer,
         filterDropdown,
-        filterTextField,
-        fixFilterTextField,
-        filterTextField_input,
-        filterTextField_outline,
         button,
         button_hover,
-        fieldLabel,
     } = useStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null)
+    const open = Boolean(anchorEl);
 
     const handleCriterionChange = (criterion: string) => {
         setSearchBar({ ...searchBar, criterion: criterion });
@@ -73,30 +80,21 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         setSubmitSearch(true);
     }
 
-    const handleFilter = () => {
-        setSubmitFilter(true);
+    const handleToggleFilter = (event) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
     }
 
-    const handleFilterChange = (event) => {
-        const filterName = event.target.name;
-        if (filterName !== 'min' && filterName !== 'max') return;
+    const handleEdit = () => {
+        setSubmitEdit(true);
+    }
 
-        const filterValue = event.target.value;
-        if (Number.isNaN(filterValue) || filterValue < 0 || filterValue > 2) return;
-        if (filterValue !== ''
-            && filterName === 'min'
-            && filterRole.max !== ''
-            && filterValue > filterRole.max) return;
-        if (filterValue !== ''
-            && filterName === 'max'
-            && filterRole.min !== ''
-            && filterValue < filterRole.min) return;
-        setFilterRole({ ...filterRole, [filterName]: (filterValue === '') ? '' : filterValue })
+    const handleDelete = () => {
+        setSubmitDelete(true);
     }
 
     const handleReset = () => {
         setFilterRole({ min: '', max: '' });
-        setSearchBar({criterion: 'username', value: ''})
+        setSearchBar({ criterion: 'username', value: '' })
         setSubmitReset(true);
     }
 
@@ -149,95 +147,8 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 </Button>
             </Box>
             <Box sx={filterContainer(pageWidth)}>
-                <Typography variant='h6' sx={fieldLabel}>
-                    Role =
-                </Typography>
-                <TextField
-                    name='min'
-                    label='Min (0-2)'
-                    type='number'
-                    value={filterRole.min}
-                    onChange={handleFilterChange}
-                    sx={{
-                        ...filterTextField,
-                        '& .MuiInputBase-root': {
-                            ...fixFilterTextField,
-                        },
-                        '& .MuiInputBase-input': {
-                            ...filterTextField_input,
-                        },
-                        '& .MuiOutlinedInput-notchedOutline': {
-                            ...filterTextField_outline,
-                            '&:hover': {
-                                borderColor: colors.grey[100],
-                            },
-                            '&.Mui-focused': {
-                                border: 'none',
-                            },
-                        },
-                        '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                            '-webkit-appearance': 'none',
-                            margin: 0,
-                        },
-                        '& input[type=number]': {
-                            '-moz-appearance': 'textfield',
-                        },
-                        '& .MuiInputLabel-root': {
-                            display: 'flex',
-                            flex: 'none',
-                            justifyContent: 'left',
-                            alignItems: 'center',
-                            width: '100%',
-                            height: '100%',
-                            top: '50%',
-                            transform: 'translateX(0.5rem) translateY(-50%)',
-                        },
-                    }}
-                />
-                <TextField
-                    name='max'
-                    label='Max (0-2)'
-                    type='number'
-                    value={filterRole.max}
-                    onChange={handleFilterChange}
-                    sx={{
-                        ...filterTextField,
-                        '& .MuiInputBase-root': {
-                            ...fixFilterTextField,
-                        },
-                        '& .MuiInputBase-input': {
-                            ...filterTextField_input,
-                        },
-                        '& .MuiOutlinedInput-notchedOutline': {
-                            ...filterTextField_outline,
-                            '&:hover': {
-                                borderColor: colors.grey[100],
-                            },
-                            '&.Mui-focused': {
-                                border: 'none',
-                            },
-                        },
-                        '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                            '-webkit-appearance': 'none',
-                            margin: 0,
-                        },
-                        '& input[type=number]': {
-                            '-moz-appearance': 'textfield',
-                        },
-                        '& .MuiInputLabel-root': {
-                            display: 'flex',
-                            flex: 'none',
-                            justifyContent: 'left',
-                            alignItems: 'center',
-                            width: '100%',
-                            height: '100%',
-                            top: '50%',
-                            transform: 'translateX(0.5rem) translateY(-50%)',
-                        },
-                    }}
-                />
                 <Button
-                    onClick={handleFilter}
+                    onClick={handleToggleFilter}
                     sx={{
                         ...button,
                         '&:hover': {
@@ -247,6 +158,51 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 >
                     <FilterListIcon sx={{ color: colors.grey[100] }} />
                 </Button>
+                <AdminFilterPopper
+                    pageWidth={pageWidth}
+                    handleToggleFilter={handleToggleFilter}
+                    open={open}
+                    anchorEl={anchorEl}
+                    setAnchorEl={setAnchorEl}
+                    filterRole={filterRole}
+                    setFilterRole={setFilterRole}
+                    searchBar={searchBar}
+                    setSearchBar={setSearchBar}
+                    setSubmitSearch={setSubmitSearch}
+                    setSubmitFilter={setSubmitFilter}
+                    setSubmitEdit={setSubmitEdit}
+                    setSubmitDelete={setSubmitDelete}
+                    setSubmitReset={setSubmitReset}
+                />
+
+                {!disabled && (
+                    <>
+                        <Button
+                            onClick={handleEdit}
+                            sx={{
+                                ...button,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            <EditIcon sx={{ color: colors.grey[100] }} />
+                        </Button>
+                        
+                        <Button
+                            onClick={handleDelete}
+                            sx={{
+                                ...button,
+                                '&:hover': {
+                                    ...button_hover
+                                },
+                            }}
+                        >
+                            <DeleteIcon sx={{ color: colors.grey[100] }} />
+                        </Button>
+                    </>
+                )}
+
                 <Button
                     onClick={handleReset}
                     sx={{

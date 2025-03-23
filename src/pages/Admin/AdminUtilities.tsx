@@ -129,6 +129,7 @@ export const useStyling = () => {
         color: colors.grey[100],
         backgroundColor: colors.primary[500],
         padding: '0',
+        borderRadius: '4px',
     };
 
     const fixFilterTextField: React.CSSProperties = {
@@ -136,7 +137,7 @@ export const useStyling = () => {
     };
 
     const filterTextField_input: React.CSSProperties = {
-        fontSize: '16px',
+        fontSize: '14px',
     };
 
     const filterTextField_outline: React.CSSProperties = {

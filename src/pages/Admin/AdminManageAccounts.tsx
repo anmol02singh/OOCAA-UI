@@ -43,8 +43,11 @@ const AdminManageAccount = () => {
     }, [pageWidth]);
 
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
+    const [disabled, setDisabled] = useState<boolean>(true);
     const [submitSearch, setSubmitSearch] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
+    const [submitEdit, setSubmitEdit] = useState<boolean>(false);
+    const [submitDelete, setSubmitDelete] = useState<boolean>(false);
     const [submitReset, setSubmitReset] = useState<boolean>(false);
 
     return (
@@ -56,9 +59,12 @@ const AdminManageAccount = () => {
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
+                    disabled={disabled}
                     setSearchBar={setSearchBar}
                     setSubmitSearch={setSubmitSearch}
                     setSubmitFilter={setSubmitFilter}
+                    setSubmitEdit={setSubmitEdit}
+                    setSubmitDelete={setSubmitDelete}
                     setSubmitReset={setSubmitReset}
                 />
 
@@ -69,10 +75,15 @@ const AdminManageAccount = () => {
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
                     searchBar={searchBar}
+                    setDisabled={setDisabled}
                     submitSearch={submitSearch}
                     setSubmitSearch={setSubmitSearch}
                     submitFilter={submitFilter}
                     setSubmitFilter={setSubmitFilter}
+                    submitEdit={submitEdit}
+                    setSubmitEdit={setSubmitEdit}
+                    submitDelete={submitDelete}
+                    setSubmitDelete={setSubmitDelete}
                     submitReset={submitReset}
                     setSubmitReset={setSubmitReset}
                 />
