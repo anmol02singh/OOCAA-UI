@@ -30,7 +30,6 @@ export const useGeneralStyling = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: '4rem 0',
         backgroundColor: colors.primary[500],
         minWidth: 0,
         minHeight: 0,
@@ -43,20 +42,19 @@ export const useGeneralStyling = () => {
     };
 
     const adminSettingsContainer = (pageWidth: number): React.CSSProperties => ({
-        width: '95%',
-        minWidth: '21rem',
-        minHeight: '75vh',
-        padding:
-            pageWidth >= mdWindowWidth ? '3rem'
-                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
-                    : '2rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        width: '95%',
+        minWidth: '21rem',
+        margin: '2rem 0',
+        padding:
+            pageWidth >= mdWindowWidth ? '3rem'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
+                    : '2rem',
         backgroundColor: colors.primary[400],
         borderRadius: '9px',
-        overflow: 'hidden',
     });
 
     const searchAndFilterContainer = (pageWidth: number): React.CSSProperties => ({
@@ -71,6 +69,16 @@ export const useGeneralStyling = () => {
         minWidth: '100%',
         gap: '2rem',
     });
+
+    const accountsDataGridContainer: React.CSSProperties = {
+        width: '100%',
+        display: 'flex',
+        flexGrow: '1',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        minWidth: 0,
+    }
 
     const accountsTableContainer = (pageWidth: number): React.CSSProperties => ({
         backgroundColor: colors.primary[400],
@@ -87,7 +95,7 @@ export const useGeneralStyling = () => {
         fontSize: '14px'
     });
 
-    const button: React.CSSProperties = {
+    const button = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flex: 'none',
         padding: '0.5rem',
@@ -97,8 +105,9 @@ export const useGeneralStyling = () => {
         backgroundColor: colors.primary[500],
         textTransform: 'none',
         fontSize: '14px',
-        width: '4em',
-    };
+        width: pageWidth >= smWindowWidth ? '4rem' : '3rem',
+        minWidth: 0,
+    });
 
     const button_hover: React.CSSProperties = {
         backgroundColor: colors.primary[600],
@@ -114,6 +123,7 @@ export const useGeneralStyling = () => {
         adminElements,
         adminSettingsContainer,
         searchAndFilterContainer,
+        accountsDataGridContainer,
         accountsTableContainer,
         button,
         button_hover,
@@ -125,14 +135,31 @@ export const useSearchStyling = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const searchContainer = (pageWidth: number): React.CSSProperties => ({
+    const searchAndSelectContainer = (pageWidth: number): React.CSSProperties => ({
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '100%',
+        gap: pageWidth >= smWindowWidth ? 0 : '0.5rem',
+    });
+
+    const searchContainer: React.CSSProperties = {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'left',
         alignItems: 'center',
-        width: pageWidth > mdWindowWidth ? '60%' : '100%',
+        width: '100%',
         gap: '0.5rem',
-    });
+    }
+
+    const filterDropdown: React.CSSProperties = {
+        backgroundColor: colors.primary[500],
+        color: colors.grey[100],
+        height: '2.5rem',
+        width: '9rem',
+        borderRadius: '4px',
+    }
 
     const searchField: React.CSSProperties = {
         display: 'flex',
@@ -163,7 +190,9 @@ export const useSearchStyling = () => {
     };
 
     return {
+        searchAndSelectContainer,
         searchContainer,
+        filterDropdown,
         searchField,
         searchField_outline,
         searchField_hover,
@@ -179,18 +208,25 @@ export const useFilterStyling = () => {
     const filterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'right',
+        justifyContent: pageWidth >= smWindowWidth ? 'flex-end' : 'center',
         alignItems: 'center',
-        width: pageWidth > mdWindowWidth ? '40%' : '100%',
         gap: '0.5rem',
     });
 
-    const filterDropdown: React.CSSProperties = {
-        backgroundColor: colors.primary[500],
-        color: colors.grey[100],
-        height: '2.5rem',
-        width: '9rem',
+    const filterPopperContentContainer: React.CSSProperties = {
+        display: 'flex',
+        flex: '0 1 0',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flext-start',
+        padding: '0.5rem',
+        gap: '0.25rem',
         borderRadius: '4px',
+        backgroundColor: colors.primary[350],
+        boxShadow: `
+            0px 5px 5px -3px rgba(0,0,0,0.2),
+            0px 8px 10px 1px rgba(0,0,0,0.14),
+            0px 3px 14px 2px rgba(0,0,0,0.12)`,
     }
 
     const filterTextField: React.CSSProperties = {
@@ -223,7 +259,7 @@ export const useFilterStyling = () => {
 
     return {
         filterContainer,
-        filterDropdown,
+        filterPopperContentContainer,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,
@@ -237,7 +273,7 @@ export const useEditItemStyling = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const {filterDropdown} = useFilterStyling();
+    const { filterDropdown } = useSearchStyling();
 
     const adminDialogueContainer = (pageWidth: number): React.CSSProperties => ({
         padding:
@@ -259,10 +295,10 @@ export const useEditItemStyling = () => {
     });
 
     const editItemHeader: React.CSSProperties = {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minWidth: '13.1rem',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minWidth: '13.1rem',
     };
 
     const editItemContainer: React.CSSProperties = {

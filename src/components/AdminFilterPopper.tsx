@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, ClickAwayListener, IconButton, Popper, TextField, Typography, useTheme } from '@mui/material';
+import { Box, ClickAwayListener, IconButton, Popper, TextField, Tooltip, Typography, useTheme } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { tokens } from '../theme.tsx';
@@ -31,6 +31,7 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
 }) => {
 
     const {
+        filterPopperContentContainer,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,
@@ -78,22 +79,7 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
             }}
         >
             <Box
-                sx={{
-                    display: 'flex',
-                    flex: '0 1 0',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flext-start',
-                    padding: '0.5rem',
-                    gap: '0.25rem',
-                    borderRadius: '4px',
-                    backgroundColor: colors.primary[400],
-                    boxShadow: `
-                        0px 5px 5px -3px rgba(0,0,0,0.2),
-                        0px 8px 10px 1px rgba(0,0,0,0.14),
-                        0px 3px 14px 2px rgba(0,0,0,0.12)`,
-                    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.119), rgba(255, 255, 255, 0.119))',
-                }}
+                sx={filterPopperContentContainer}
             >
                 <ClickAwayListener onClickAway={handleToggleFilter}>
                     <div>
@@ -184,12 +170,62 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
                                     },
                                 }}
                             />
-                            <IconButton onClick={handleFilter}>
-                                <CheckIcon sx={{ color: colors.grey[100] }} />
-                            </IconButton>
-                            <IconButton onClick={handleResetFilters}>
-                                <RestartAltIcon sx={{ color: colors.grey[100] }} />
-                            </IconButton>
+                            <Tooltip
+                                title="Save Filters"
+                                arrow
+                                enterDelay={1000}
+                                enterNextDelay={1000}
+                                slotProps={{
+                                    popper: {
+                                        sx: {
+                                            zIndex: 3000,
+                                        }
+                                    },
+                                    tooltip: {
+                                        sx: {
+                                            backgroundColor: colors.primary[350],
+                                            fontSize: '12px',
+                                        },
+                                    },
+                                    arrow: {
+                                        sx: {
+                                            color: colors.primary[350],
+                                        }
+                                    }
+                                }}
+                            >
+                                <IconButton onClick={handleFilter}>
+                                    <CheckIcon sx={{ color: colors.grey[100] }} />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                                title="Reset Filters"
+                                arrow
+                                enterDelay={1000}
+                                enterNextDelay={1000}
+                                slotProps={{
+                                    popper: {
+                                        sx: {
+                                            zIndex: 3000,
+                                        }
+                                    },
+                                    tooltip: {
+                                        sx: {
+                                            backgroundColor: colors.primary[350],
+                                            fontSize: '12px',
+                                        },
+                                    },
+                                    arrow: {
+                                        sx: {
+                                            color: colors.primary[350],
+                                        }
+                                    }
+                                }}
+                            >
+                                <IconButton onClick={handleResetFilters}>
+                                    <RestartAltIcon sx={{ color: colors.grey[100] }} />
+                                </IconButton>
+                            </Tooltip>
                         </Box>
                     </div>
                 </ClickAwayListener>

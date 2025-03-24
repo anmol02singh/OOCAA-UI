@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, InputBase, MenuItem, Select, useTheme } from '@mui/material';
+import { Box, Button, InputBase, MenuItem, Popper, Select, Tooltip, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -9,6 +9,7 @@ import { tokens } from '../theme.tsx';
 import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../pages/Admin/AdminUtilities.tsx';
 import AdminFilterPopper from './AdminFilterPopper.tsx';
 import AdminEditRoleDialogue from './AdminEditRoleDialogue.tsx';
+import { smWindowWidth } from '../pages/Profile/ProfileUtilities.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
@@ -61,7 +62,9 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     } = useGeneralStyling();
 
     const {
+        searchAndSelectContainer,
         searchContainer,
+        filterDropdown,
         searchField,
         searchField_outline,
         searchField_hover,
@@ -70,7 +73,6 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
     const {
         filterContainer,
-        filterDropdown,
     } = useFilterStyling();
 
     const theme = useTheme();
@@ -115,66 +117,111 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         setSubmitReset(true);
     }
 
+    const filterSelectMenu = (
+        <Select
+            value={searchBar.criterion}
+            onChange={(event) => handleCriterionChange(event.target.value)}
+            sx={filterDropdown}
+            MenuProps={{
+                PaperProps: {
+                    sx: {
+                        backgroundColor: colors.primary[350],
+                        backgroundImage: 'none',
+                    },
+                },
+            }}
+        >
+            <MenuItem value='username'>Username</MenuItem>
+            <MenuItem value='name'>Name</MenuItem>
+            <MenuItem value='email'>Email</MenuItem>
+            <MenuItem value='phoneNumber'>Phone Number</MenuItem>
+        </Select>
+    );
+
     return (
         <Box sx={searchAndFilterContainer(pageWidth)}>
-            <Box sx={searchContainer(pageWidth)}>
-                <Select
-                    value={searchBar.criterion}
-                    onChange={(event) => handleCriterionChange(event.target.value)}
-                    sx={filterDropdown}
-                    MenuProps={{
-                        PaperProps: {
-                            sx: {
-                                backgroundColor: colors.primary[400],
-                            },
-                        },
-                    }}
-                >
-                    <MenuItem value='username'>Username</MenuItem>
-                    <MenuItem value='name'>Name</MenuItem>
-                    <MenuItem value='email'>Email</MenuItem>
-                    <MenuItem value='phoneNumber'>Phone Number</MenuItem>
-                </Select>
-                <Box sx={searchField}>
-                    <InputBase
-                        placeholder='Search accounts here'
-                        value={searchBar.value}
-                        onChange={(e) => handleValueChange(e.target.value)}
+            <Box sx={searchAndSelectContainer(pageWidth)}>
+                <Box sx={searchContainer}>
+                    {pageWidth >= smWindowWidth && filterSelectMenu}
+                    <Box sx={searchField}>
+                        <InputBase
+                            placeholder='Search accounts here'
+                            value={searchBar.value}
+                            onChange={(e) => handleValueChange(e.target.value)}
+                            sx={{
+                                ...searchField_outline,
+                                '&:hover': {
+                                    ...searchField_hover,
+                                },
+                                '&.Mui-focused': {
+                                    ...searchField_focused,
+                                }
+                            }}
+                        />
+                    </Box>
+                    <Button
+                        onClick={handleSearch}
                         sx={{
-                            ...searchField_outline,
+                            ...button(pageWidth),
                             '&:hover': {
-                                ...searchField_hover,
+                                ...button_hover
                             },
-                            '&.Mui-focused': {
-                                ...searchField_focused,
-                            }
                         }}
-                    />
+                    >
+                        <SearchIcon sx={{ color: colors.grey[100] }} />
+                    </Button>
                 </Box>
-                <Button
-                    onClick={handleSearch}
-                    sx={{
-                        ...button,
-                        '&:hover': {
-                            ...button_hover
-                        },
-                    }}
-                >
-                    <SearchIcon sx={{ color: colors.grey[100] }} />
-                </Button>
+                {pageWidth < smWindowWidth && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                        }}
+                    >
+                        {filterSelectMenu}
+                    </Box>
+                )}
             </Box>
             <Box sx={filterContainer(pageWidth)}>
-                <Button
-                    onClick={handleToggleFilter}
-                    sx={{
-                        ...button,
-                        '&:hover': {
-                            ...button_hover
+                <Tooltip
+                    title="Filter Accounts"
+                    arrow
+                    enterDelay={1000}
+                    enterNextDelay={1000}
+                    slotProps={{
+                        popper: {
+                            sx: {
+                                zIndex: 3000,
+                            }
                         },
+                        tooltip: {
+                            sx: {
+                                backgroundColor: colors.primary[350],
+                                fontSize: '12px',
+                            },
+                        },
+                        arrow: {
+                            sx: {
+                                color: colors.primary[350],
+                            }
+                        }
                     }}
                 >
-                    <FilterListIcon sx={{ color: colors.grey[100] }} />
-                </Button>
+                    <Button
+                        onClick={handleToggleFilter}
+                        sx={{
+                            ...button(pageWidth),
+                            '&:hover': {
+                                ...button_hover
+                            },
+                        }}
+                    >
+                        <FilterListIcon sx={{ color: colors.grey[100] }} />
+                    </Button>
+                </Tooltip>
                 <AdminFilterPopper
                     pageWidth={pageWidth}
                     handleToggleFilter={handleToggleFilter}
@@ -187,43 +234,116 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
 
                 {!disabled && (
                     <>
-                        <Button
-                            onClick={handleEdit}
-                            sx={{
-                                ...button,
-                                '&:hover': {
-                                    ...button_hover
+                        <Tooltip
+                            title="Edit Accounts"
+                            arrow
+                            enterDelay={1000}
+                            enterNextDelay={1000}
+                            slotProps={{
+                                popper: {
+                                    sx: {
+                                        zIndex: 3000,
+                                    }
                                 },
+                                tooltip: {
+                                    sx: {
+                                        backgroundColor: colors.primary[350],
+                                        fontSize: '12px',
+                                    },
+                                },
+                                arrow: {
+                                    sx: {
+                                        color: colors.primary[350],
+                                    }
+                                }
                             }}
                         >
-                            <EditIcon sx={{ color: colors.grey[100] }} />
-                        </Button>
-                        
-                        <Button
-                            onClick={handleDelete}
-                            sx={{
-                                ...button,
-                                '&:hover': {
-                                    ...button_hover
+                            <Button
+                                onClick={handleEdit}
+                                sx={{
+                                    ...button(pageWidth),
+                                    '&:hover': {
+                                        ...button_hover
+                                    },
+                                }}
+                            >
+                                <EditIcon sx={{ color: colors.grey[100] }} />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip
+                            title="Delete Accounts"
+                            arrow
+                            enterDelay={1000}
+                            enterNextDelay={1000}
+                            slotProps={{
+                                popper: {
+                                    sx: {
+                                        zIndex: 3000,
+                                    }
                                 },
+                                tooltip: {
+                                    sx: {
+                                        backgroundColor: colors.primary[350],
+                                        fontSize: '12px',
+                                    },
+                                },
+                                arrow: {
+                                    sx: {
+                                        color: colors.primary[350],
+                                    }
+                                }
                             }}
                         >
-                            <DeleteIcon sx={{ color: colors.grey[100] }} />
-                        </Button>
+                            <Button
+                                onClick={handleDelete}
+                                sx={{
+                                    ...button(pageWidth),
+                                    '&:hover': {
+                                        ...button_hover
+                                    },
+                                }}
+                            >
+                                <DeleteIcon sx={{ color: colors.grey[100] }} />
+                            </Button>
+                        </Tooltip>
                     </>
                 )}
-
-                <Button
-                    onClick={handleReset}
-                    sx={{
-                        ...button,
-                        '&:hover': {
-                            ...button_hover
+                <Tooltip
+                    title="Reset Table"
+                    arrow
+                    enterDelay={1000}
+                    enterNextDelay={1000}
+                    slotProps={{
+                        popper: {
+                            sx: {
+                                zIndex: 3000,
+                            }
                         },
+                        tooltip: {
+                            sx: {
+                                backgroundColor: colors.primary[350],
+                                fontSize: '12px',
+                            },
+                        },
+                        arrow: {
+                            sx: {
+                                color: colors.primary[350],
+                            }
+                        }
                     }}
                 >
-                    <RestartAltIcon sx={{ color: colors.grey[100] }} />
-                </Button>
+                    <Button
+                        onClick={handleReset}
+                        sx={{
+                            ...button(pageWidth),
+                            '&:hover': {
+                                ...button_hover
+                            },
+                        }}
+                    >
+                        <RestartAltIcon sx={{ color: colors.grey[100] }} />
+                    </Button>
+                </Tooltip>
             </Box>
             <AdminEditRoleDialogue
                 open={dialogueOpen}

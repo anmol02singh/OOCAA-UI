@@ -3,7 +3,7 @@ import {
     Box,
     useTheme,
 } from '@mui/material';
-import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId, GridSortItem } from '@mui/x-data-grid';
 import { tokens } from '../theme.tsx';
 import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../API/account.tsx';
 import { Account } from '../types.tsx';
@@ -17,8 +17,8 @@ interface AccountTableProps {
         max: number | '',
     };
     setFilterRole: React.Dispatch<React.SetStateAction<{
-        min: number | "";
-        max: number | "";
+        min: number | '';
+        max: number | '';
     }>>;
     searchBar: {
         criterion: string;
@@ -59,6 +59,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
 }) => {
 
     const {
+        accountsDataGridContainer,
         accountsTableContainer,
     } = useGeneralStyling();
 
@@ -68,6 +69,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
     const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
+    const [sortedColumns, setSortedColumns] = useState<GridSortItem[]>([]);
     const [currentUser, setCurrentUser] = useState<Account>();
 
     useEffect(() => {
@@ -187,6 +189,8 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                     });
             }
             setSelectedRows([]);
+            setSortedColumns([]);
+            setFilterRole({ min: '', max: '' });
             setSubmitReset(false);
         }
     }
@@ -204,12 +208,14 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
             email?: string,
             phoneNumber?: string,
         } = {}
-        if (value !== '') {
-            params.name = searchBar.criterion === "name" ? value : undefined;
-            params.username = searchBar.criterion === "username" ? value : undefined;
+        if (!(value === undefined
+            || ((searchBar.criterion !== 'name' && searchBar.criterion !== 'phoneNumber')
+                && value === ''))) {
+            params.name = searchBar.criterion === 'name' ? value : undefined;
+            params.username = searchBar.criterion === 'username' ? value : undefined;
             params.role = undefined;
-            params.email = searchBar.criterion === "email" ? value : undefined;
-            params.phoneNumber = searchBar.criterion === "phoneNumber" ? value : undefined;
+            params.email = searchBar.criterion === 'email' ? value : undefined;
+            params.phoneNumber = searchBar.criterion === 'phoneNumber' ? value : undefined;
         }
 
         return await getAccounts(token, ...Object.values(params))
@@ -285,16 +291,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
 
     return (
         <Box
-            sx={{
-                width: '100%',
-                display: 'flex',
-                flexGrow: '1',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                mx: "auto",
-                minWidth: 0,
-            }}
+            sx={accountsDataGridContainer}
         >
             <DataGrid
                 rows={filteredAccounts}
@@ -302,6 +299,9 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                 columns={columns}
                 rowSelectionModel={selectedRows}
                 onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as string[])}
+                sortModel={sortedColumns}
+                onSortModelChange={(newSortedColumns) =>
+                    setSortedColumns(newSortedColumns as GridSortItem[])}
                 getRowClassName={(params) =>
                     currentUser !== undefined && params.row.username === currentUser.username
                         ? 'currentUser'
@@ -316,9 +316,62 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                     }
                 }}
                 checkboxSelection
+                slotProps={{
+                    columnMenu: {
+                        style: {
+                            backgroundColor: colors.primary[350],
+                            borderRadius: '4px',
+                        }
+                    },
+                    columnsPanel: {
+                        style: {
+                            backgroundColor: colors.primary[350],
+                            borderRadius: '4px',
+                        }
+                    },
+                    panel: {
+                        sx: {
+                            "& .MuiOutlinedInput-root": {
+                                "&.Mui-focused fieldset": {
+                                    borderColor: colors.primary[350],
+                                },
+                            },
+                            "& .MuiCheckbox-root": {
+                                color: colors.grey[100],
+                                "&.Mui-checked": {
+                                    color: colors.greenAccent[500],
+                                },
+                                "&.MuiCheckbox-indeterminate": {
+                                    color: colors.greenAccent[500],
+                                },
+                                "&.Mui-disabled": {
+                                    color: colors.grey[400],
+                                },
+                            },
+                            "& .MuiButton-root": {
+                                color: colors.blueAccent[400],
+                                "&:hover": {
+                                    color: colors.blueAccent[500],
+                                },
+                            },
+                        },
+                    },
+                    pagination: {
+                        SelectProps: {
+                            MenuProps: {
+                                PaperProps: {
+                                    sx: {
+                                        backgroundColor: colors.primary[350],
+                                        backgroundImage: 'none',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }}
                 sx={{
                     ...accountsTableContainer(pageWidth),
-                    "& .MuiDataGrid-columnHeader": {
+                    '& .MuiDataGrid-columnHeader': {
                         flexShrink: 0,
                         color: colors.blueAccent[400],
                         '& .MuiDataGrid-sortIcon': {
@@ -333,20 +386,20 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                                 color: colors.blueAccent[500],
                             },
                         },
-                        "&:focus": {
-                            outline: "none",
+                        '&:focus': {
+                            outline: 'none',
                         },
-                        "&:focus-within": {
-                            outline: "none",
+                        '&:focus-within': {
+                            outline: 'none',
                         }
                     },
-                    "& .MuiDataGrid-columnHeaders": {
-                        borderBottom: "none",
+                    '& .MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none',
                     },
-                    "& .MuiDataGrid-columnSeparator": {
-                        display: "none",
+                    '& .MuiDataGrid-columnSeparator': {
+                        display: 'none',
                     },
-                    "& .MuiDataGrid-row": {
+                    '& .MuiDataGrid-row': {
                         cursor: 'pointer',
                         '&.currentUser': {
                             color: '#f44336',
@@ -361,20 +414,20 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                             backgroundColor: colors.primary[500],
                         },
                     },
-                    "& .MuiDataGrid-checkboxInput": {
+                    '& .MuiDataGrid-checkboxInput': {
                         color: colors.grey[100],
                         '&.Mui-checked': {
                             color: colors.greenAccent[500],
                         },
                     },
-                    "& .MuiDataGrid-cell": {
+                    '& .MuiDataGrid-cell': {
                         flexShrink: 0,
-                        "&:focus": {
-                            outline: "none",
+                        '&:focus': {
+                            outline: 'none',
                         },
-                        "&:focus-within": {
-                            outline: "none",
-                        }
+                        '&:focus-within': {
+                            outline: 'none',
+                        },
                     },
                 }}
             />

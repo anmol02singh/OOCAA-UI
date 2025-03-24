@@ -132,8 +132,7 @@ const ProfileEditName = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        let processedName = newName.replace(containsExtraSpaces, ' ').trim();
-        if(processedName === '') processedName = '\u00A0'
+        const processedName = newName.replace(containsExtraSpaces, ' ').trim();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});
