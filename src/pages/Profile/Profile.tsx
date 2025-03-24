@@ -15,6 +15,7 @@ import {
 import { userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
+import { Account } from '../../types.tsx';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ const Profile = () => {
     const colors = tokens(theme.palette.mode);
     
     //User data
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<Account>({
         name: '',
         username: '',
         email: '',
@@ -169,7 +170,7 @@ const Profile = () => {
                     <Grid container sx={profileElements} spacing={1}>
                         <Grid size={12} sx={profilePictureContainer}>
                             <Box sx={regImageContainer(pageWidth)}>
-                                {userData.profileImage.url && (
+                                {userData.profileImage?.url && (
                                     <img
                                         alt='profile-user'
                                         src = {userData.profileImage.url}
@@ -199,7 +200,7 @@ const Profile = () => {
                                     color: colors.greenAccent[500]
                                 }}
                             >
-                                {userData.role.toUpperCase()}
+                                {userData.role?.toUpperCase() ?? ''}
                             </Typography>                                
                         </Grid>
 

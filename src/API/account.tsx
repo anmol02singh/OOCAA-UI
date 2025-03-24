@@ -37,13 +37,13 @@ export async function userdata(token: string) {
                 }
 
                 const account: Account = {
-                    name: json.name,
-                    username: json.username,
-                    role: roleString,
-                    roleNum: json.role,
-                    email: json.email,
-                    phoneNumber: json.phoneNumber,
-                    profileImage: json.profileImage
+                    name: json.name ?? '',
+                    username: json.username ?? '',
+                    role: roleString ?? '',
+                    roleNum: json.role ?? '',
+                    email: json.email ?? '',
+                    phoneNumber: json.phoneNumber ?? '',
+                    profileImage: json.profileImage ?? '',
                 };
                 return account;
             });

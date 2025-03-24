@@ -8,7 +8,7 @@ export interface Account {
     roleNum?: number,
     role?: string,
     profileImage?: {
-        publicId: string,
-        url: string | undefined,
+        publicId?: string,
+        url?: string,
     },
   }

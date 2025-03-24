@@ -11,7 +11,6 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutlined';
@@ -19,6 +18,7 @@ import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import routes from '../../routes.js';
+import { Account } from '../../types.tsx';
 
 interface ItemProps {
   title: string;
@@ -51,7 +51,7 @@ const Navbar: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('Dashboard');
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<Account>({
     username: '',
     role: '',
     roleNum: 1,
@@ -111,7 +111,7 @@ const Navbar: FC = () => {
           {!isCollapsed && (
             <Box marginBottom="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                {userData.username && userData.profileImage.url && (
+                {userData.username && userData.profileImage?.url && (
                   <img
                     alt="profile-user"
                     width="100px"
@@ -128,7 +128,7 @@ const Navbar: FC = () => {
                 </Typography>
                 {userData.username && (
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    {userData.role.toUpperCase()}
+                    {userData.role?.toUpperCase() ?? ''}
                   </Typography>
                 )}
               </Box>
@@ -154,14 +154,14 @@ const Navbar: FC = () => {
             <Item title="Pie Chart" to="/pie" icon={<PieChartOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Line Chart" to="/line" icon={<TimelineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Geo Chart" to="/geo" icon={<MapOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            {userData.roleNum < 1 &&
+            {userData.roleNum !== undefined && userData.roleNum < 1 && (
               <>
                 <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
                   Admin
                 </Typography>
                 <Item title="Manage Accounts" to={routes.manageAccounts} icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
               </>
-            }
+            )}
           </Box>
         </Menu>
       </ProSidebar>
