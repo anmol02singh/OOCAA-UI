@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, InputBase, MenuItem, Popper, Select, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, InputBase, MenuItem, Select, Tooltip, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
