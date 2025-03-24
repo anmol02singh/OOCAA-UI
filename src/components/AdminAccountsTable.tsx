@@ -144,7 +144,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     }
 
     const handleSelect = (newSelection) => {
-        if (newSelection.length === filteredAccounts.length) return;
+        if (filteredAccounts.length-selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
         setSelectedRows(newSelection as string[])
     }
 
