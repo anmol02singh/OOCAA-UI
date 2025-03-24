@@ -91,8 +91,10 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
         setSearchBar({ ...searchBar, value: value });
     };
 
-    const handleSearch = () => {
-        setSubmitSearch(true);
+    const handleSearch = (event) => {
+        if(!('key' in event) || event.key === 'Enter'){
+            setSubmitSearch(true);
+        }
     }
 
     const handleToggleFilter = (event) => {
@@ -148,6 +150,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                             placeholder='Search accounts here'
                             value={searchBar.value}
                             onChange={(e) => handleValueChange(e.target.value)}
+                            onKeyDown={handleSearch}
                             sx={{
                                 ...searchField_outline,
                                 '&:hover': {
