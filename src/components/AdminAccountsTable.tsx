@@ -143,6 +143,11 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
         }
     }
 
+    const handleSelect = (newSelection) => {
+        if (newSelection.length === filteredAccounts.length) return;
+        setSelectedRows(newSelection as string[])
+    }
+
     const handleEdit = () => {
         if (submitEdit) {
             if (token) {
@@ -298,7 +303,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                 getRowId={getRowId}
                 columns={columns}
                 rowSelectionModel={selectedRows}
-                onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection as string[])}
+                onRowSelectionModelChange={handleSelect}
                 sortModel={sortedColumns}
                 onSortModelChange={(newSortedColumns) =>
                     setSortedColumns(newSortedColumns as GridSortItem[])}
