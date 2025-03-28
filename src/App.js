@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-//import "/Users/san/OOCAA-UI/src/styles/index.css";
-import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
@@ -24,6 +22,7 @@ import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
+import Directory from "./pages/Directory.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -33,7 +32,6 @@ function App() {
   const isLoginPage = location.pathname === "/login";
   const isSignupPage = location.pathname === "/signup";
 
-
   return (
       <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
@@ -41,6 +39,7 @@ function App() {
               <div className="app" style={{
                 width: '100vw',
                 height: '100vh',
+                "overflow-x": "hidden",
               }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
@@ -59,6 +58,7 @@ function App() {
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
+                          <Route path="/directory" element={<Directory />} />
                           <Route path={routes.profile} element={<Profile />} />
                           <Route path={routes.editProfile} element={<ProfileEdit />} />
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />
