@@ -89,26 +89,32 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
 
     useEffect(() => {
         updateButtons(selectedRows);
+        //eslint-disable-next-line
     }, [selectedRows]);
 
     useEffect(() => {
         handleSearch();
+        //eslint-disable-next-line
     }, [submitSearch]);
 
     useEffect(() => {
         handleFilter();
+        //eslint-disable-next-line
     }, [submitFilter]);
 
     useEffect(() => {
         handleEdit();
+        //eslint-disable-next-line
     }, [submitEdit]);
 
     useEffect(() => {
         handleDelete();
+        //eslint-disable-next-line
     }, [submitDelete]);
 
     useEffect(() => {
         handleReset();
+        //eslint-disable-next-line
     }, [submitReset]);
 
     const updateButtons = (selectedRows) => {
