@@ -19,6 +19,7 @@ import { updateGeneralUserData, userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
+import { Account } from '../../types.tsx';
 
 const ProfileEditEmail = () => {
     const navigate = useNavigate();
@@ -55,14 +56,14 @@ const ProfileEditEmail = () => {
     const colors = tokens(theme.palette.mode);
     
     //User data
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<Account>({
         name: '',
         username: '',
         email: '',
         phoneNumber: '',
         role: '',
     });
-    const [newPhoneNumber, setNewPhoneNumber] = useState<string>(userData.email); 
+    const [newPhoneNumber, setNewPhoneNumber] = useState<string>(userData.email ?? '');
 
     const [disabled, setDisabled] = useState<boolean>(true);
     const [isInvalidInput, setInvalidInput] = useState<boolean>(false);
@@ -106,7 +107,7 @@ const ProfileEditEmail = () => {
     }, [pageWidth]);
 
     useEffect(() => {
-        setNewPhoneNumber(userData.phoneNumber);
+        setNewPhoneNumber(userData.phoneNumber ?? '');
     }, [userData]);
 
     const handleChange = (event) => {
@@ -131,7 +132,7 @@ const ProfileEditEmail = () => {
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});
 
-        if(newPhoneNumber === userData.phoneNumber.replace(/\D/g, '')){
+        if(newPhoneNumber === userData.phoneNumber?.replace(/\D/g, '')){
             invalidInput = true;
             setErrorMessageElement({...errorMessageElement, type: 'unchangedPhone'});
         }

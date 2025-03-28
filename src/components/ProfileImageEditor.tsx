@@ -22,9 +22,9 @@ const ProfileImageEditor = (props: {
     open: boolean;
     onClose: () => void;
     pageWidth: number;
-    profileImage: {
-        publicId: string,
-        url: string | undefined,
+    profileImage?: {
+        publicId?: string,
+        url?: string | undefined,
     }
 }) => {
 
@@ -81,7 +81,7 @@ const ProfileImageEditor = (props: {
         }
 
         if(profileImage){
-            setDisabled(!profileImage.publicId.includes("OOCAA/profileImages/placeholderProfileImage"))
+            setDisabled(!profileImage.publicId?.includes("OOCAA/profileImages/placeholderProfileImage"))
         }
 
         return () => {

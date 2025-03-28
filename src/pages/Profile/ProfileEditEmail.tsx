@@ -21,6 +21,7 @@ import {
 import { updateGeneralUserData, userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
+import { Account } from '../../types.tsx';
 
 const ProfileEditEmail = () => {
     const navigate = useNavigate();
@@ -57,14 +58,14 @@ const ProfileEditEmail = () => {
     const colors = tokens(theme.palette.mode);
     
     //User data
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<Account>({
         name: '',
         username: '',
         email: '',
         phoneNumber: '',
         role: '',
     });
-    const [newEmail, setNewEmail] = useState<string>(userData.email); 
+    const [newEmail, setNewEmail] = useState<string>(userData.email ?? ''); 
 
     const [disabled, setDisabled] = useState<boolean>(true);
     const [isInvalidInput, setInvalidInput] = useState<boolean>(false);
@@ -108,7 +109,7 @@ const ProfileEditEmail = () => {
     }, [pageWidth]);
 
     useEffect(() => {
-        setNewEmail(userData.email);
+        setNewEmail(userData.email ?? '');
     }, [userData]);
 
     const handleChange = (event) => {
@@ -132,7 +133,7 @@ const ProfileEditEmail = () => {
     const handleSubmit = (event): boolean => {
         event.preventDefault();
         
-        const processedEmail = newEmail.replace(containsExtraSpaces, ' ').trim()
+        const processedEmail = newEmail.replace(containsExtraSpaces, ' ').trim();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});

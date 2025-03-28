@@ -1,3 +1,6 @@
+import { formatPhoneNumber } from "../pages/Profile/ProfileUtilities.tsx";
+import { Account } from "../types.tsx";
+
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
 export async function userdata(token: string) {
@@ -7,11 +10,43 @@ export async function userdata(token: string) {
             body: JSON.stringify({ token: token }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
-        return await response.json();
+        return await response.json()
+            .then(json => {
+                if (!json || Object.keys(json).length < 1) return json;
+
+                let roleString = ''
+                switch (json.role) {
+                    case 0: {
+                        roleString = "Admin"
+                        break;
+                    }
+                    case 1: {
+                        roleString = "Level 1 Operator"
+                        break;
+                    }
+                    case 2: {
+                        roleString = "Level 2 Operator"
+                        break;
+                    }
+                }
+
+                const account: Account = {
+                    name: json.name ?? '',
+                    username: json.username ?? '',
+                    role: roleString ?? '',
+                    roleNum: json.role ?? '',
+                    email: json.email ?? '',
+                    phoneNumber: json.phoneNumber ?? '',
+                    profileImage: json.profileImage ?? '',
+                };
+                return account;
+            });
     } catch (error) {
         console.error('Error obtaining role:', error);
         throw error;
@@ -67,6 +102,77 @@ export async function register(name: string, email: string, phone: string, usern
     }
 }
 
+export async function getAccounts(
+    token: string,
+    name?: string,
+    username?: string,
+    role?: number,
+    email?: string,
+    phoneNumber?: string,
+): Promise<Account[]> {
+    try {
+        const response = await fetch(`${API_URL}/getAccounts`, {
+            method: "POST",
+            body: JSON.stringify({
+                token: token,
+                name: name,
+                username: username,
+                role: role,
+                email: email,
+                phoneNumber: phoneNumber,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json()
+            .then(json => {
+                if (!json || Object.keys(json).length < 1) return json;
+                const accounts: Account[] = [];
+                for(const item of Object.values(json) as Account[]){
+                    let roleString = ''
+                    if(item.role === undefined) continue;
+                    const roleNum: number = parseFloat(item.role);
+                    switch (roleNum) {
+                        case 0: {
+                            roleString = "Admin"
+                            break;
+                        }
+                        case 1: {
+                            roleString = "Level 1 Operator"
+                            break;
+                        }
+                        case 2: {
+                            roleString = "Level 2 Operator"
+                            break;
+                        }
+                    }
+
+                    const account: Account = {
+                        _id: item._id,
+                        name: item.name,
+                        username: item.username,
+                        role: roleString,
+                        roleNum: roleNum,
+                        email: item.email,
+                        phoneNumber: formatPhoneNumber(JSON.stringify(item.phoneNumber)).phoneNumber,
+                    };
+                    accounts.push(account);
+                }
+                return accounts;
+            });
+    } catch (error) {
+        console.error('Error obtaining role:', error);
+        throw error;
+    }
+}
+
 export async function updateGeneralUserData(
     token: string,
     newName?: string | undefined,
@@ -86,13 +192,73 @@ export async function updateGeneralUserData(
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
         return await response.json();
     } catch (error) {
         console.error('Error updating user account:', error);
+        throw error;
+    }
+}
+
+export async function updateAccountsRole(
+    token: string,
+    usernames: string[],
+    role: number,
+) {
+    try {
+        const response = await fetch(`${API_URL}/updateAccountsRole`, {
+            method: "PUT",
+            body: JSON.stringify({
+                token: token,
+                usernames: usernames,
+                role: role,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user accounts:', error);
+        throw error;
+    }
+}
+
+export async function deleteAccounts(
+    token: string,
+    usernames: string[],
+) {
+    try {
+        const response = await fetch(`${API_URL}/deleteAccounts`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                token: token,
+                usernames: usernames,
+            }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (response.status === 403) {
+            window.location.href = '/';
+        } else if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting user accounts:', error);
         throw error;
     }
 }
@@ -106,11 +272,13 @@ export async function updateProfileImage(
             method: "PUT",
             body: JSON.stringify({
                 token: token,
-                newImage: newImage 
+                newImage: newImage
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
@@ -130,7 +298,9 @@ export async function removeProfileImage(token: string) {
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (!response.ok) {
+        if (response.status === 500) {
+            window.location.href = '/login';
+        } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
