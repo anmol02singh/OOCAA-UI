@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-//import "/Users/san/OOCAA-UI/src/styles/index.css";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
-import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
-import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
-import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx"
-import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx"
+import ProfileEdit from "./pages/Profile/ProfileEdit.tsx";
+import ProfileEditName from "./pages/Profile/ProfileEditName.tsx";
+import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx";
+import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx";
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -27,48 +26,63 @@ import routes from "./routes.js";
 function App() {
   const [theme, colorMode] = useMode();
   const [isNavbar, setIsNavbar] = useState(true);
-  const location = useLocation(); 
+  const location = useLocation();
 
   const isLoginPage = location.pathname === "/login";
   const isSignupPage = location.pathname === "/signup";
 
-
   return (
-      <ColorModeContext.Provider value={colorMode}>
-          <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <div className="app" style={{
-                width: '100vw',
-                height: '100vh',
-              }}>
-                  {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
-                  <main className="content">
-                    <Box sx={{
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}>
-                      {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
-                        <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/bar" element={<Bar />} />
-                          <Route path="/pie" element={<Pie />} />
-                          <Route path="/line" element={<Line />} />
-                          <Route path="/geo" element={<Geo />} />
-                          <Route path="/login" element={<UserLogin />} />
-                          <Route path="/signup" element={<UserSignUp />} />
-                          <Route path={routes.profile} element={<Profile />} />
-                          <Route path={routes.editProfile} element={<ProfileEdit />} />
-                          <Route path={routes.editProfileName} element={<ProfileEditName />} />
-                          <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
-                          <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
-                        </Routes>
-                    </Box>
-                  </main>
-              </div>
-          </ThemeProvider>
-      </ColorModeContext.Provider>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div
+          className="app"
+          style={{
+            width: "100vw",
+            height: "100vh",
+          }}
+        >
+          {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
+          <main className="content">
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {!(isLoginPage || isSignupPage) && (
+                <Topbar setIsNavbar={setIsNavbar} />
+              )}
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/bar" element={<Bar />} />
+                <Route path="/pie" element={<Pie />} />
+                <Route path="/line" element={<Line />} />
+                <Route path="/geo" element={<Geo />} />
+                <Route path="/login" element={<UserLogin />} />
+                <Route path="/signup" element={<UserSignUp />} />
+                <Route path={routes.profile} element={<Profile />} />
+                <Route path={routes.editProfile} element={<ProfileEdit />} />
+                <Route
+                  path={routes.editProfileName}
+                  element={<ProfileEditName />}
+                />
+                <Route
+                  path={routes.editProfileEmail}
+                  element={<ProfileEditEmail />}
+                />
+                <Route
+                  path={routes.editProfilePhone}
+                  element={<ProfileEditPhone />}
+                />
+              </Routes>
+            </Box>
+          </main>
+        </div>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 
