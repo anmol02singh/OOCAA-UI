@@ -4,12 +4,13 @@ import { DataGrid, GridToolbar, GridColDef } from "@mui/x-data-grid";
 import { tokens } from '../theme.tsx';
 import Header from "../components/Header.tsx";
 import { useTheme } from "@mui/material";
-import { Event, WatchlistEntry } from '../types.tsx';
+import { WatchlistEntry } from '../types.tsx';
 import { fetchUserWatchlist } from '../API/watchlist.tsx';
 import { userdata } from '../API/account.tsx';
 import { useNavigate } from 'react-router-dom';
 
 const Watchlist: React.FC = () => {
+  const navigate = useNavigate();  
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -33,7 +34,7 @@ const Watchlist: React.FC = () => {
     const fetchData = async () => {
       const token = localStorage.getItem("accountToken");
       if (!token) {
-        
+        navigate('/login')
         return;
       }
       try {

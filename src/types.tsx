@@ -101,6 +101,6 @@ export interface Position {
   export interface WatchlistEntry {
     _id: string;
     event: Event;
-    userId: string;
+    user: string;
     createdAt: string;
   }
