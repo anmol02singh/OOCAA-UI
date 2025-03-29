@@ -91,9 +91,16 @@ export interface Position {
     secondaryObjectDesignator: string;
     secondaryObjectName: string;
     secondaryObjectType: string;
-    tca: string; // or Date, depending on your API
+    tca: string;
     missDistances: [number];
     collisionProbabilities: [number];
     primaryOperatorOrganization: string;
     secondaryOperatorOrganization: string;
+  }
+
+  export interface WatchlistEntry {
+    _id: string;
+    event: Event;
+    userId: string;
+    createdAt: string;
   }
