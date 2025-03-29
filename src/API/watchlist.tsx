@@ -19,7 +19,7 @@ export const fetchUserWatchlist = async (userId: string) => {
     }
 };
 
-export const subsribeToEvent = async (eventId: string, userId: string) => {
+export const subscribeToEvent = async (eventId: string, userId: string) => {
     try {
         const response = await fetch(`${API_URL}/cdm-data/subscribe`, {
             method: 'POST',

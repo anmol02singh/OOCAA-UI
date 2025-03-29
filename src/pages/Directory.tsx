@@ -31,7 +31,6 @@ import { useNavigate } from 'react-router-dom';
 const Directory = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accountToken");
-  console.log("token", token);
   if(!token){
       navigate('/login')
   }
@@ -172,10 +171,10 @@ const Directory = () => {
         62,998 searchable objects
       </Typography>
       <Typography variant="h3" fontWeight="bold" mt={1}>
-        OOCAA - On-Orbit Collision Avoidance Assistant
+        Directory
       </Typography>
       <Typography variant="subtitle1" mt={2} mb={3}>
-        OOCAA organizes Conjunction Data Messages (CDMs) into clear formats, enabling quick data analysis with advanced search and filters.
+        Filter thousands of Conjunction Data Messages (CDMs) into clear formats, enabling quick data analysis with advanced search and filters.
       </Typography>
 
       {/* Stat Cards */}

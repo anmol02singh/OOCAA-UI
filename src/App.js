@@ -23,6 +23,7 @@ import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
 import Directory from "./pages/Directory.tsx";
+import Watchlist from "./pages/Watchlist.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -59,6 +60,7 @@ function App() {
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
                           <Route path="/directory" element={<Directory />} />
+                          <Route path="/watchlist" element={<Watchlist />} />
                           <Route path={routes.profile} element={<Profile />} />
                           <Route path={routes.editProfile} element={<ProfileEdit />} />
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />

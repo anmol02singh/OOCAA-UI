@@ -21,8 +21,9 @@ import {
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
-import { subsribeToEvent } from '../API/watchlist.tsx';
+import { subscribeToEvent } from '../API/watchlist.tsx';
 import { userdata } from '../API/account.tsx';
+import { useNavigate } from 'react-router-dom';
 
 type Order = 'asc' | 'desc';
 type NumericOperator = 'lte' | 'gte' | 'eq';
@@ -34,6 +35,7 @@ interface EventTableProps {
 }
 
 const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedEvent }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -155,13 +157,13 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
   const handleSubscribe = async (eventItem: Event) => {
     const token = localStorage.getItem("accountToken");
     if (!token) {
-      alert("Please log in to subscribe to events");
+      navigate('/login');
       return;
     }
     const user = await userdata(token);
     const userId = user._id;
     try {
-      await subsribeToEvent(userId, eventItem._id);
+      await subscribeToEvent(eventItem._id, userId,);
       alert("Successfully subscribed to event");
     } catch (error) {
       console.error('Error subscribing to event:', error);

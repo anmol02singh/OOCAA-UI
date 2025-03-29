@@ -37,6 +37,7 @@ export async function userdata(token: string) {
                 }
 
                 const account: Account = {
+                    _id: json._id ?? '',
                     name: json.name ?? '',
                     username: json.username ?? '',
                     role: roleString ?? '',
