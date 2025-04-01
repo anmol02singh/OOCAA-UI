@@ -83,6 +83,7 @@ const UserLogin = () => {
             variant="p"
             sx={{
               color: "red",
+              textAlign: "center",
             }}
           >
             <em>Login failed.  Please try again.</em>

@@ -21,8 +21,11 @@ import {
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
-import { subsribeToEvent } from '../API/watchlist.tsx';
+import { subscribeToEvent } from '../API/watchlist.tsx';
 import { userdata } from '../API/account.tsx';
+import { useNavigate } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 type Order = 'asc' | 'desc';
 type NumericOperator = 'lte' | 'gte' | 'eq';
@@ -34,6 +37,7 @@ interface EventTableProps {
 }
 
 const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedEvent }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -52,6 +56,14 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
   const [collisionProbabilityOperator, setCollisionProbabilityOperator] = useState<NumericOperator>('gte');
   
   const [filterOperatorOrganization, setFilterOperatorOrganization] = useState<string>('');
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });  
 
   const isApproximatelyEqual = (
     a: number,
@@ -155,22 +167,37 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
   const handleSubscribe = async (eventItem: Event) => {
     const token = localStorage.getItem("accountToken");
     if (!token) {
-      alert("Please log in to subscribe to events");
+      navigate('/login');
       return;
     }
     const user = await userdata(token);
     const userId = user._id;
     try {
-      await subsribeToEvent(userId, eventItem._id);
-      alert("Successfully subscribed to event");
+      await subscribeToEvent(eventItem._id, userId,);
+      setSnackbarMessage("Successfully subscribed to event");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Error subscribing to event:', error);
-      alert("You have already subscribed to this event");
+      setSnackbarMessage("You have already subscribed to this event");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
   return (
     <Box mt={4}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
       <Box display="flex" gap={2} mb={2}>
         <TextField
           fullWidth
