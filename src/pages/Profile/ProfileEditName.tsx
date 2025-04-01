@@ -20,10 +20,11 @@ import {
 import { updateGeneralUserData, userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
+import { Account } from '../../types.tsx';
 
 const ProfileEditName = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem("accountToken");
+    const token = localStorage.getItem('accountToken');
     if(!token){
         navigate('/login')
     }
@@ -56,14 +57,14 @@ const ProfileEditName = () => {
     const colors = tokens(theme.palette.mode);
     
     //User data
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<Account>({
         name: '',
         username: '',
         email: '',
         phoneNumber: '',
         role: '',
     });
-    const [newName, setNewName] = useState<string>(userData.name); 
+    const [newName, setNewName] = useState<string>(userData.name ?? ''); 
 
     const [disabled, setDisabled] = useState<boolean>(true);
     const [isInvalidInput, setInvalidInput] = useState<boolean>(false);
@@ -107,7 +108,7 @@ const ProfileEditName = () => {
     }, [pageWidth]);
 
     useEffect(() => {
-        setNewName(userData.name);
+        setNewName(userData.name ?? '');
     }, [userData]);
 
     const handleChange = (event) => {
@@ -131,7 +132,7 @@ const ProfileEditName = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        const processedName = newName.replace(containsExtraSpaces, ' ').trim()
+        const processedName = newName.replace(containsExtraSpaces, ' ').trim();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});

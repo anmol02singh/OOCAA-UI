@@ -7,6 +7,7 @@ const routes = {
     editProfileName: '/profile/edit/name',
     editProfileEmail: '/profile/edit/email',
     editProfilePhone: '/profile/edit/phone-number',
+    manageAccounts: '/admin/manage-accounts',
 };
 
 export default routes;
