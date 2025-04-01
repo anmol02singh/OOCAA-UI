@@ -53,7 +53,22 @@ const Heatmap = () => {
       x: {
         type: "linear",
         position: "bottom",
-        ticks: { stepSize: 1 },
+        ticks: {
+          stepSize: 1,
+          color: "#fff", // Darker text color
+          callback: (value: number) => {
+            const daysOfWeek = [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun",
+            ];
+            return daysOfWeek[value - 1] || "";
+          },
+        },
         grid: {
           color: "rgba(200, 200, 200, 0.8)",
           lineWidth: 1,
@@ -61,7 +76,13 @@ const Heatmap = () => {
       },
       y: {
         type: "linear",
-        ticks: { stepSize: 1 },
+        ticks: {
+          stepSize: 1,
+          color: "#fff", // Darker text color
+          callback: (value: number) => {
+            return `${String(value - 1).padStart(2, "0")}:00`;
+          },
+        },
         grid: {
           color: "rgba(200, 200, 200, 0.8)",
           lineWidth: 1,
@@ -71,8 +92,20 @@ const Heatmap = () => {
     plugins: {
       tooltip: {
         callbacks: {
-          label: function (context) {
-            return `Value: ${context.raw.r * 2}`;
+          label: function (context: any) {
+            const daysOfWeek = [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun",
+            ];
+            const day = daysOfWeek[context.raw.x - 1];
+            const time = `${String(context.raw.y - 1).padStart(2, "0")}:00`;
+            const value = context.raw.r * 2;
+            return `Day: ${day}, Time: ${time}, Value: ${value}`;
           },
         },
       },
