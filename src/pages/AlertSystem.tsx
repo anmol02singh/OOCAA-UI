@@ -12,12 +12,14 @@ import {
   Stack,
   Grid2,
   Box,
+  useTheme,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import CircleIcon from "@mui/icons-material/Circle";
 import Heatmap from "../components/HeatMap.tsx";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
+import { tokens } from "../theme.tsx";
 
 const API_URL = process.env.API_URL || "http://localhost:3000";
 
@@ -187,6 +189,8 @@ const AlertSystem = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   const openModal = () => {
     handleOpen();
@@ -242,15 +246,19 @@ const AlertSystem = () => {
           </Button>
         </Grid2>
       </Grid2>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          backgroundColor: colors.primary[500],
+          color: colors.primary[100],
+          border: `1px solid ${colors.primary[700]}`,
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>
                 <strong>CDM</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Description</strong>
               </TableCell>
               <TableCell>
                 <strong>Last Update</strong>
@@ -270,7 +278,6 @@ const AlertSystem = () => {
             {subscribedCDM.map((val: any, index) => (
               <TableRow key={val._id}>
                 <TableCell>{val._id}</TableCell>
-                <TableCell>This is description</TableCell>
                 <TableCell>{val.creationDate}</TableCell>
                 <TableCell>{val.event}</TableCell>
                 <TableCell>

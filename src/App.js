@@ -22,6 +22,7 @@ import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
+import AlertSystem from "./pages/AlertSystem.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/geo" element={<Geo />} />
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/signup" element={<UserSignUp />} />
+                <Route path="/alertsystem" element={<AlertSystem />} />
                 <Route path={routes.profile} element={<Profile />} />
                 <Route path={routes.editProfile} element={<ProfileEdit />} />
                 <Route
