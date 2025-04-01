@@ -5,7 +5,7 @@ import { tokens } from '../theme.tsx';
 import Header from "../components/Header.tsx";
 import { useTheme } from "@mui/material";
 import { WatchlistEntry } from '../types.tsx';
-import { fetchUserWatchlist } from '../API/watchlist.tsx';
+import { fetchUserWatchlist, deleteEvent } from '../API/watchlist.tsx';
 import { userdata } from '../API/account.tsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,15 +65,25 @@ const Watchlist: React.FC = () => {
         renderCell: (params) => (
             <CustomTooltip title = "Delete this Event from your Watchlist">
                 <Button
-                    variant="contained"
-                    sx={{
-                    backgroundColor: colors.primary[500],
-                    }}
-                    onClick={(e) => {
+                  variant="contained"
+                  sx={{ backgroundColor: colors.primary[500] }}
+                  onClick={(e) => {
                     e.stopPropagation();
-                    }}
+                    deleteEvent(params.row.eventId)
+                      .then(() => {
+                        setWatchlist(prev =>
+                          prev.filter(
+                            (entry) => entry.event._id !== params.row.eventId
+                          )
+                        );
+                      })
+                      .catch((error) => {
+                        console.error("Error deleting event:", error);
+                        setErrMsg("Error deleting event");
+                      });
+                  }}
                 >
-                    Delete
+                  Delete
                 </Button>
             </CustomTooltip>
           
@@ -81,12 +91,12 @@ const Watchlist: React.FC = () => {
       }      
   ];
 
-  // Map the watchlist entries to rows using the nested event data.
   const rows = useMemo(() => {
     return watchlist.map((entry) => {
       const evt = entry.event;
       return {
-        id: entry._id, // use the watchlist entry _id as the row id
+        id: entry._id,
+        eventId: evt._id,
         eventName: evt.eventName,
         primaryObjectName: evt.primaryObjectName,
         primaryObjectDesignator: evt.primaryObjectDesignator,
