@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-//import "/Users/san/OOCAA-UI/src/styles/index.css";
-import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
@@ -9,6 +7,7 @@ import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
 import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
 import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx"
 import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx"
+import AdminManageAccounts from "./pages/Admin/AdminManageAccounts.tsx"
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -24,6 +23,7 @@ import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
 import SettingsPopover from "./pages/SettingsPopover.tsx";
+import Directory from "./pages/Directory.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -33,7 +33,6 @@ function App() {
   const isLoginPage = location.pathname === "/login";
   const isSignupPage = location.pathname === "/signup";
 
-
   return (
       <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
@@ -41,6 +40,7 @@ function App() {
               <div className="app" style={{
                 width: '100vw',
                 height: '100vh',
+                "overflow-x": "hidden",
               }}>
                   {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
                   <main className="content">
@@ -59,12 +59,14 @@ function App() {
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
+                          <Route path="/directory" element={<Directory />} />
                           <Route path={routes.profile} element={<Profile />} />
                           <Route path={routes.editProfile} element={<ProfileEdit />} />
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />
                           <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
                           <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
                           <Route path="/settings" element={<SettingsPopover/>} />
+                          <Route path={routes.manageAccounts} element={<AdminManageAccounts />} />
                         </Routes>
                     </Box>
                   </main>

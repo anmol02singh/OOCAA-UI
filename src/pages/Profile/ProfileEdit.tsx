@@ -17,7 +17,8 @@ import {
 import { userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import routes from '../../routes.js';
-import ProfilePictureEditor from '../../components/ProfileImageEditor.tsx';
+import ProfileImageEditor from '../../components/ProfileImageEditor.tsx';
+import { Account } from '../../types.tsx';
 
 const ProfileEdit = () => {
 
@@ -51,7 +52,7 @@ const ProfileEdit = () => {
     const colors = tokens(theme.palette.mode);
 
     //User data
-    const [userData, setUserData] = useState({
+    const [userData, setUserData] = useState<Account>({
         name: '',
         username: '',
         email: '',
@@ -92,7 +93,7 @@ const ProfileEdit = () => {
                     });
                 });
         }
-    //eslint-disable-next-line
+        //eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -153,7 +154,7 @@ const ProfileEdit = () => {
                                 },
                             }}
                         >
-                            {userData.profileImage.url && (
+                            {userData.profileImage?.url && (
                                 <>
                                     <img
                                         alt='profile-user'
@@ -296,7 +297,7 @@ const ProfileEdit = () => {
                         </Button>
                     </Grid>
                 </Grid>
-                <ProfilePictureEditor
+                <ProfileImageEditor
                     open={dialogueOpen}
                     onClose={handleClose}
                     pageWidth={pageWidth}
