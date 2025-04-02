@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box,Typography,Slider,IconButton, Button, List, ListItemText, Divider, TextField,Alert,useTheme,LinearProgress} from "@mui/material";
 import { ColorModeContext } from "./../theme.tsx";
 import { tokens } from "./../theme.tsx";
@@ -9,7 +9,22 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import { SettingsOutlined as SettingsOutlinedIcon } from "@mui/icons-material";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import { userdata, changePassword } from "../API/account.tsx";
+import { userdata, changePassword,changeUsername } from "../API/account.tsx";
+const CompactAlert = ({ children, severity }) => (
+  <Alert 
+    severity={severity} 
+    sx={{
+      mb: 1,
+      maxWidth: '600px',
+      width: 'auto',
+      mx: 'auto',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }}
+  >
+    {children}
+  </Alert>
+);
 
 const SettingsPopover = () => {
   const { textSize, setTextSize, toggleColorMode } = useContext(ColorModeContext);
@@ -17,8 +32,9 @@ const SettingsPopover = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [loading, setLoading] = useState(false);
-
+  const [isUpdatingUsername, setIsUpdatingUsername] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const MESSAGE_DISPLAY_DURATION = 3000;
   // For display settings (General)
   const handleTextSizeChange = (event: Event, newValue: number | number[]) => {
     const value = typeof newValue === "number" ? newValue : newValue[0];
@@ -33,6 +49,8 @@ const SettingsPopover = () => {
   // States for account preferences updates
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [usernameSuccess, setUsernameSuccess] = useState("");
 
   // Username update states
   const [showUsernameField, setShowUsernameField] = useState(false);
@@ -45,21 +63,54 @@ const SettingsPopover = () => {
   const [confirmNewPass, setConfirmNewPass] = useState("");
   const [notificationEnabled, setNotificationEnabled] = useState(true);
   const [notificationChannels, setNotificationChannels] = useState(["SMS", "Email"]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setUsernameSuccess("");
+      setUsernameError("");
+      setSuccess("");
+      setError("");
+    }, MESSAGE_DISPLAY_DURATION);
+  
+    return () => clearTimeout(timer);
+  }, [usernameSuccess, usernameError, success, error]);
+  const handleUsernameUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUsernameError("");
+    setUsernameSuccess("");
+ 
+    try {
+      if (!newUsername) {
+        throw new Error("Please enter a new username");
+      }
+      if (newUsername.length < 4) {
+        throw new Error("Username must be at least 4 characters");
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
+        throw new Error("Username can only contain letters, numbers, and underscores");
+        
+    }
+      
+      setIsUpdatingUsername(true);
+      const token = localStorage.getItem("accountToken");
+      if (!token) throw new Error("Authentication required");
 
-  // const handleUsernameUpdate = () => {
-  //   setError("");
-  //   setSuccess("");
-  //   if (!newUsername) {
-  //     setError("Please enter a new username.");
-  //     setTimeout(() => setError(""), 3000);
-
-  //     return;
-  //   }
-  //   setSuccess("Username updated successfully!");
-  //   setShowUsernameField(false);
-  //   setNewUsername("");
-   
-  // };
+      const result = await changeUsername(token, newUsername);
+  
+      if (result) {
+        setUsernameSuccess("Username updated successfully!");
+        localStorage.setItem("accountToken", result.token);
+        setTimeout(() => {
+          setShowUsernameField(false);
+          setNewUsername("");
+        }, MESSAGE_DISPLAY_DURATION);
+      }
+      
+    } catch (error) {
+      setUsernameError(error.message);
+    } finally {
+      setIsUpdatingUsername(false);
+    }
+  };
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,44 +118,37 @@ const SettingsPopover = () => {
     setSuccess("");
 
     try {
-        // Basic validation
-        if (!curPassword || !newPass || !confirmNewPass) {
-            throw new Error("All fields are required");
-        }
-        if (newPass !== confirmNewPass) {
-            throw new Error("New passwords do not match");
-        }
-        if (curPassword === newPass) {
-            throw new Error("New password must be different");
-        }
+      if (!curPassword || !newPass || !confirmNewPass) {
+        throw new Error("All fields are required");
+      }
+      if (newPass !== confirmNewPass) {
+        throw new Error("New passwords do not match");
+      }
+      if (curPassword === newPass) {
+        throw new Error("New password must be different");
+      }
 
-        setLoading(true);
-        const token = localStorage.getItem("accountToken");
-        if (!token) throw new Error("Authentication required");
+      setIsUpdatingPassword(true);
+      const token = localStorage.getItem("accountToken");
+      if (!token) throw new Error("Authentication required");
 
-        const result = await changePassword(token, curPassword, newPass);
-        
-        if (result.success) {
-            setSuccess(result.message);
-            // Update token if needed
-            if (result.token) {
-                localStorage.setItem("accountToken", result.token);
-            }
-            setTimeout(() => {
-                setShowPasswordField(false);
-                setCurPassword("");
-                setNewPass("");
-                setConfirmNewPass("");
-            }, 2000);
-        } else {
-            throw new Error(result.message);
-        }
+      const result = await changePassword(token, curPassword, newPass);
+      
+      if (result.success) {
+        setSuccess(result.message);
+        setTimeout(() => {
+          setShowPasswordField(false);
+          setCurPassword("");
+          setNewPass("");
+          setConfirmNewPass("");
+        }, MESSAGE_DISPLAY_DURATION,);
+      }
     } catch (error) {
-        setError(error.message);
+      setError(error.message);
     } finally {
-        setLoading(false);
+      setIsUpdatingPassword(false);
     }
-};
+  };
   
   const toggleNotificationChannel = (channel: string) => {
     if (notificationChannels.includes(channel)) {
@@ -120,7 +164,8 @@ const SettingsPopover = () => {
         backgroundColor: theme.palette.mode,
         color: theme.palette.mode,
         minHeight: "100vh",
-        width: "100vw",
+        width: "100%",
+        boxSizing: 'border-box' 
       }}
     >
       <IconButton onClick={handleOpen} sx={{ color: theme.palette.mode }}>
@@ -156,7 +201,7 @@ const SettingsPopover = () => {
               onClick={() => setSelectedSection("account")}
               sx={{ cursor: "pointer" }}
             >
-              <LockOutlinedIcon />
+              <LockOutlinedIcon sx={{ mr: 1 }} />
               <ListItemText primary="Account Preferences" />
             </ListItemButton>
             <ListItemButton
@@ -191,7 +236,7 @@ const SettingsPopover = () => {
                 max={32}
                 step={1}
                 color="secondary"
-                sx={{ width: 300 }}
+                sx={{ width: '100%', maxWidth: 500 }}
               />
               <Typography>Theme</Typography>
               <IconButton onClick={toggleColorMode} sx={{ color: theme.palette.text.primary }}>
@@ -203,83 +248,179 @@ const SettingsPopover = () => {
               </IconButton>
             </>
           )}
-         {selectedSection === "account" && (
-    <>
-      <Typography variant="h5" gutterBottom>
-        Account Preferences
-      </Typography>
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
-
-      <Box mb={2}>
-        {!showPasswordField ? (
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => setShowPasswordField(true)}
-          >
-            Change Password
-          </Button>
-        ) : (
-          <Box component="form" onSubmit={handlePasswordUpdate}>
-            <TextField
-              label="Current Password"
-              type="password"
-              value={curPassword}
-              onChange={(e) => setCurPassword(e.target.value)}
-              fullWidth
-              sx={{ mb: 2 }}
-              required
-            />
-            
-            <TextField
-              label="New Password"
-              type="password"
-              value={newPass}
-              onChange={(e) => setNewPass(e.target.value)}
-              fullWidth
-              sx={{ mb: 1 }}
-              required
-            />
-            
-        
-            <TextField
-              label="Confirm New Password"
-              type="password"
-              value={confirmNewPass}
-              onChange={(e) => setConfirmNewPass(e.target.value)}
-              fullWidth
-              sx={{ mb: 2 }}
-              required
-            />
-
-            <Box>
-              <Button 
-                type="submit" 
-                variant="contained" 
-                color="secondary"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowPasswordField(false);
-                  setCurPassword("");
-                  setNewPass("");
-                  setConfirmNewPass("");
-                }}
-                sx={{ ml: 2 }}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
+        {selectedSection === "account" && (
+      <>
+        <Typography variant="h5" gutterBottom>
+          Account Preferences
+        </Typography>
+        {usernameError && (
+      <Alert 
+        severity="error" 
+        sx={{ 
+          mb: 1,
+          maxWidth: '600px',
+          whiteSpace: 'nowrap',
+         mt: 1 
+        }}
+      >
+        {usernameError}
+      </Alert>
+    )}
+    
+    {usernameSuccess && (
+      <Alert 
+        severity="success" 
+        sx={{ 
+          mb: 1,
+          maxWidth: '600px',
+          whiteSpace: 'nowrap',
+         mt: 1 
+        }}
+      >
+        {usernameSuccess}
+      </Alert>
+    )}
+        {error && (
+      <Alert 
+        severity="error" 
+        sx={{ 
+          mb: 1,
+          maxWidth: '600px',
+          whiteSpace: 'nowrap',
+          mt: 1 
+        }}
+      >
+        {error}
+      </Alert>
+    )}
+    
+    {success && (
+      <Alert 
+        severity="success" 
+        sx={{ 
+          mb: 1,
+          maxWidth: '600px',
+          whiteSpace: 'nowrap',
+          mt: 1 
+        }}
+      >
+        {success}
+      </Alert>
+    )} 
+        <Box mb={2}>
+          {!showUsernameField ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setShowUsernameField(true)}
+            >
+              Change Username
+            </Button>
+          ) : (
+            <Box component="form" onSubmit={handleUsernameUpdate} sx={{ maxWidth: 600 }}>
+              <TextField
+                label="New Username"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                fullWidth
+                sx={{ mb: 1 }}
+              />
+              <Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  disabled={isUpdatingUsername}
+                >
+                  {isUpdatingUsername ? "Updating..." : "Update Username"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => {
+                    setShowUsernameField(false);
+                    setNewUsername("");
+                  }}
+                  sx={{ ml: 1 }}
+                  disabled={isUpdatingUsername}
+                >
+                  Cancel
+                </Button>
+              </Box>
             </Box>
+          )}
+        </Box>
+
+        <Box mb={2}>
+      {!showPasswordField ? (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setShowPasswordField(true)}
+        >
+          Change Password
+        </Button>
+      ) : (
+        <Box component="form" onSubmit={handlePasswordUpdate} sx={{ maxWidth: 600 }}>
+          <TextField
+            label="Current Password"
+            type="password"
+            value={curPassword}
+            onChange={(e) => setCurPassword(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+            required
+          />
+          
+          <TextField
+            label="New Password"
+            type="password"
+            value={newPass}
+            onChange={(e) => setNewPass(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+            required
+          />
+          
+          <TextField
+            label="Confirm New Password"
+            type="password"
+            value={confirmNewPass}
+            onChange={(e) => setConfirmNewPass(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+            required
+          />
+
+          <Box>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="secondary"
+              disabled={isUpdatingPassword}
+            >
+              {isUpdatingPassword ? "Updating..." : "Update Password"}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                setShowPasswordField(false);
+                setCurPassword("");
+                setNewPass("");
+                setConfirmNewPass("");
+              }}
+              sx={{ ml: 2 }}
+              disabled={isUpdatingPassword}
+            >
+              Cancel
+            </Button>
           </Box>
-        )}
-      </Box>
-    </>
-  )}
+        </Box>
+      )}
+    </Box>
+  </>
+)}
           {selectedSection === "privacy" && (
             <>
               <Typography variant="h5" gutterBottom>
