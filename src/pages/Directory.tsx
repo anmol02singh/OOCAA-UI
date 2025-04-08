@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -20,6 +20,7 @@ import { tokens } from '../theme.tsx';
 import { fetchEvents } from '../API/searchEvents.tsx';
 import { fetchTLEs } from '../API/fetchTLEs.tsx'; 
 import { fetchCDMs } from '../API/fetchCDMs.tsx';
+import { getEvents } from '../API/getEvents.tsx';
 import { CDM } from '../types.tsx';
 import { Event } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
@@ -72,6 +73,23 @@ const Directory = () => {
   });
 
   const [errMsg, setErrMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getEvents();
+        if (data.length === 0) {
+          setErrMsg("No events found");
+        }
+        setEvents(data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        setErrMsg("Error fetching events");
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
