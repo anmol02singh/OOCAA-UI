@@ -24,9 +24,9 @@ import { CDM } from '../types.tsx';
 import { Event } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
 import EventTable from '../components/EventTable.tsx';
+import EventFilters, { ExtraFilters } from '../components/EventFilters.tsx';
 import CDMTable from '../components/CDMTable.tsx';
 import { useNavigate } from 'react-router-dom';
-
 
 const Directory = () => {
   const navigate = useNavigate();
@@ -36,6 +36,15 @@ const Directory = () => {
   }
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const pageContainer: React.CSSProperties = {
+      width: '100%',
+      height: 'auto',
+      backgroundColor: colors.primary[500],
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      padding: '2rem',
+  };
 
   const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'objectName', value: '' }]);
   const [tcaRange, setTcaRange] = useState<[number, number]>([
@@ -53,6 +62,14 @@ const Directory = () => {
   const [selectedCDM, setSelectedCDM] = useState<CDM | null>(null);
 
   const [tca, setTca] = useState(new Date().toISOString());
+
+  const [extraFilters, setExtraFilters] = useState<ExtraFilters>({
+    missDistanceValue: undefined,
+    missDistanceOperator: 'lte',
+    collisionProbabilityValue: undefined,
+    collisionProbabilityOperator: 'gte',
+    operatorOrganization: '',
+  });
 
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
@@ -89,20 +106,8 @@ const Directory = () => {
   };
 
   const handleSearch = async () => {
-    const hasEmptySearch = searchBars.some((bar) => bar.value.trim() === '');
-    if (hasEmptySearch) {
-      setErrMsg('Please fill in all search fields');
-      setTimeout(() => setErrMsg(null), 2900);
-      // setEvents([]);
-      // setCdms([]);
-      // setSelectedEvent(null);
-      // setSelectedCDM(null);
-      // setTles({});
-      return;
-    }
-    setErrMsg(null);
     try {
-      const data = await fetchEvents(searchBars, tcaRange, {});
+      const data = await fetchEvents(searchBars, tcaRange, extraFilters);
       if (data.length == 0) {
         setErrMsg('No search results found');
         setTimeout(() => setErrMsg(null), 2900);
@@ -159,12 +164,13 @@ const Directory = () => {
 
   return (
     <Box
-      p={3}
-      sx={{
-        backgroundColor: theme.palette.background.default,
-        color: colors.grey[100],
-        minHeight: '100vh',
-      }}
+      // p={3}
+      // sx={{
+      //   backgroundColor: theme.palette.background.default,
+      //   color: colors.grey[100],
+      //   minHeight: '100vh',
+      // }}
+      sx={pageContainer}
     >
       {/* Header */}
       <Typography variant="body1" sx={{ color: colors.grey[300], fontFamily: 'Arial, sans-serif' }}>
@@ -224,6 +230,9 @@ const Directory = () => {
           </IconButton>
         )}
       </Box>
+
+      {/* Extra Filters */}
+      <EventFilters filters={extraFilters} setFilters={setExtraFilters} />
 
       {/* TCA Picker */}
       <TcaPicker 
