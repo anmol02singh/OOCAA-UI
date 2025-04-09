@@ -104,3 +104,9 @@ export interface Position {
     user: string;
     createdAt: string;
   }
+
+  export interface SearchParams {
+    id: number;
+    criteria: string;
+    value: string;
+  }

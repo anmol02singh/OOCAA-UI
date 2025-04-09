@@ -27,7 +27,11 @@ import EventCharts from '../components/EventCharts.tsx';
 import EventTable from '../components/EventTable.tsx';
 import EventFilters, { ExtraFilters } from '../components/EventFilters.tsx';
 import CDMTable from '../components/CDMTable.tsx';
+import { subscribeToCriteria } from '../API/watchlist.tsx';
+import { userdata } from '../API/account.tsx';
 import { useNavigate } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 const Directory = () => {
   const navigate = useNavigate();
@@ -74,6 +78,14 @@ const Directory = () => {
 
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -180,6 +192,34 @@ const Directory = () => {
     }
   };
 
+  const handleSubscribe = async () => {
+    const token = localStorage.getItem("accountToken");
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const user = await userdata(token);
+    const userId = user._id;
+    try {
+      const events = await fetchEvents(searchBars, tcaRange, extraFilters);
+      if (!events || events.length === 0) {
+        setSnackbarMessage("No Events Exist for the Current Filter Criteria");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        return;
+      }
+      await subscribeToCriteria(userId, searchBars, tcaRange, extraFilters);
+      setSnackbarMessage("Successfully Subscribed to the Current Filter Criteria");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error){
+      console.error('Error subscribing to criteria:', error);
+      setSnackbarMessage("You Have Already Subscribed to the Current Filter Criteria");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
   return (
     <Box
       // p={3}
@@ -190,6 +230,16 @@ const Directory = () => {
       // }}
       sx={pageContainer}
     >
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       {/* Header */}
       <Typography variant="body1" sx={{ color: colors.grey[300], fontFamily: 'Arial, sans-serif' }}>
         62,998 searchable objects
@@ -229,7 +279,6 @@ const Directory = () => {
           value={bar.value}
           onCriteriaChange={(value) => handleCriteriaChange(bar.id, value)}
           onValueChange={(value) => handleValueChange(bar.id, value)}
-          onSearch={handleSearch}
           backgroundColor={colors.primary[400]}
           textColor={colors.grey[100]}
         />
@@ -256,7 +305,8 @@ const Directory = () => {
       <TcaPicker 
         tcaRange={tcaRange} 
         onTcaChange={handleTcaChange} 
-        onSearch={handleSearch} 
+        onSearch={handleSearch}
+        onSubscribe={handleSubscribe} 
       />
 
       {errMsg && (
@@ -266,7 +316,7 @@ const Directory = () => {
         </Box>
       )}
 
-      {/* Search Results Table */}
+      {/* Search Results (Events) Table */}
       {events.length > 0 && (
       <EventTable events={events} selectedEvent={selectedEvent} onEventClick={handleEventClick} />
     )}

@@ -11,7 +11,6 @@ interface SearchBarProps {
   value: string;
   onCriteriaChange: (value: string) => void;
   onValueChange: (value: string) => void;
-  onSearch: () => void;
 }
 
 const SearchBox = styled(Box)<{ backgroundColor: string; }>(
@@ -33,7 +32,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   textColor,
   value,
   onValueChange,
-  onSearch,
 }) => {
 
   const theme = useTheme();
