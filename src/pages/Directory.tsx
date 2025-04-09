@@ -142,6 +142,11 @@ const Directory = () => {
         setErrMsg('No search results found');
         setTimeout(() => setErrMsg(null), 2900);
       }
+      if (searchBars.length > 1 && searchBars.some((bar) => bar.value.trim() === '')) {
+        setErrMsg('Please Enter Another Object or Remove a Search Bar');
+        setTimeout(() => setErrMsg(null), 2900);
+        return;
+      }
       setEvents(data);
       setSelectedCDM(null);
       setTles({});
@@ -193,6 +198,13 @@ const Directory = () => {
   };
 
   const handleSubscribe = async () => {
+    if (searchBars.length > 1 && searchBars.some((bar) => bar.value.trim() === '')) {
+      setSnackbarMessage("Please Enter Another Object or Remove a Search Bar");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
     const token = localStorage.getItem("accountToken");
     if (!token) {
       navigate('/login');
