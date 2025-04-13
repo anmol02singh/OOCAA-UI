@@ -57,6 +57,14 @@ export const useGeneralStyling = () => {
         borderRadius: '9px',
     });
 
+    const titleContainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '100%',
+    }; 
+
     const searchAndFilterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flexDirection: pageWidth >= mdWindowWidth ? 'row' : 'column',
@@ -67,6 +75,7 @@ export const useGeneralStyling = () => {
                 : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
                     : '44vw',
         minWidth: '100%',
+        marginTop: '2rem',
         gap: '2rem',
     });
 
@@ -122,6 +131,7 @@ export const useGeneralStyling = () => {
         pageContainer,
         adminElements,
         adminSettingsContainer,
+        titleContainer,
         searchAndFilterContainer,
         accountsDataGridContainer,
         accountsTableContainer,

@@ -98,7 +98,7 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
                         >
                             <TextField
                                 name='min'
-                                placeholder='Max (0-2)'
+                                placeholder='Min (0-2)'
                                 type='number'
                                 value={filterRole.min}
                                 onChange={handleFilterChange}

@@ -8,6 +8,8 @@ import {
 import AdminAccountSearchBar from '../../components/AdminAccountsSearchBar.tsx';
 import AdminAccountsTable from '../../components/AdminAccountsTable.tsx';
 import { userdata } from '../../API/account.tsx';
+import { Typography, useTheme } from '@mui/material';
+import { tokens } from '../../theme.tsx';
 
 const AdminManageAccount = () => {
     const navigate = useNavigate();
@@ -16,9 +18,13 @@ const AdminManageAccount = () => {
         navigate('/login')
     }
 
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+
     const {
         pageContainer,
         adminSettingsContainer,
+        titleContainer,
     } = useGeneralStyling();
 
     const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
@@ -66,6 +72,13 @@ const AdminManageAccount = () => {
     return (
         <Box ref={boxRef} sx={pageContainer}>
             <Box sx={adminSettingsContainer(pageWidth)}>
+                {/* Title */}
+                <Box sx={titleContainer}>
+                    <Typography variant='h2' sx={{color: colors.blueAccent[400]}}>
+                        Manage Accounts
+                    </Typography>
+                </Box>
+                
                 {/* Search Bar */}
                 <AdminAccountSearchBar
                     pageWidth={pageWidth}
