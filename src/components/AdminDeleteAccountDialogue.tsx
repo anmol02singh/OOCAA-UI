@@ -1,28 +1,26 @@
 import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
-import { Button, Grid2 as Grid, IconButton, MenuItem, Select, useTheme } from '@mui/material';
+import { Button, Grid2 as Grid, IconButton, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { tokens } from '../theme.tsx';
-import { useGeneralStyling, useEditItemStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { useGeneralStyling, useDeleteItemStyling } from '../pages/Admin/AdminUtilities.tsx';
 import { userdata } from '../API/account.tsx';
 
 interface EditItemDialogueProps {
     open: boolean;
     onClose: () => void;
     pageWidth: number;
-    newRole: number;
-    setNewRole: React.Dispatch<React.SetStateAction<number>>;
-    setSubmitEdit: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedAccountsAmount: number;
+    setSubmitDelete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
+const AdminDeleteAccountDialogue: React.FC<EditItemDialogueProps> = ({
     open,
     onClose,
     pageWidth,
-    newRole,
-    setNewRole,
-    setSubmitEdit,
+    selectedAccountsAmount,
+    setSubmitDelete,
 }) => {
     const token = localStorage.getItem("accountToken");
     if (!token) {
@@ -35,14 +33,13 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
     } = useGeneralStyling();
 
     const {
-        adminEditItemDialogueContainer,
-        editItemHeader,
-        editItemContainer,
-        editItemDropdown,
-        editItemMenu,
-        editItemButtonContainer,
-        editItemSaveButton,
-    } = useEditItemStyling();
+        adminDeleteItemDialogueContainer,
+        deleteItemHeader,
+        deleteItemContainer,
+        deleteItemButtonContainer,
+        deleteItemConfirmButton,
+        cancelDeleteButton,
+    } = useDeleteItemStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -60,19 +57,14 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
 
     useEffect(() => {
         if (!open) return;
-        setNewRole(1);
     }, [open]);
-
-    const handleCriterionChange = (role: number) => {
-        setNewRole(role);
-    };
 
     const handleClose = () => {
         onClose();
     }
 
     const handleSubmit = () => {
-        setSubmitEdit(true);
+        setSubmitDelete(true);
         onClose();
     };
 
@@ -83,7 +75,7 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
             keepMounted
             sx={{
                 '& .MuiPaper-root': {
-                    ...adminEditItemDialogueContainer(pageWidth),
+                    ...adminDeleteItemDialogueContainer(pageWidth),
                 },
                 '& .css-kw13he-MuiDialogContent-root': {
                     padding: 0,
@@ -96,54 +88,47 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
                         <CloseIcon sx={{ fontSize: '1.8rem' }} />
                     </IconButton>
                 </Grid>
-                <Grid size={8} sx={editItemHeader}>
-                    <Typography variant='h3' sx={{ color: colors.grey[100] }}>
-                        Edit Role
+                <Grid size={8} sx={deleteItemHeader}>
+                    <Typography variant='h3' sx={{ color: colors.redAccent[400] }}>
+                        Delete Selected?
                     </Typography>
                 </Grid>
 
-                <Grid size={12} sx={editItemContainer}>
-                    <Select
-                        value={newRole ?? 1}
-                        onChange={(event) => handleCriterionChange((event.target.value ?? 1) as number)}
-                        sx={editItemDropdown}
-                        MenuProps={{
-                            PaperProps: {
-                                sx: { ...editItemMenu },
-                            },
-                        }}
-                    >
-                        <MenuItem value={1}>Level 1 Operator</MenuItem>
-                        <MenuItem value={2}>Level 2 Operator</MenuItem>
-                        <MenuItem value={0}>Admin</MenuItem>
-                    </Select>
+                <Grid size={12} sx={deleteItemContainer}>
+                    <Typography variant='h4' sx={{ color: colors.grey[100] }}>
+                        {`${selectedAccountsAmount} account(s) are about to be deleted. This can not be undone.`}
+                    </Typography>
                 </Grid>
 
-                <Grid
-                    size={12}
-                    sx={{
-                        height: '4rem'
-                    }}
-                >
-                    {/*Spacing for dropdown*/}
-                </Grid>
-
-                <Grid size={12} sx={editItemButtonContainer}>
-                    <Button
+                <Grid size={12} sx={deleteItemButtonContainer}>
+                <Button
                         type='submit'
-                        onClick={handleSubmit}
+                        onClick={handleClose}
                         sx={{
-                            ...editItemSaveButton,
+                            ...cancelDeleteButton,
                             '&:hover': {
                                 ...button_hover
                             },
                         }}
                     >
-                        Save
+                        Cancel
+                    </Button>
+                    <Button
+                        type='submit'
+                        onClick={handleSubmit}
+                        sx={{
+                            ...deleteItemConfirmButton,
+                            '&:hover': {
+                                ...button_hover,
+                                color: '#f44336',
+                            },
+                        }}
+                    >
+                        Delete Selected
                     </Button>
                 </Grid>
             </Grid>
         </Dialog>
     );
 }
-export default AdminEditRoleDialogue;
+export default AdminDeleteAccountDialogue;

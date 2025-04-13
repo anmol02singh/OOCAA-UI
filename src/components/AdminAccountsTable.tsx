@@ -26,6 +26,7 @@ interface AccountTableProps {
     };
     setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
     newRole: number;
+    setSelectedAccountsAmount: React.Dispatch<React.SetStateAction<number>>;
     submitSearch: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     submitFilter: boolean;
@@ -46,6 +47,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     searchBar,
     setDisabled,
     newRole,
+    setSelectedAccountsAmount,
     submitSearch,
     setSubmitSearch,
     submitFilter,
@@ -89,6 +91,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
 
     useEffect(() => {
         updateButtons(selectedRows);
+        setSelectedAccountsAmount(getSelectedAccounts().length);
         //eslint-disable-next-line
     }, [selectedRows]);
 
@@ -151,18 +154,22 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
 
     const handleSelect = (newSelection) => {
         if (filteredAccounts.length-selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
-        setSelectedRows(newSelection as string[])
+        setSelectedRows(newSelection as string[]);
     }
 
+    const getSelectedAccounts = (): string[] => {
+        return selectedRows.filter(username => filteredAccounts.map(account => {
+            if (!account || !account.username) return false;
+            return account.username.includes(username);
+        }));
+    }
+    
     const handleEdit = () => {
         if (submitEdit) {
             if (token) {
                 updateAccountsRole(
                     token,
-                    selectedRows.filter(username => filteredAccounts.map(account => {
-                        if (!account || !account.username) return false;
-                        return account.username.includes(username);
-                    })),
+                    getSelectedAccounts(),
                     newRole,
                 )
                     .then(result => {
@@ -177,10 +184,10 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     const handleDelete = () => {
         if (submitDelete) {
             if (token) {
-                deleteAccounts(token, selectedRows.filter(username => filteredAccounts.map(account => {
-                    if (!account || !account.username) return false;
-                    return account.username.includes(username);
-                })))
+                deleteAccounts(
+                    token,
+                    getSelectedAccounts()
+                )
                     .then(result => {
                         if (!result) return;
                         setSubmitReset(true);

@@ -10,6 +10,7 @@ import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../pages/
 import AdminFilterPopper from './AdminFilterPopper.tsx';
 import AdminEditRoleDialogue from './AdminEditRoleDialogue.tsx';
 import { smWindowWidth } from '../pages/Profile/ProfileUtilities.tsx';
+import AdminDeleteAccountDialogue from './AdminDeleteAccountDialogue.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
@@ -31,6 +32,7 @@ interface SearchBarProps {
     }>>;
     disabled: boolean;
     newRole: number;
+    selectedAccountsAmount: number;
     setNewRole: React.Dispatch<React.SetStateAction<number>>;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,6 +49,7 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     setSearchBar,
     disabled,
     newRole,
+    selectedAccountsAmount,
     setNewRole,
     setSubmitSearch,
     setSubmitFilter,
@@ -78,7 +81,8 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const [dialogueOpen, setDialogueOpen] = React.useState(false);
+    const [roleDialogueOpen, setRoleDialogueOpen] = React.useState(false);
+    const [deleteDialogueOpen, setDeleteDialogueOpen] = React.useState(false);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null)
     const open = Boolean(anchorEl);
@@ -102,16 +106,21 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     }
 
     const handleEdit = () => {
-        setDialogueOpen(true);
+        setRoleDialogueOpen(true);
     }
 
-    const handleClose = () => {
-        setDialogueOpen(false);
+    const handleEditClose = () => {
+        setRoleDialogueOpen(false);
     };
 
     const handleDelete = () => {
-        setSubmitDelete(true);
+        // setSubmitDelete(true);
+        setDeleteDialogueOpen(true);
     }
+
+    const handleDeleteClose = () => {
+        setDeleteDialogueOpen(false);
+    };
 
     const handleReset = () => {
         setFilterRole({ min: '', max: '' });
@@ -349,12 +358,19 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
                 </Tooltip>
             </Box>
             <AdminEditRoleDialogue
-                open={dialogueOpen}
-                onClose={handleClose}
+                open={roleDialogueOpen}
+                onClose={handleEditClose}
                 pageWidth={pageWidth}
                 newRole={newRole}
                 setNewRole={setNewRole}
                 setSubmitEdit={setSubmitEdit}
+            />
+            <AdminDeleteAccountDialogue
+                open={deleteDialogueOpen}
+                onClose={handleDeleteClose}
+                pageWidth={pageWidth}
+                selectedAccountsAmount={selectedAccountsAmount}
+                setSubmitDelete={setSubmitDelete}
             />
         </Box>
     );

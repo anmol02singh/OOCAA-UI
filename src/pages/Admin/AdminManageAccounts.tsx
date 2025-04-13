@@ -63,6 +63,7 @@ const AdminManageAccount = () => {
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
     const [disabled, setDisabled] = useState<boolean>(true);
     const [newRole, setNewRole] = useState<number>(1);
+    const [selectedAccountsAmount, setSelectedAccountsAmount] = useState<number>(0);
     const [submitSearch, setSubmitSearch] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
     const [submitEdit, setSubmitEdit] = useState<boolean>(false);
@@ -87,6 +88,7 @@ const AdminManageAccount = () => {
                     searchBar={searchBar}
                     disabled={disabled}
                     newRole={newRole}
+                    selectedAccountsAmount={selectedAccountsAmount}
                     setNewRole={setNewRole}
                     setSearchBar={setSearchBar}
                     setSubmitSearch={setSubmitSearch}
@@ -105,6 +107,7 @@ const AdminManageAccount = () => {
                     searchBar={searchBar}
                     setDisabled={setDisabled}
                     newRole={newRole}
+                    setSelectedAccountsAmount={setSelectedAccountsAmount}
                     submitSearch={submitSearch}
                     setSubmitSearch={setSubmitSearch}
                     submitFilter={submitFilter}

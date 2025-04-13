@@ -285,7 +285,7 @@ export const useEditItemStyling = () => {
 
     const { filterDropdown } = useSearchStyling();
 
-    const adminDialogueContainer = (pageWidth: number): React.CSSProperties => ({
+    const adminEditItemDialogueContainer = (pageWidth: number): React.CSSProperties => ({
         padding:
             pageWidth >= mdWindowWidth ? '3rem'
                 : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
@@ -354,12 +354,92 @@ export const useEditItemStyling = () => {
     };
 
     return {
-        adminDialogueContainer,
+        adminEditItemDialogueContainer,
         editItemHeader,
         editItemContainer,
         editItemDropdown,
         editItemMenu,
         editItemButtonContainer,
         editItemSaveButton,
+    };
+}
+
+export const useDeleteItemStyling = () => {
+
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+
+    const adminDeleteItemDialogueContainer = (pageWidth: number): React.CSSProperties => ({
+        padding:
+            pageWidth >= mdWindowWidth ? '3rem'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
+                    : '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '35vw',
+        minWidth: '22rem',
+        maxWidth: '33rem',
+        backgroundColor: colors.primary[400],
+        borderRadius: '9px',
+        backgroundImage: 'none',
+        gap: '1rem',
+        overflow: 'auto',
+    });
+
+    const deleteItemHeader: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minWidth: '13.1rem',
+    };
+
+    const deleteItemContainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        textAlign: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+    };
+
+    const deleteItemButtonContainer: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+    };
+
+    const deleteItemConfirmButton: React.CSSProperties = {
+        padding: '0.8rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '1rem',
+        margin: '0.5rem',
+        width: '10rem',
+    };
+
+    const cancelDeleteButton: React.CSSProperties = {
+        padding: '0.8rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '1rem',
+        margin: '0.5rem',
+        width: '6rem',
+    };
+
+    return {
+        adminDeleteItemDialogueContainer,
+        deleteItemHeader,
+        deleteItemContainer,
+        deleteItemButtonContainer,
+        deleteItemConfirmButton,
+        cancelDeleteButton,
     };
 }
