@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { tokens } from '../../theme.tsx';
-import { AccountStats, useAccountStatsStyling } from '../../pages/Admin/AdminUtilities.tsx';
+import { AccountStats, useAccountStatsStyling, mdWindowWidth } from '../../pages/Admin/AdminUtilities.tsx';
 
 interface AccountStatCardProps {
     pageWidth: number;
@@ -23,7 +23,7 @@ const AccountStatCard: FC<AccountStatCardProps> = ({
 
     return (
         <Box sx={statContainer(pageWidth)}>
-            <Typography variant="h2" sx={{ color: colors.grey[100] }}>
+            <Typography variant={value >= 1000000 || pageWidth < mdWindowWidth ? 'h3' : 'h2'} sx={{ color: colors.grey[100] }}>
                 {value}
             </Typography>
             <Typography variant="h5" sx={{ color: colors.greenAccent[400] }}>

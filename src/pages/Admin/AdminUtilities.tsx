@@ -175,16 +175,13 @@ export const useAccountStatsStyling = () => {
         justifyContent: 'flex-start',
         alignItems: 'center',
         width: '100%',
-        minWidth: '9rem',
+        minWidth: 'max-content',
         maxWidth: '23rem',
         backgroundColor: colors.primary[500],
         borderRadius: '9px',
-        backgroundImage: 'none',
         gap: '0.1rem',
         overflow: 'auto',
     });
-
-    
 
     return {
         statsContainer,
