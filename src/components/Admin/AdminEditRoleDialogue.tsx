@@ -60,7 +60,7 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
 
     useEffect(() => {
         if (!open) return;
-        setNewRole(1);
+        setNewRole(-1);
     }, [open]);
 
     const handleCriterionChange = (role: number) => {
@@ -104,15 +104,16 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
 
                 <Grid size={12} sx={editItemContainer}>
                     <Select
-                        value={newRole ?? 1}
-                        onChange={(event) => handleCriterionChange((event.target.value ?? 1) as number)}
-                        sx={editItemDropdown}
+                        value={newRole ?? -1}
+                        onChange={(event) => handleCriterionChange((event.target.value ?? -1) as number)}
+                        sx={editItemDropdown(newRole)}
                         MenuProps={{
                             PaperProps: {
                                 sx: { ...editItemMenu },
                             },
                         }}
                     >
+                        <MenuItem value={-1} sx={{color: colors.grey[400]}}>Select New Role</MenuItem>
                         <MenuItem value={1}>Level 1 Operator</MenuItem>
                         <MenuItem value={2}>Level 2 Operator</MenuItem>
                         <MenuItem value={0}>Admin</MenuItem>
@@ -131,6 +132,7 @@ const AdminEditRoleDialogue: React.FC<EditItemDialogueProps> = ({
                 <Grid size={12} sx={editItemButtonContainer}>
                     <Button
                         type='submit'
+                        disabled={newRole < 0 || newRole > 2}
                         onClick={handleSubmit}
                         sx={{
                             ...editItemSaveButton,

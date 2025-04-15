@@ -64,7 +64,7 @@ const AdminManageAccount = () => {
 
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
     const [disabled, setDisabled] = useState<boolean>(true);
-    const [newRole, setNewRole] = useState<number>(1);
+    const [newRole, setNewRole] = useState<number>(-1);
     const [accountStats, setAccountStats] = useState<AccountStats>({
         totalAccounts: { label: 'Total Accounts', value: 0 },
         op1AccountAmount: { label: 'Level 1 Operators', value: 0 },

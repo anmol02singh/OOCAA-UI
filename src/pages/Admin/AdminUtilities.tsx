@@ -368,21 +368,22 @@ export const useEditItemStyling = () => {
         height: '100%',
     };
 
-    const editItemDropdown: React.CSSProperties = {
+    const editItemDropdown = (newRole: number): React.CSSProperties => ({
         ...filterDropdown,
         width: '23vw',
         minWidth: '11rem',
         maxWidth: '17rem',
         height: '2.5rem',
         fontSize: '16px',
-    }
+        color: newRole >= 0 ? colors.grey[100] : colors.grey[500],
+    });
 
     const editItemMenu: React.CSSProperties = {
         width: '23vw',
         minWidth: '11rem !important',
         maxWidth: '17rem',
         backgroundColor: colors.primary[400],
-    }
+    };
 
     const editItemButtonContainer: React.CSSProperties = {
         display: 'flex',
