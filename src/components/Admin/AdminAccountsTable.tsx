@@ -49,6 +49,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     searchBar,
     setDisabled,
     newRole,
+    accountStats,
     setAccountStats,
     setSelectedAccountsAmount,
     submitSearch,
@@ -77,6 +78,30 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     const [sortedColumns, setSortedColumns] = useState<GridSortItem[]>([]);
     const [currentUser, setCurrentUser] = useState<Account>();
 
+    const setAllAccountStats = (accounts) => {
+        if (accounts) {
+            setAccountStats({
+                ...accountStats,
+                totalAccounts: {
+                    ...accountStats.totalAccounts,
+                    value: accounts.length
+                },
+                op1AccountAmount: {
+                    ...accountStats.op1AccountAmount,
+                    value: accounts.filter(account => account && account.roleNum === 1).length
+                },
+                op2AccountAmount: {
+                    ...accountStats.op2AccountAmount,
+                    value: accounts.filter(account => account && account.roleNum === 2).length
+                },
+                adminAccountAmount: {
+                    ...accountStats.adminAccountAmount,
+                    value: accounts.filter(account => account && account.roleNum === 0).length
+                },
+            });
+        }
+    }
+
     useEffect(() => {
         if (token) {
             userdata(token)
@@ -87,6 +112,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                 .then(accounts => {
                     setSearchedAccounts(accounts);
                     setFilteredAccounts(accounts);
+                    setAllAccountStats(accounts);
                 });
         }
         //eslint-disable-next-line
@@ -156,7 +182,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     }
 
     const handleSelect = (newSelection) => {
-        if (filteredAccounts.length-selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
+        if (filteredAccounts.length - selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
         setSelectedRows(newSelection as string[]);
     }
 
@@ -166,7 +192,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
             return account.username.includes(username);
         }));
     }
-    
+
     const handleEdit = () => {
         if (submitEdit) {
             if (token) {
@@ -207,6 +233,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
                     .then(accounts => {
                         setSearchedAccounts(accounts);
                         setFilteredAccounts(accounts);
+                        setAllAccountStats(accounts);
                     });
             }
             setSelectedRows([]);

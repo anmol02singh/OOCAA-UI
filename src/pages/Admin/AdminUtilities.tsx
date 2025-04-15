@@ -8,10 +8,10 @@ import {
 
 /*############### Admin-Specific types ###############*/
 export type AccountStats = {
-    totalAccounts: { label: 'Total Accounts', value: 0 },
-    op1AccountAmount: { label: 'Level 1 Operators', value: 0 },
-    op2AccountAmount: { label: 'Level 2 Operators', value: 0 },
-    adminAccountAmount: { label: 'Administrators', value: 0 },
+    totalAccounts: { label: 'Total Accounts', value: number },
+    op1AccountAmount: { label: 'Level 1 Operators', value: number },
+    op2AccountAmount: { label: 'Level 2 Operators', value: number },
+    adminAccountAmount: { label: 'Administrators', value: number },
 }
 
 /*############### Constants ###############*/
