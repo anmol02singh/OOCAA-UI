@@ -6,6 +6,14 @@ import {
     getPageWidth as profileGetPageWidth
 } from '../Profile/ProfileUtilities.tsx';
 
+/*############### Admin-Specific types ###############*/
+export type AccountStats = {
+    totalAccounts: { label: 'Total Accounts', value: 0 },
+    op1AccountAmount: { label: 'Level 1 Operators', value: 0 },
+    op2AccountAmount: { label: 'Level 2 Operators', value: 0 },
+    adminAccountAmount: { label: 'Administrators', value: 0 },
+}
+
 /*############### Constants ###############*/
 //Window resizing thresholds
 export const mdWindowWidth = 802;
@@ -53,17 +61,18 @@ export const useGeneralStyling = () => {
             pageWidth >= mdWindowWidth ? '3rem'
                 : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
                     : '2rem',
+        gap: '1rem',
         backgroundColor: colors.primary[400],
         borderRadius: '9px',
     });
 
-    const titleContainer: React.CSSProperties = {
+    const titleContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: pageWidth >= smWindowWidth ? 'flex-start' : 'center',
         alignItems: 'center',
         width: '100%',
-    }; 
+    }); 
 
     const searchAndFilterContainer = (pageWidth: number): React.CSSProperties => ({
         display: 'flex',
@@ -92,7 +101,6 @@ export const useGeneralStyling = () => {
     const accountsTableContainer = (pageWidth: number): React.CSSProperties => ({
         backgroundColor: colors.primary[400],
         color: colors.grey[100],
-        marginTop: '1rem',
         width:
             pageWidth >= mdWindowWidth ? '65vw'
                 : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
@@ -140,6 +148,49 @@ export const useGeneralStyling = () => {
         button_click,
     };
 };
+
+export const useAccountStatsStyling = () => {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+
+    const statsContainer = (pageWidth: number): React.CSSProperties => ({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: pageWidth >= mdWindowWidth ? 'center' : 'flex-start',
+        alignItems: 'center',
+        width:
+            pageWidth >= mdWindowWidth ? '65vw'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '55vw'
+                    : '44vw',
+        minWidth: '100%',
+        gap: pageWidth >= mdWindowWidth ? '1rem' : '0.5rem',
+        overflow: 'auto',
+    });
+
+    const statContainer = (pageWidth: number): React.CSSProperties => ({
+        padding:
+            pageWidth >= mdWindowWidth ? '1rem' : '0.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '100%',
+        minWidth: '9rem',
+        maxWidth: '23rem',
+        backgroundColor: colors.primary[500],
+        borderRadius: '9px',
+        backgroundImage: 'none',
+        gap: '0.1rem',
+        overflow: 'auto',
+    });
+
+    
+
+    return {
+        statsContainer,
+        statContainer,
+    }
+}
 
 export const useSearchStyling = () => {
     const theme = useTheme();
@@ -378,9 +429,9 @@ export const useDeleteItemStyling = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        width: '35vw',
+        width: '50vw',
         minWidth: '22rem',
-        maxWidth: '33rem',
+        maxWidth: '29rem',
         backgroundColor: colors.primary[400],
         borderRadius: '9px',
         backgroundImage: 'none',

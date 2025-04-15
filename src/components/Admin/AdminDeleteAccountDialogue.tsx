@@ -3,11 +3,11 @@ import Dialog from '@mui/material/Dialog';
 import { Button, Grid2 as Grid, IconButton, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import { tokens } from '../theme.tsx';
-import { useGeneralStyling, useDeleteItemStyling } from '../pages/Admin/AdminUtilities.tsx';
-import { userdata } from '../API/account.tsx';
+import { tokens } from '../../theme.tsx';
+import { useGeneralStyling, useDeleteItemStyling } from '../../pages/Admin/AdminUtilities.tsx';
+import { userdata } from '../../API/account.tsx';
 
-interface EditItemDialogueProps {
+interface DeleteItemDialogueProps {
     open: boolean;
     onClose: () => void;
     pageWidth: number;
@@ -15,7 +15,7 @@ interface EditItemDialogueProps {
     setSubmitDelete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AdminDeleteAccountDialogue: React.FC<EditItemDialogueProps> = ({
+const AdminDeleteAccountDialogue: React.FC<DeleteItemDialogueProps> = ({
     open,
     onClose,
     pageWidth,

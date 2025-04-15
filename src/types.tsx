@@ -17,24 +17,24 @@ export interface Position {
     x: number;
     y: number;
     z: number;
-  }
-  
-  export interface Velocity {
+}
+
+export interface Velocity {
     x_dot: number;
     y_dot: number;
     z_dot: number;
-  }
-  
-  export interface PositionCovariance {
+}
+
+export interface PositionCovariance {
     cr_r: number;
     ct_r: number;
     ct_t: number;
     cn_r: number;
     cn_t: number;
     cn_n: number;
-  }
-  
-  export interface VelocityCovariance {
+}
+
+export interface VelocityCovariance {
     crdot_r: number;
     crdot_t: number;
     crdot_n: number;
@@ -50,9 +50,9 @@ export interface Position {
     cndot_rdot: number;
     cndot_tdot: number;
     cndot_ndot: number;
-  }
-  
-  export interface CDMObject {
+}
+
+export interface CDMObject {
     object: string;
     objectDesignator: string;
     catalogName: string;
@@ -67,12 +67,12 @@ export interface Position {
     velocity: Velocity;
     positionCovariance: PositionCovariance;
     velocityCovariance: VelocityCovariance;
-  }
-  
-  export interface CDM {
+}
+
+export interface CDM {
     _id: string;
     ccsdsCdmVers: string;
-    creationDate: string; 
+    creationDate: string;
     originator: string;
     messageId: string;
     tca: string;
@@ -80,9 +80,9 @@ export interface Position {
     collisionProbability: number;
     object1: CDMObject;
     object2: CDMObject;
-  }
-  
-  export interface Event {
+}
+
+export interface Event {
     _id: string;
     eventName: string;
     primaryObjectDesignator: string;
@@ -96,4 +96,4 @@ export interface Position {
     collisionProbabilities: [number];
     primaryOperatorOrganization: string;
     secondaryOperatorOrganization: string;
-  }
+}

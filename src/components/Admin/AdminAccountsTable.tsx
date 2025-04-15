@@ -4,10 +4,10 @@ import {
     useTheme,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId, GridSortItem } from '@mui/x-data-grid';
-import { tokens } from '../theme.tsx';
-import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../API/account.tsx';
-import { Account } from '../types.tsx';
-import { useGeneralStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { tokens } from '../../theme.tsx';
+import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../../API/account.tsx';
+import { Account } from '../../types.tsx';
+import { AccountStats, useGeneralStyling } from '../../pages/Admin/AdminUtilities.tsx';
 
 interface AccountTableProps {
     token: string | null;
@@ -26,6 +26,8 @@ interface AccountTableProps {
     };
     setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
     newRole: number;
+    accountStats: AccountStats;
+    setAccountStats: React.Dispatch<React.SetStateAction<AccountStats>>;
     setSelectedAccountsAmount: React.Dispatch<React.SetStateAction<number>>;
     submitSearch: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,6 +49,7 @@ const AdminAccountsTable: React.FC<AccountTableProps> = ({
     searchBar,
     setDisabled,
     newRole,
+    setAccountStats,
     setSelectedAccountsAmount,
     submitSearch,
     setSubmitSearch,

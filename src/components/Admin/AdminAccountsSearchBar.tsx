@@ -5,11 +5,11 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { tokens } from '../theme.tsx';
-import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { tokens } from '../../theme.tsx';
+import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../../pages/Admin/AdminUtilities.tsx';
 import AdminFilterPopper from './AdminFilterPopper.tsx';
 import AdminEditRoleDialogue from './AdminEditRoleDialogue.tsx';
-import { smWindowWidth } from '../pages/Profile/ProfileUtilities.tsx';
+import { smWindowWidth } from '../../pages/Profile/ProfileUtilities.tsx';
 import AdminDeleteAccountDialogue from './AdminDeleteAccountDialogue.tsx';
 
 interface SearchBarProps {
@@ -41,7 +41,7 @@ interface SearchBarProps {
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AccountSearchBar: React.FC<SearchBarProps> = ({
+const AdminAccountsSearchBar: React.FC<SearchBarProps> = ({
     pageWidth,
     filterRole,
     setFilterRole,
@@ -376,4 +376,4 @@ const AccountSearchBar: React.FC<SearchBarProps> = ({
     );
 };
 
-export default AccountSearchBar;
+export default AdminAccountsSearchBar;

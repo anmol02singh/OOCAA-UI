@@ -3,9 +3,9 @@ import Dialog from '@mui/material/Dialog';
 import { Button, Grid2 as Grid, IconButton, MenuItem, Select, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import { tokens } from '../theme.tsx';
-import { useGeneralStyling, useEditItemStyling } from '../pages/Admin/AdminUtilities.tsx';
-import { userdata } from '../API/account.tsx';
+import { tokens } from '../../theme.tsx';
+import { useGeneralStyling, useEditItemStyling } from '../../pages/Admin/AdminUtilities.tsx';
+import { userdata } from '../../API/account.tsx';
 
 interface EditItemDialogueProps {
     open: boolean;

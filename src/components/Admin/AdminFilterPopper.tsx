@@ -2,8 +2,8 @@ import React from 'react';
 import { Box, ClickAwayListener, IconButton, Popper, TextField, Tooltip, Typography, useTheme } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { tokens } from '../theme.tsx';
-import { useFilterStyling } from '../pages/Admin/AdminUtilities.tsx';
+import { tokens } from '../../theme.tsx';
+import { useFilterStyling } from '../../pages/Admin/AdminUtilities.tsx';
 
 interface FilterPopperProps {
     pageWidth: number;
