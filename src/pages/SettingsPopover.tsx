@@ -85,33 +85,50 @@ const SettingsPopover = () => {
       if (newUsername.length < 4) {
         throw new Error("Username must be at least 4 characters");
       }
-      if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
+      if (!/^[a-zA-Z0-9_.]+$/.test(newUsername)) {
         throw new Error("Username can only contain letters, numbers, and underscores");
         
+    }
+    if (/\.\./.test(newUsername)) {
+      throw new Error("Username cannot contain consecutive periods.");
+    }
+    if (/^\.|\.$/.test(newUsername)) {
+      throw new Error("Username cannot start or end with a period.");
     }
       
       setIsUpdatingUsername(true);
       const token = localStorage.getItem("accountToken");
       if (!token) throw new Error("Authentication required");
-
+      console.log("Token from localStorage:", token);
+      if (!token) {
+         console.error("No token found in localStorage!");
+         setUsernameError("Authentication token not found. Please log in again."); 
+         setIsUpdatingUsername(false); 
+         return; 
+      }
       const result = await changeUsername(token, newUsername);
   
-      if (result) {
-        setUsernameSuccess("Username updated successfully!");
+      if (result && result.success) { 
+        setUsernameSuccess(result.message || "Username updated successfully!"); 
         localStorage.setItem("accountToken", result.token);
-        setTimeout(() => {
-          setShowUsernameField(false);
-          setNewUsername("");
-        }, MESSAGE_DISPLAY_DURATION);
+    
+        setShowUsernameField(false);
+        setNewUsername("");
+        setTimeout(() => setUsernameSuccess(""), MESSAGE_DISPLAY_DURATION);
+    
+      } else {
+        setUsernameError(result?.message || "Failed to update username. Please try again.");
+        setTimeout(() => setUsernameError(""), MESSAGE_DISPLAY_DURATION);
       }
-      
-    } catch (error) {
-      setUsernameError(error.message);
+    
+    } catch (error: any) { 
+        console.error("Error during username update:", error);
+        setUsernameError(error.message || "An unexpected error occurred.");
+        setTimeout(() => setUsernameError(""), MESSAGE_DISPLAY_DURATION);
     } finally {
       setIsUpdatingUsername(false);
     }
-  };
-
+  }
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -163,15 +180,14 @@ const SettingsPopover = () => {
       sx={{
         backgroundColor: theme.palette.mode,
         color: theme.palette.mode,
-        minHeight: "100vh",
+        minHeight: "90%",
         width: "100%",
-        boxSizing: 'border-box' 
+        boxSizing: 'border-box', 
+        display: 'flex', 
+        flexDirection: 'column' 
       }}
     >
-      <IconButton onClick={handleOpen} sx={{ color: theme.palette.mode }}>
-        <SettingsOutlinedIcon />
-      </IconButton>
-      <Box display="flex" height="calc(100vh - 48px)">
+      <Box display="flex" flexGrow={1}>
         {/* Sidebar */}
         <Box
           width="250px"
@@ -180,6 +196,7 @@ const SettingsPopover = () => {
           display="flex"
           flexDirection="column"
           boxShadow={2}
+          sx={{ height: "auto" }}
         >
           <Typography variant="h6" gutterBottom>
             Settings
