@@ -86,7 +86,7 @@ const SettingsPopover = () => {
         throw new Error("Username must be at least 4 characters");
       }
       if (!/^[a-zA-Z0-9_.]+$/.test(newUsername)) {
-        throw new Error("Username can only contain letters, numbers, and underscores");
+        throw new Error("Username can only contain letters, numbers, underscores or periods");
         
     }
     if (/\.\./.test(newUsername)) {
@@ -180,7 +180,7 @@ const SettingsPopover = () => {
       sx={{
         backgroundColor: theme.palette.mode,
         color: theme.palette.mode,
-        minHeight: "90%",
+        minHeight: "92.5%",
         width: "100%",
         boxSizing: 'border-box', 
         display: 'flex', 
