@@ -1,37 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box,Typography,Slider,IconButton, Button, List, ListItemText, Divider, TextField,Alert,useTheme,LinearProgress} from "@mui/material";
+import { Box,Typography,Slider,IconButton, Button, List, ListItemText, Divider, TextField,Alert,useTheme} from "@mui/material";
 import { ColorModeContext } from "./../theme.tsx";
 import { tokens } from "./../theme.tsx";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import { SettingsOutlined as SettingsOutlinedIcon } from "@mui/icons-material";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import { userdata, changePassword,changeUsername } from "../API/account.tsx";
-const CompactAlert = ({ children, severity }) => (
-  <Alert 
-    severity={severity} 
-    sx={{
-      mb: 1,
-      maxWidth: '600px',
-      width: 'auto',
-      mx: 'auto',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }}
-  >
-    {children}
-  </Alert>
-);
 
 const SettingsPopover = () => {
   const { textSize, setTextSize, toggleColorMode } = useContext(ColorModeContext);
   const [selectedSection, setSelectedSection] = useState("general");
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isUpdatingUsername, setIsUpdatingUsername] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const MESSAGE_DISPLAY_DURATION = 3000;
@@ -42,9 +25,6 @@ const SettingsPopover = () => {
     document.body.style.fontSize = `${value}px`;
   };
 
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   // States for account preferences updates
   const [error, setError] = useState("");
@@ -179,15 +159,16 @@ const SettingsPopover = () => {
     <Box
       sx={{
         backgroundColor: theme.palette.mode,
-        color: theme.palette.mode,
-        minHeight: "92.5%",
-        width: "100%",
-        boxSizing: 'border-box', 
-        display: 'flex', 
-        flexDirection: 'column' 
+    color: theme.palette.mode,
+    height: "100vh", // Full viewport height
+    width: "100%",
+    display: 'flex',
+    flexDirection: 'column',
+    overflowX: 'hidden',
+    overflowY: 'auto', // Prevent overall scrolling
       }}
     >
-      <Box display="flex" flexGrow={1}>
+      <Box display="flex" sx={{ minHeight: '100%' /* Ensure flex container tries to fill height */ }}>
         {/* Sidebar */}
         <Box
           width="250px"
@@ -196,7 +177,8 @@ const SettingsPopover = () => {
           display="flex"
           flexDirection="column"
           boxShadow={2}
-          sx={{ height: "auto" }}
+          sx={{overflowY: 'auto', overflowX: 'hidden', height: "100vh",}}
+          
         >
           <Typography variant="h6" gutterBottom>
             Settings
@@ -237,8 +219,7 @@ const SettingsPopover = () => {
         <Box
           flex={1}
           p={4}
-          bgcolor={theme.palette.mode}
-        
+          bgcolor={theme.palette.mode}        
         >
           {selectedSection === "general" && (
             <>
@@ -250,10 +231,10 @@ const SettingsPopover = () => {
                 value={textSize}
                 onChange={handleTextSizeChange}
                 min={12}
-                max={32}
+                max={25}
                 step={1}
                 color="secondary"
-                sx={{ width: '100%', maxWidth: 500 }}
+                sx={{ width: '100%', maxWidth: 500, }}
               />
               <Typography>Theme</Typography>
               <IconButton onClick={toggleColorMode} sx={{ color: theme.palette.text.primary }}>
@@ -385,7 +366,7 @@ const SettingsPopover = () => {
             value={curPassword}
             onChange={(e) => setCurPassword(e.target.value)}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 1 }}
             required
           />
           
@@ -395,7 +376,7 @@ const SettingsPopover = () => {
             value={newPass}
             onChange={(e) => setNewPass(e.target.value)}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 1 }}
             required
           />
           
@@ -405,7 +386,7 @@ const SettingsPopover = () => {
             value={confirmNewPass}
             onChange={(e) => setConfirmNewPass(e.target.value)}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 1 }}
             required
           />
 
@@ -427,7 +408,7 @@ const SettingsPopover = () => {
                 setNewPass("");
                 setConfirmNewPass("");
               }}
-              sx={{ ml: 2 }}
+              sx={{ ml: 1 }}
               disabled={isUpdatingPassword}
             >
               Cancel
