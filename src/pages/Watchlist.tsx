@@ -5,7 +5,7 @@ import { tokens } from '../theme.tsx';
 import Header from "../components/Header.tsx";
 import { useTheme } from "@mui/material";
 import { WatchlistEntry } from '../types.tsx';
-import { fetchUserWatchlist, deleteEvent } from '../API/watchlist.tsx';
+import { fetchUserWatchlist, deleteFilters } from '../API/watchlist.tsx';
 import { userdata } from '../API/account.tsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,42 +50,42 @@ const Watchlist: React.FC = () => {
     fetchData();
   }, []);
 
-  // Define the columns for the DataGrid.
   const columns: GridColDef[] = [
-    { field: "eventName", headerName: "EVENT NAME", flex: 1 },
-    { field: "primaryObjectName", headerName: "PRIMARY OBJECT NAME", flex: 1 },
-    { field: "primaryObjectDesignator", headerName: "PRIMARY OBJECT DESIGNATOR", flex: 1 },
-    { field: "secondaryObjectName", headerName: "SECONDARY OBJECT NAME", flex: 1 },
-    { field: "secondaryObjectDesignator", headerName: "SECONDARY OBJECT DESIGNATOR", flex: 1 },
-    { field: "tca", headerName: "TCA [UTC]", flex: 1 },
+    { field: "objectOne", headerName: "OBJECT ONE", flex: 1 },
+    { field: "objectTwo", headerName: "OBJECT TWO", flex: 1 },
+    { field: "tcaStart", headerName: "TCA START", flex: 1 },
+    { field: "tcaFinish", headerName: "TCA FINISH", flex: 1 },
+    { field: "missDistance", headerName: "MISS DISTANCE", flex: 1 },
+    { field: "collisionProbability", headerName: "COLLISION PROBABILITY", flex: 1 },
+    { field: "operatorOrganization", headerName: "OPERATOR ORGANIZATION", flex: 1 },
     {
         field: "actions",
         headerName: "ACTIONS",
         flex: 1,
         renderCell: (params) => (
-            <CustomTooltip title = "Delete this Event from your Watchlist">
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: colors.primary[500] }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteEvent(params.row.eventId)
-                      .then(() => {
-                        setWatchlist(prev =>
-                          prev.filter(
-                            (entry) => entry.event._id !== params.row.eventId
-                          )
-                        );
-                      })
-                      .catch((error) => {
-                        console.error("Error deleting event:", error);
-                        setErrMsg("Error deleting event");
-                      });
-                  }}
-                >
-                  Delete
-                </Button>
-            </CustomTooltip>
+        <CustomTooltip title="Delete these Filters from your Watchlist">
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: colors.primary[500] }}
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteFilters(params.row.id) 
+                .then(() => {
+                  setWatchlist(prev =>
+                    prev.filter(
+                      (entry) => entry._id !== params.row.id
+                    )
+                  );
+                })
+                .catch((error) => {
+                  console.error("Error deleting filters:", error);
+                  setErrMsg("Error deleting filters");
+                });
+            }}
+          >
+            Delete
+          </Button>
+        </CustomTooltip>
           
         )
       }      
@@ -93,16 +93,37 @@ const Watchlist: React.FC = () => {
 
   const rows = useMemo(() => {
     return watchlist.map((entry) => {
-      const evt = entry.event;
+      const objectNames = entry.searchParams
+        .filter(param => param.criteria === 'objectName' || param.criteria === 'objectType' || param.criteria === 'objectDesignator')
+        .map(param => param.value);
+      
+      const objectOne = objectNames[0] || 'N/A';
+      const objectTwo = objectNames[1] || 'N/A';
+      
+      const tcaStart = new Date(entry.tcaRange[0]).toISOString();
+      const tcaFinish = new Date(entry.tcaRange[1]).toISOString();
+  
+      let missDistanceStr = 'N/A';
+      if (entry.missDistanceValue) {
+        const missOp = entry.missDistanceOperator === 'gte' ? '≥' : '≤';
+        missDistanceStr = `${missOp} ${entry.missDistanceValue}`;
+      }
+  
+      let collisionProbabilityStr = 'N/A';
+      if (entry.collisionProbabilityValue) {
+        const probOp = entry.collisionProbabilityOperator === 'gte' ? '≥' : '≤';
+        collisionProbabilityStr = `${probOp} ${entry.collisionProbabilityValue}`;
+      }
+      
       return {
         id: entry._id,
-        eventId: evt._id,
-        eventName: evt.eventName,
-        primaryObjectName: evt.primaryObjectName,
-        primaryObjectDesignator: evt.primaryObjectDesignator,
-        secondaryObjectName: evt.secondaryObjectName,
-        secondaryObjectDesignator: evt.secondaryObjectDesignator,
-        tca: new Date(evt.tca).toLocaleString(),
+        objectOne: objectOne.toUpperCase(),
+        objectTwo: objectTwo.toUpperCase(), 
+        tcaStart: tcaStart,
+        tcaFinish: tcaFinish,
+        missDistance: missDistanceStr,
+        collisionProbability: collisionProbabilityStr,
+        operatorOrganization: entry.operatorOrganization || 'N/A',
       };
     });
   }, [watchlist]);

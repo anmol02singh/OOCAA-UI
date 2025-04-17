@@ -59,20 +59,20 @@ export const subscribeToCriteria = async (
     }
 };
 
-export const deleteEvent = async (eventId: string) => {
+export const deleteFilters = async (filterId: string) => {
     try {
-        const response = await fetch(`${API_URL}/cdm-data/delete-event/${eventId}`, {
+        const response = await fetch(`${API_URL}/cdm-data/delete-filters/${filterId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
         })
         if (!response.ok) {
-            throw new Error('Failed to delete event');
+            throw new Error('Failed to delete filters');
         }
         return await response.json();
     } catch (error) {
-        console.error('Error deleting event:', error);
+        console.error('Error deleting filters:', error);
         throw error;
     }
 }

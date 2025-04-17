@@ -100,9 +100,14 @@ export interface Position {
 
   export interface WatchlistEntry {
     _id: string;
-    event: Event;
     user: string;
-    createdAt: string;
+    searchParams: SearchParams[];
+    tcaRange: [number, number];
+    missDistanceOperator: string;
+    missDistanceValue?: number;
+    collisionProbabilityOperator: string;
+    collisionProbabilityValue?: number;
+    operatorOrganization: string;
   }
 
   export interface SearchParams {
