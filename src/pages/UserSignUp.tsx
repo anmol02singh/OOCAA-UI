@@ -23,7 +23,7 @@ import { containsExtraSpaces, formatPhoneNumber, isEmailFormat, preventEnterSubm
 import { isValidPhoneNumber } from "libphonenumber-js";
 
 type registerErrorMessage = (
-    "none" |
+    undefined |
     "backEndError" |
     "invalidEmailFormat" |
     "invalidPhoneFormat" |
@@ -40,22 +40,27 @@ const UserSignUp = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [errorMessageType, setErrorMessageType] = useState<registerErrorMessage>("none");
+    const [errorMessageType, setErrorMessageType] = useState<registerErrorMessage>(undefined);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
     async function handleRegister() {
-        //if (!username || !password) { return; }
-
         if (!isValidEmail()) return;
         if (!isValidPhoneNumber()) return;
         if (!isValidUsername()) return;
+        if (!isValidPassword()) return;
 
-        const response = await register(name, email, phone, username, password);
+        const response = await register(
+            name.replace(containsExtraSpaces, ' ').trim(),
+            email,
+            phone,
+            username,
+            password
+        );
         if (response.success) {
-            setErrorMessageType('none');
+            setErrorMessageType(undefined);
             localStorage.setItem("accountToken", response.token);
             window.location.replace("/");
         } else {
@@ -64,13 +69,12 @@ const UserSignUp = () => {
         }
     }
 
+
     const isValidEmail = (): boolean => {
-        const processedEmail = email.replace(containsExtraSpaces, ' ').trim();
-
         let invalidInput = false;
-        setErrorMessageType('none');
+        setErrorMessageType(undefined);
 
-        if (!processedEmail.match(isEmailFormat)) {
+        if (!email.match(isEmailFormat)) {
             invalidInput = true;
             setErrorMessageType('invalidEmailFormat');
         }
@@ -80,7 +84,7 @@ const UserSignUp = () => {
 
     const isValidPhoneNumber = (): boolean => {
         let invalidInput = false;
-        setErrorMessageType('none');
+        setErrorMessageType(undefined);
 
         const { success } = formatPhoneNumber(phone);
 
@@ -93,17 +97,13 @@ const UserSignUp = () => {
     }
 
     const isValidUsername = (): boolean => {
-        const processedUsername = username.replace(containsExtraSpaces, ' ').trim();
-
         let invalidInput = false;
-        setErrorMessageType('none');
+        setErrorMessageType(undefined);
 
-        if (processedUsername.length < 4) {
+        if (username.length < 4) {
             invalidInput = true;
             setErrorMessageType('shortUsername');
-        }
-
-        if (!processedUsername.match(/^[a-zA-Z0-9_.]+$/)) {
+        } else if (!username.match(/^[a-zA-Z0-9_.]+$/)) {
             invalidInput = true;
             setErrorMessageType('invalidUsernameFormat');
         }
@@ -111,10 +111,34 @@ const UserSignUp = () => {
         return !(invalidInput);
     }
 
-    const handleChangeEmail = (event) => {
+    const isValidPassword = (): boolean => {
+        let invalidInput = false;
+        setErrorMessageType(undefined);
+
+        if (password.length < 8) {
+            invalidInput = true;
+            setErrorMessageType('shortPassword');
+        } else if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)) {
+            invalidInput = true;
+            setErrorMessageType('invalidPasswordFormat');
+        }
+
+        return !(invalidInput);
+    }
+
+
+    const handleChangeName = (event) => {
         const fieldValue = event.target.value;
 
         if (fieldValue.length > 150) return;
+        
+        setName(fieldValue);
+    }
+    
+    const handleChangeEmail = (event) => {
+        const fieldValue = event.target.value;
+
+        if (fieldValue.length > 254) return;
 
         setEmail(fieldValue);
     }
@@ -123,6 +147,29 @@ const UserSignUp = () => {
         setPhone(event);
     }
 
+    const handleChangeUsername = (event) => {
+        const fieldValue = event.target.value.trim();
+
+        if (fieldValue.length > 150) return;
+
+        setUsername(fieldValue);
+    }
+
+    const handleChangePassword = (event) => {
+        setPassword(event.target.value.trim());
+    }
+
+
+    const errorMessage = {
+        backEndError: error,
+        invalidEmailFormat: "Please enter a valid email address.",
+        invalidPhoneFormat: "Please enter a valid phone number.",
+        invalidUsernameFormat: "Username can only contain letters, numbers, underscores, and periods.",
+        shortUsername: "Username must contain at least 4 characters.",
+        invalidPasswordFormat: "Password must contain 1+ lowercase and 1+ uppercase letters, 1+ number, and 1+ special characters.",
+        shortPassword: "Password must contain at least 8 characters.",
+    };
+
     const errorMessageStyle: React.CSSProperties = {
         margin: '0 0.1rem',
         gap: '0.2rem',
@@ -130,38 +177,7 @@ const UserSignUp = () => {
         display: 'flex',
         alignItems: 'center',
     }
-
-    const errorMessageElements = {
-        none: undefined
-        , backEndError:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> {error}
-            </Typography>
-        , invalidEmailFormat:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Please enter a valid email address.
-            </Typography>
-        , invalidPhoneFormat:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Please enter a valid phone number.
-            </Typography>
-        , invalidUsernameFormat:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Username can only contain letters, numbers, underscores, and periods.
-            </Typography>
-        , shortUsername:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Username must contain at least 4 characters.
-            </Typography>
-        , invalidPasswordFormat:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Password can only contain letters, numbers, underscores, and periods.
-            </Typography>
-        , shortPassword:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Password must contain at least 8 characters.
-            </Typography>
-    };
+    
 
     return (
         <Box
@@ -189,7 +205,7 @@ const UserSignUp = () => {
                     flexDirection: "column",
                     alignItems: "center",
                     width: "75%",
-                    maxWidth: "650px",
+                    maxWidth: "600px",
                     minWidth: "350px",
                     backgroundColor: colors.primary[400],
                     color: colors.grey[100],
@@ -220,12 +236,16 @@ const UserSignUp = () => {
                         </Typography>
                     </Grid2>
 
-                    {errorMessageElements[errorMessageType]}
+                    {errorMessageType &&
+                        <Typography variant='h6' sx={errorMessageStyle}>
+                            <ErrorIcon /> {errorMessage[errorMessageType]}
+                        </Typography>
+                    }
 
                     <Grid2>
                         <TextField
                             id="name"
-                            onChange={event => setName(event.target.value)}
+                            onChange={handleChangeName}
                             value={name}
                             label="Name"
                             variant="outlined"
@@ -378,7 +398,7 @@ const UserSignUp = () => {
                     <Grid2>
                         <TextField
                             id="username"
-                            onChange={event => setUsername(event.target.value)}
+                            onChange={handleChangeUsername}
                             value={username}
                             label="User Name"
                             variant="outlined"
@@ -426,7 +446,7 @@ const UserSignUp = () => {
                             <InputLabel htmlFor="password">Password</InputLabel>
                             <OutlinedInput
                                 id="password"
-                                onChange={event => setPassword(event.target.value)}
+                                onChange={handleChangePassword}
                                 value={password}
                                 fullWidth
                                 type={showPassword ? 'text' : 'password'}

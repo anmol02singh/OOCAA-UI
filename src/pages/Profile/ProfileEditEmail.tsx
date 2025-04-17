@@ -13,7 +13,6 @@ import {
     getPageWidth,
     useEditProfileStyling,
     useEditItemStyling,
-    containsExtraSpaces,
     preventEnterSubmit,
     isEmailFormat,
 
@@ -117,7 +116,7 @@ const ProfileEditEmail = () => {
     
         const fieldValue = event.target.value;
 
-        if(fieldValue.length>150) return
+        if(fieldValue.length>254) return
     
         setNewEmail(fieldValue);
     }
@@ -133,23 +132,21 @@ const ProfileEditEmail = () => {
     const handleSubmit = (event): boolean => {
         event.preventDefault();
         
-        const processedEmail = newEmail.replace(containsExtraSpaces, ' ').trim();
-        
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});
 
-        if(processedEmail === userData.email){
+        if(newEmail === userData.email){
             invalidInput = true;
             setErrorMessageElement({...errorMessageElement, type: 'unchangedEmail'});
         }
-        if(!processedEmail.match(isEmailFormat)){
+        if(!newEmail.match(isEmailFormat)){
             invalidInput = true;
             setErrorMessageElement({...errorMessageElement, type: 'invalidEmailFormat'});
         }
 
         if(!invalidInput){
             if (token) {
-                updateGeneralUserData(token, undefined, processedEmail)
+                updateGeneralUserData(token, undefined, newEmail)
                     .then(({ success, message }) => {
                         if(!success){
                             setInvalidInput(true);
