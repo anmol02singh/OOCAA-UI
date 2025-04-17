@@ -160,15 +160,15 @@ const SettingsPopover = () => {
       sx={{
         backgroundColor: theme.palette.mode,
     color: theme.palette.mode,
-    height: "100vh", // Full viewport height
+    height: "100vh", 
     width: "100%",
     display: 'flex',
     flexDirection: 'column',
     overflowX: 'hidden',
-    overflowY: 'auto', // Prevent overall scrolling
+    overflowY: 'auto', 
       }}
     >
-      <Box display="flex" sx={{ minHeight: '100%' /* Ensure flex container tries to fill height */ }}>
+      <Box display="flex" sx={{ minHeight: '100%'}}>
         {/* Sidebar */}
         <Box
           width="250px"
@@ -177,7 +177,7 @@ const SettingsPopover = () => {
           display="flex"
           flexDirection="column"
           boxShadow={2}
-          sx={{overflowY: 'auto', overflowX: 'hidden', height: "100vh",}}
+          sx={{overflowY: 'hidden', overflowX: 'hidden', height: "100vh",}}
           
         >
           <Typography variant="h6" gutterBottom>
@@ -226,6 +226,7 @@ const SettingsPopover = () => {
               <Typography variant="h5" gutterBottom>
                 General Settings
               </Typography>
+              <Divider sx={{ my: 1 }} />
               <Typography>Text Size</Typography>
               <Slider
                 value={textSize}
@@ -248,9 +249,10 @@ const SettingsPopover = () => {
           )}
         {selectedSection === "account" && (
       <>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom sx={{mb:1}}>
           Account Preferences
         </Typography>
+        <Divider sx={{ mb: 2 }} />
         {usernameError && (
       <Alert 
         severity="error" 
@@ -317,18 +319,20 @@ const SettingsPopover = () => {
           ) : (
             <Box component="form" onSubmit={handleUsernameUpdate} sx={{ maxWidth: 600 }}>
               <TextField
+              
                 label="New Username"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
                 fullWidth
                 sx={{ mb: 1 }}
               />
-              <Box>
+              <Box display="flex" gap={1}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="secondary"
                   disabled={isUpdatingUsername}
+                  
                 >
                   {isUpdatingUsername ? "Updating..." : "Update Username"}
                 </Button>
@@ -390,7 +394,7 @@ const SettingsPopover = () => {
             required
           />
 
-          <Box>
+          <Box display="flex" gap={1}>
             <Button 
               type="submit" 
               variant="contained" 
@@ -424,6 +428,7 @@ const SettingsPopover = () => {
               <Typography variant="h5" gutterBottom>
                 Notification Choice
               </Typography>
+              <Divider sx={{ my: 1 }} />
               <Box display="flex" gap={1}>
                 {["SMS", "Email"].map((channel) => (
                   <Button
