@@ -18,14 +18,19 @@ import { useTheme } from "@mui/material";
 import SatelliteAltOutlinedIcon from "@mui/icons-material/SatelliteAltOutlined";
 import { tokens } from "../theme.tsx";
 import ErrorIcon from '@mui/icons-material/Error';
+import PhoneInput from "react-phone-input-2";
+import { containsExtraSpaces, formatPhoneNumber, isEmailFormat, preventEnterSubmit } from "./Profile/ProfileUtilities.tsx";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 type registerErrorMessage = (
-    undefined |
+    "none" |
     "backEndError" |
-    "invalidPhoneNumberFormat" |
     "invalidEmailFormat" |
+    "invalidPhoneFormat" |
     "invalidUsernameFormat" |
-    "invalidPasswordFormat"
+    "shortUsername" |
+    "invalidPasswordFormat" |
+    "shortPassword"
 );
 
 const UserSignUp = () => {
@@ -35,26 +40,91 @@ const UserSignUp = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [errorMessageType, setErrorMessageType] = useState<registerErrorMessage> ();
+    const [errorMessageType, setErrorMessageType] = useState<registerErrorMessage>("none");
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
     async function handleRegister() {
-        if (!username || !password) { return; }
+        //if (!username || !password) { return; }
+
+        if (!isValidEmail()) return;
+        if (!isValidPhoneNumber()) return;
+        if (!isValidUsername()) return;
 
         const response = await register(name, email, phone, username, password);
         if (response.success) {
+            setErrorMessageType('none');
             localStorage.setItem("accountToken", response.token);
             window.location.replace("/");
         } else {
+            setErrorMessageType('backEndError');
             setError(response.error);
         }
     }
 
+    const isValidEmail = (): boolean => {
+        const processedEmail = email.replace(containsExtraSpaces, ' ').trim();
+
+        let invalidInput = false;
+        setErrorMessageType('none');
+
+        if (!processedEmail.match(isEmailFormat)) {
+            invalidInput = true;
+            setErrorMessageType('invalidEmailFormat');
+        }
+
+        return !(invalidInput);
+    }
+
+    const isValidPhoneNumber = (): boolean => {
+        let invalidInput = false;
+        setErrorMessageType('none');
+
+        const { success } = formatPhoneNumber(phone);
+
+        if (!success) {
+            invalidInput = true;
+            setErrorMessageType('invalidPhoneFormat');
+        }
+
+        return !(invalidInput);
+    }
+
+    const isValidUsername = (): boolean => {
+        const processedUsername = username.replace(containsExtraSpaces, ' ').trim();
+
+        let invalidInput = false;
+        setErrorMessageType('none');
+
+        if (processedUsername.length < 4) {
+            invalidInput = true;
+            setErrorMessageType('shortUsername');
+        }
+
+        if (!processedUsername.match(/^[a-zA-Z0-9_.]+$/)) {
+            invalidInput = true;
+            setErrorMessageType('invalidUsernameFormat');
+        }
+
+        return !(invalidInput);
+    }
+
+    const handleChangeEmail = (event) => {
+        const fieldValue = event.target.value;
+
+        if (fieldValue.length > 150) return;
+
+        setEmail(fieldValue);
+    }
+
+    const handleChangePhone = (event) => {
+        setPhone(event);
+    }
+
     const errorMessageStyle: React.CSSProperties = {
-        margin: '0.3rem 0.1rem',
+        margin: '0 0.1rem',
         gap: '0.2rem',
         color: '#f44336',
         display: 'flex',
@@ -67,29 +137,29 @@ const UserSignUp = () => {
             <Typography variant='h6' sx={errorMessageStyle}>
                 <ErrorIcon /> {error}
             </Typography>
-        , invalidPhoneNumberFormat:
+        , invalidEmailFormat:
+            <Typography variant='h6' sx={errorMessageStyle}>
+                <ErrorIcon /> Please enter a valid email address.
+            </Typography>
+        , invalidPhoneFormat:
             <Typography variant='h6' sx={errorMessageStyle}>
                 <ErrorIcon /> Please enter a valid phone number.
             </Typography>
-        , invalidEmailFormat:
+        , invalidUsernameFormat:
             <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Please enter a valid email.
-            </Typography>
-        , invalidUsernameCharacters:
-            <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Usernames can only contain letters, numbers, underscores, and periods.
+                <ErrorIcon /> Username can only contain letters, numbers, underscores, and periods.
             </Typography>
         , shortUsername:
             <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Usernames must contain at least 4 characters.
+                <ErrorIcon /> Username must contain at least 4 characters.
             </Typography>
         , invalidPasswordFormat:
             <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Passwords can only contain letters, numbers, underscores, and periods.
+                <ErrorIcon /> Password can only contain letters, numbers, underscores, and periods.
             </Typography>
         , shortPassword:
             <Typography variant='h6' sx={errorMessageStyle}>
-                <ErrorIcon /> Passwords must contain at least 8 characters.
+                <ErrorIcon /> Password must contain at least 8 characters.
             </Typography>
     };
 
@@ -101,9 +171,14 @@ const UserSignUp = () => {
                 alignItems: "center",
                 height: "100vh",
                 backgroundColor: colors.primary[600],
+                backgroundImage: `
+                    linear-gradient(240deg,rgba(23, 29, 52, 1) 0%,
+                    rgba(16, 22, 36, 1) 40%, rgba(16, 22, 36, 1) 60%,
+                    rgba(21, 36, 46, 1) 100%)`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                overflow: "hidden",
+                overflowX: "hidden",
+                overflowY: "auto",
             }}
         >
             <Box
@@ -113,11 +188,12 @@ const UserSignUp = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    width: "50%",
-                    maxWidth: "400px",
+                    width: "75%",
+                    maxWidth: "650px",
+                    minWidth: "350px",
                     backgroundColor: colors.primary[400],
                     color: colors.grey[100],
-                    borderRadius: "8px",
+                    borderRadius: "9px",
                     backdropFilter: "blur(4px)",
                 }}
             >
@@ -125,6 +201,8 @@ const UserSignUp = () => {
 
                 <Grid2
                     direction="column"
+                    minWidth="19rem"
+                    width="85%"
                     container
                     sx={{ alignContent: "center" }}
                     spacing={3}
@@ -142,19 +220,7 @@ const UserSignUp = () => {
                         </Typography>
                     </Grid2>
 
-                    {error !== "" &&
-                        <Typography
-                            sx={{
-                                margin: '0.3rem 0.1rem',
-                                gap: '0.2rem',
-                                color: '#f44336',
-                                display: 'flex',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <ErrorIcon /> {error}
-                        </Typography>
-                    }
+                    {errorMessageElements[errorMessageType]}
 
                     <Grid2>
                         <TextField
@@ -170,7 +236,7 @@ const UserSignUp = () => {
                                         borderColor: colors.blueAccent[300],
                                     },
                                     "&:hover fieldset": {
-                                        borderColor: colors.blueAccent[300],
+                                        borderColor: colors.blueAccent[400],
                                     },
                                     "&.Mui-focused fieldset": {
                                         borderColor: colors.blueAccent[300],
@@ -183,7 +249,7 @@ const UserSignUp = () => {
                                     color: colors.blueAccent[300],
                                 },
                                 input: {
-                                    color: "#FFFFFF",
+                                    color: colors.grey[100],
                                 },
                             }}
                         />
@@ -192,7 +258,7 @@ const UserSignUp = () => {
                     <Grid2>
                         <TextField
                             id="email"
-                            onChange={event => setEmail(event.target.value)}
+                            onChange={handleChangeEmail}
                             value={email}
                             label="Email"
                             variant="outlined"
@@ -204,7 +270,7 @@ const UserSignUp = () => {
                                         borderColor: colors.blueAccent[300],
                                     },
                                     "&:hover fieldset": {
-                                        borderColor: colors.blueAccent[300],
+                                        borderColor: colors.blueAccent[400],
                                     },
                                     "&.Mui-focused fieldset": {
                                         borderColor: colors.blueAccent[300],
@@ -217,43 +283,96 @@ const UserSignUp = () => {
                                     color: colors.blueAccent[300],
                                 },
                                 input: {
-                                    color: "#FFFFFF",
+                                    color: colors.grey[100],
                                 },
                             }}
                         />
                     </Grid2>
 
                     <Grid2>
-                        <TextField
-                            id="phoneNumber"
-                            onChange={event => setPhone(event.target.value)}
+                        <style> {/*For styling inaccessible components*/}
+                            {`
+                                .react-tel-input .special-label {
+                                    color: ${colors.blueAccent[300]} !important;
+                                    background-color: ${colors.primary[400]} !important;
+                                    font-size: 10px;
+                                    transform: translate(-14px, 0);
+                                }
+                                
+                                .react-tel-input .country:hover {
+                                    background-color: ${colors.primary[500]} !important;
+                                }
+
+                                .react-tel-input .country.highlight {
+                                    background-color: ${colors.primary[500]} !important;
+                                }
+
+                                .react-tel-input .form-control {
+                                    border: 1px solid ${colors.blueAccent[300]};
+                                    borderRadius: 4px;
+                                    transition: none;
+                                    cursor: text !important;
+                                }
+
+                                .react-tel-input .form-control:hover {
+                                    border-color: ${colors.blueAccent[400]};
+                                }
+
+                                .react-tel-input .form-control:focus {
+                                    border: 1px solid ${colors.blueAccent[300]};
+                                    box-shadow:
+                                        inset 1px 1px 0 0 ${colors.blueAccent[300]},
+                                        inset -1px -1px 0 0 ${colors.blueAccent[300]};
+                                }
+
+                                .country-list .country .dial-code {
+                                    color: ${colors.grey[300]} !important;
+                                }
+
+                                .react-tel-input .flag-dropdown{
+                                    cursor: pointer;
+                                }
+
+                                .react-tel-input .selected-flag .arrow{
+                                    border-top: 4px solid ${colors.blueAccent[200]};
+                                }
+
+                                .react-tel-input .selected-flag:focus .arrow{
+                                    border-left-width: 3px;
+                                    border-right-width: 3px;
+                                    border-top: 4px solid ${colors.blueAccent[400]};
+                                }
+
+                                .react-tel-input .selected-flag .arrow.up{
+                                    border-top: none;
+                                    border-bottom: 4px solid ${colors.blueAccent[400]};
+                                }
+                            `}
+                        </style>
+                        <PhoneInput
+                            country={'ca'}
+                            preferredCountries={['us', 'ca']}
+                            countryCodeEditable={false}
                             value={phone}
-                            label="Phone Number"
-                            variant="outlined"
-                            fullWidth
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    "& fieldset": {
-                                        borderColor: colors.blueAccent[300],
-                                    },
-                                    "&:hover fieldset": {
-                                        borderColor: colors.blueAccent[300],
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: colors.blueAccent[300],
-                                    },
-                                },
-                                "& .MuiInputLabel-root": {
-                                    color: colors.blueAccent[300],
-                                },
-                                "& .MuiInputLabel-root.Mui-focused": {
-                                    color: colors.blueAccent[300],
-                                },
-                                input: {
-                                    color: "#FFFFFF",
-                                },
+                            specialLabel='Phone'
+                            onChange={handleChangePhone}
+                            onKeyDown={preventEnterSubmit}
+                            inputStyle={{
+                                cursor: 'pointer',
+                                borderRadius: '4px',
+                                color: colors.grey[100],
+                                backgroundColor: colors.primary[400],
+                                fontSize: '13px',
+                                width: '100%',
                             }}
-                        />
+                            dropdownStyle={{
+                                color: colors.grey[100],
+                                backgroundColor: colors.primary[400],
+                                borderRadius: '6px',
+                                width: '20rem',
+                            }}
+                        >
+                        </PhoneInput>
                     </Grid2>
 
                     <Grid2>
@@ -271,7 +390,7 @@ const UserSignUp = () => {
                                         borderColor: colors.blueAccent[300],
                                     },
                                     "&:hover fieldset": {
-                                        borderColor: colors.blueAccent[300],
+                                        borderColor: colors.blueAccent[400],
                                     },
                                     "&.Mui-focused fieldset": {
                                         borderColor: colors.blueAccent[300],
@@ -284,7 +403,7 @@ const UserSignUp = () => {
                                     color: colors.blueAccent[300],
                                 },
                                 input: {
-                                    color: "#FFFFFF",
+                                    color: colors.grey[100],
                                 },
                             }}
                         />
@@ -293,14 +412,15 @@ const UserSignUp = () => {
                     <Grid2>
                         <FormControl
                             sx={{
+                                width: '100%',
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": { borderColor: colors.blueAccent[300], },
-                                    "&:hover fieldset": { borderColor: colors.blueAccent[300], },
+                                    "&:hover fieldset": { borderColor: colors.blueAccent[400], },
                                     "&.Mui-focused fieldset": { borderColor: colors.blueAccent[300], },
                                 },
                                 "& .MuiInputLabel-root": { color: colors.blueAccent[300], },
                                 "& .MuiInputLabel-root.Mui-focused": { color: colors.blueAccent[300], },
-                                input: { color: "#FFFFFF", },
+                                input: { color: colors.grey[100], },
                             }}
                         >
                             <InputLabel htmlFor="password">Password</InputLabel>
@@ -318,6 +438,9 @@ const UserSignUp = () => {
                                             }
                                             onClick={() => setShowPassword((show) => !show)}
                                             edge="end"
+                                            sx={{
+                                                color: colors.blueAccent[200],
+                                            }}
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
                                         </IconButton>
@@ -339,9 +462,9 @@ const UserSignUp = () => {
                             variant="contained"
                             sx={{
                                 backgroundColor: colors.blueAccent[300],
-                                color: "#0A1E3D",
+                                color: colors.primary[500],
                                 "&:hover": {
-                                    backgroundColor: colors.blueAccent[200],
+                                    backgroundColor: colors.blueAccent[400],
                                 },
                             }}
                             onClick={handleRegister}
