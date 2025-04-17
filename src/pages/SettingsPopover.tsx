@@ -160,7 +160,7 @@ const SettingsPopover = () => {
       sx={{
         backgroundColor: theme.palette.mode,
     color: theme.palette.mode,
-    height: "100vh", 
+    height: "100%", 
     width: "100%",
     display: 'flex',
     flexDirection: 'column',
@@ -177,7 +177,7 @@ const SettingsPopover = () => {
           display="flex"
           flexDirection="column"
           boxShadow={2}
-          sx={{overflowY: 'hidden', overflowX: 'hidden', height: "100vh",}}
+          sx={{overflowY: 'hidden', overflowX: 'hidden', height: "100%",}}
           
         >
           <Typography variant="h6" gutterBottom>
