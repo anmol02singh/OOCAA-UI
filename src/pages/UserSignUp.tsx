@@ -48,7 +48,7 @@ const UserSignUp = () => {
 
     async function handleRegister() {
         if (!isValidEmail()) return;
-        if (!isValidPhoneNumber()) return;
+        if (phone && !isValidPhoneNumber()) return;
         if (!isValidUsername()) return;
         if (!isValidPassword()) return;
 
@@ -411,9 +411,10 @@ const UserSignUp = () => {
                         <PhoneInput
                             country={'ca'}
                             preferredCountries={['us', 'ca']}
-                            countryCodeEditable={false}
+                            countryCodeEditable={true}
                             value={phone}
                             specialLabel='Phone'
+                            placeholder=''
                             onChange={handleChangePhone}
                             onKeyDown={preventEnterSubmit}
                             inputStyle={{

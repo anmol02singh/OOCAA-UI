@@ -28,7 +28,6 @@ const UserLogin = () => {
         }
 
         const response = await login(processedUsernameOrEmail, password);
-        console.log(response);
         if (response.success) {
             localStorage.setItem("accountToken", response.token);
             window.location.replace("/");
@@ -256,7 +255,7 @@ const UserLogin = () => {
                             }}
                             onClick={handleLogin}
                         >
-                            Log In
+                            Sign In
                         </Button>
                     </Grid2>
                 </Grid2>
