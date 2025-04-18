@@ -19,9 +19,9 @@ import CesiumViewer from '../components/CesiumViewer.tsx';
 import { tokens } from '../theme.tsx';
 import { fetchEvents } from '../API/searchEvents.tsx';
 import { fetchTLEs } from '../API/fetchTLEs.tsx'; 
-import { fetchCDMs } from '../API/fetchCDMs.tsx';
+import { fetchCDMs, fetchCounts } from '../API/fetchCDMs.tsx';
 import { getEvents } from '../API/getEvents.tsx';
-import { CDM } from '../types.tsx';
+import { CDM, ObjectTypeCounts } from '../types.tsx';
 import { Event } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
 import EventTable from '../components/EventTable.tsx';
@@ -82,6 +82,17 @@ const Directory = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
+  const initialStats: ObjectTypeCounts = {
+    total:     0,
+    payload:   0,
+    debris:    0,
+    rocketBody:0,
+    unknown:   0,
+    other:     0,
+  }
+
+  const [stats, setStats] = useState<ObjectTypeCounts>(initialStats);
+
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -92,16 +103,29 @@ const Directory = () => {
         const data = await getEvents();
         if (data.length === 0) {
           setErrMsg("No events found");
+          setTimeout(() => setErrMsg(null), 2900);
         }
         setEvents(data);
       } catch (error) {
         console.error("Error fetching events:", error);
         setErrMsg("Error fetching events");
+        setTimeout(() => setErrMsg(null), 2900);
       }
     };
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchCounts()
+      .then(data => setStats(data))
+      .catch(err => {
+        console.error(err);
+        setErrMsg('Failed to load Statistics');
+        setTimeout(() => setErrMsg(null), 2900);
+      });
+  }, []);
+  
 
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
@@ -266,15 +290,15 @@ const Directory = () => {
       {/* Stat Cards */}
       <Box display="flex" justifyContent="space-between" gap={2} mb={3}>
         {[
-          { label: 'On-orbit total', value: '15' },
-          { label: 'Debris', value: '5' },
-          { label: 'Payload', value: '10' },
-          { label: 'Rocket Body', value: '0' },
-          { label: 'Unknown/Other', value: '0' },
+          { label: 'On-orbit total', value: stats.total },
+          { label: 'Debris', value: stats.debris },
+          { label: 'Payload', value: stats.payload },
+          { label: 'Rocket Body', value: stats.rocketBody },
+          { label: 'Unknown/Other', value: stats.unknown + stats.other },
         ].map((stat, index) => (
           <StatCard
             key={index}
-            value={stat.value}
+            value={stat.value.toString()}
             label={stat.label}
             backgroundColor={colors.primary[400]}
             accentColor={colors.grey[100]}

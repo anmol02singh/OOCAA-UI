@@ -115,3 +115,13 @@ export interface Position {
     criteria: string;
     value: string;
   }
+
+  export interface ObjectTypeCounts {
+    payload: number;
+    debris: number;
+    rocketBody: number;
+    unknown: number;
+    other: number;
+    total: number;
+  }
+  
