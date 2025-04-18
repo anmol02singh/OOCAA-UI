@@ -10,7 +10,8 @@ import {
     IconButton,
     InputAdornment,
     InputLabel,
-    FormControl
+    FormControl,
+    Divider
 } from "@mui/material";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -20,7 +21,6 @@ import { tokens } from "../theme.tsx";
 import ErrorIcon from '@mui/icons-material/Error';
 import PhoneInput from "react-phone-input-2";
 import { containsExtraSpaces, formatPhoneNumber, isEmailFormat, preventEnterSubmit } from "./Profile/ProfileUtilities.tsx";
-import { isValidPhoneNumber } from "libphonenumber-js";
 
 type registerErrorMessage = (
     undefined |
@@ -54,7 +54,7 @@ const UserSignUp = () => {
 
         const response = await register(
             name.replace(containsExtraSpaces, ' ').trim(),
-            email,
+            email.toLowerCase(),
             phone,
             username,
             password
@@ -131,10 +131,10 @@ const UserSignUp = () => {
         const fieldValue = event.target.value;
 
         if (fieldValue.length > 150) return;
-        
+
         setName(fieldValue);
     }
-    
+
     const handleChangeEmail = (event) => {
         const fieldValue = event.target.value;
 
@@ -164,39 +164,41 @@ const UserSignUp = () => {
         backEndError: error,
         invalidEmailFormat: "Please enter a valid email address.",
         invalidPhoneFormat: "Please enter a valid phone number.",
-        invalidUsernameFormat: "Username can only contain letters, numbers, underscores, and periods.",
         shortUsername: "Username must contain at least 4 characters.",
-        invalidPasswordFormat: "Password must contain 1+ lowercase and 1+ uppercase letters, 1+ number, and 1+ special characters.",
+        invalidUsernameFormat: "Username can only contain letters, numbers, underscores, and periods.",
         shortPassword: "Password must contain at least 8 characters.",
+        invalidPasswordFormat: "Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special character.",
     };
-
-    const errorMessageStyle: React.CSSProperties = {
-        margin: '0 0.1rem',
-        gap: '0.2rem',
-        color: '#f44336',
-        display: 'flex',
-        alignItems: 'center',
-    }
-    
 
     return (
         <Box
             sx={{
                 display: "flex",
-                justifyContent: "center",
+                flexDirection: "column",
+                justifyContent: "flex-start",
                 alignItems: "center",
-                height: "100vh",
+                width: "100%",
+                height: "100%",
                 backgroundColor: colors.primary[600],
                 backgroundImage: `
                     linear-gradient(240deg,rgba(23, 29, 52, 1) 0%,
                     rgba(16, 22, 36, 1) 40%, rgba(16, 22, 36, 1) 60%,
-                    rgba(21, 36, 46, 1) 100%)`,
+                    rgba(23, 29, 52, 1) 100%)`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 overflowX: "hidden",
                 overflowY: "auto",
             }}
         >
+            {/* Spacer */}
+            <Box
+                sx={{
+                    display: "flex",
+                    width: "100%",
+                    height: "33vh",
+                }}
+            />
+            
             <Box
                 sx={{
                     p: 3,
@@ -205,16 +207,14 @@ const UserSignUp = () => {
                     flexDirection: "column",
                     alignItems: "center",
                     width: "75%",
-                    maxWidth: "600px",
-                    minWidth: "350px",
+                    maxWidth: "37rem",
+                    minWidth: "22rem",
+                    margin: "2rem 0",
                     backgroundColor: colors.primary[400],
-                    color: colors.grey[100],
                     borderRadius: "9px",
-                    backdropFilter: "blur(4px)",
+                    boxShadow: "0px 5px 1.25rem rgba(0, 0, 0, 0.34)"
                 }}
             >
-                <SatelliteAltOutlinedIcon sx={{ fontSize: "80px", mb: 2, color: colors.blueAccent[300] }} />
-
                 <Grid2
                     direction="column"
                     minWidth="19rem"
@@ -223,21 +223,60 @@ const UserSignUp = () => {
                     sx={{ alignContent: "center" }}
                     spacing={3}
                 >
-                    <Grid2 container sx={{ justifyContent: "center" }} mb={0}>
-                        <Typography
-                            variant="h3"
+                    <Grid2
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "1rem",
+                            textAlign: "center"
+                        }}
+                    >
+                        <SatelliteAltOutlinedIcon
                             sx={{
-                                color: colors.blueAccent[300],
-                                fontWeight: "bold",
-                                fontSize: "3rem",
+                                fontSize: "64px",
+                                color: colors.blueAccent[400],
+                            }}
+                        />
+                        <Divider
+                            orientation="horizontal"
+                            sx={{
+                                width: "100%",
+                                textAlign: "center",
                             }}
                         >
-                            OOCAA
+                            <Typography
+                                variant="h1"
+                                sx={{
+                                    color: colors.blueAccent[300],
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                OOCAA
+                            </Typography>
+                        </Divider>
+                        <Typography
+                            variant="h2"
+                            sx={{
+                                color: colors.blueAccent[400],
+                            }}
+                        >
+                            Sign Up
                         </Typography>
                     </Grid2>
 
                     {errorMessageType &&
-                        <Typography variant='h6' sx={errorMessageStyle}>
+                        <Typography
+                            variant='h6'
+                            sx={{
+                                margin: '0 0.1rem',
+                                gap: '0.2rem',
+                                color: '#f44336',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                            }}
+                        >
                             <ErrorIcon /> {errorMessage[errorMessageType]}
                         </Typography>
                     }
@@ -472,8 +511,9 @@ const UserSignUp = () => {
                     </Grid2>
 
                     <Typography sx={{ width: '100%', textAlign: 'center' }}>
-                        Have an account already? <a href="/login" style={{ color: colors.blueAccent[300] }}>
-                            Login
+                        {"Have an account already? "}
+                        <a href="/login" style={{ color: colors.blueAccent[300] }}>
+                            Sign in
                         </a>
                     </Typography>
 
@@ -494,6 +534,15 @@ const UserSignUp = () => {
                     </Grid2>
                 </Grid2>
             </Box>
+
+            {/* Spacer */}
+            <Box
+                sx={{
+                    display: "flex",
+                    width: "100%",
+                    height: "33vh",
+                }}
+            />
         </Box>
     );
 };

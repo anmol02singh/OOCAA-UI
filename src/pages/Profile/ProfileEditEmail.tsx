@@ -131,22 +131,24 @@ const ProfileEditEmail = () => {
 
     const handleSubmit = (event): boolean => {
         event.preventDefault();
+
+        const processedEmail = newEmail.toLowerCase();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});
 
-        if(newEmail === userData.email){
+        if(processedEmail === userData.email){
             invalidInput = true;
             setErrorMessageElement({...errorMessageElement, type: 'unchangedEmail'});
         }
-        if(!newEmail.match(isEmailFormat)){
+        if(!processedEmail.match(isEmailFormat)){
             invalidInput = true;
             setErrorMessageElement({...errorMessageElement, type: 'invalidEmailFormat'});
         }
 
         if(!invalidInput){
             if (token) {
-                updateGeneralUserData(token, undefined, newEmail)
+                updateGeneralUserData(token, undefined, processedEmail)
                     .then(({ success, message }) => {
                         if(!success){
                             setInvalidInput(true);
