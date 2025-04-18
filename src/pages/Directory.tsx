@@ -278,7 +278,7 @@ const Directory = () => {
       </Snackbar>
       {/* Header */}
       <Typography variant="body1" sx={{ color: colors.grey[300], fontFamily: 'Arial, sans-serif' }}>
-        62,998 searchable objects
+        {`${stats.total}`} searchable objects
       </Typography>
       <Typography variant="h3" fontWeight="bold" mt={1}>
         Directory

@@ -146,7 +146,7 @@ const Navbar: FC = () => {
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Pages
             </Typography>
-            <Item title="Profile Form" to="/form" icon={<PersonOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="Profile Form" to="/profile" icon={<PersonOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="FAQ Page" to="/faq" icon={<HelpOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Charts
