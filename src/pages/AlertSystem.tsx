@@ -20,159 +20,110 @@ import Heatmap from "../components/HeatMap.tsx";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { tokens } from "../theme.tsx";
+import { WatchlistEntry } from "../types.tsx";
+import { useNavigate } from "react-router-dom";
+import { userdata } from "../API/account.tsx";
+import { fetchUserWatchlist } from "../API/watchlist.tsx";
+import { fetchEvents } from "../API/searchEvents.tsx";
 
 const API_URL = process.env.API_URL || "http://localhost:3000";
 
-const initialRows = [
-  {
-    name: "123",
-    description: "CDM for 123",
-    duration: "00:01:00",
-    events: 10,
-    status: "New Event",
-  },
-  {
-    name: "234",
-    description: "CDM for 234",
-    duration: "00:05:00",
-    events: 12,
-    status: "Actioned by: James",
-  },
-  {
-    name: "345",
-    description: "CDM for 345",
-    duration: "00:03:00",
-    events: 4,
-    status: "New Event",
-  },
-  {
-    name: "456",
-    description: "CDM for 456",
-    duration: "00:05:00",
-    events: 6,
-    status: "Actioned by: James",
-  },
-  {
-    name: "567",
-    description: "CDM for 567",
-    duration: "00:05:00",
-    events: 18,
-    status: "New Event",
-  },
-  {
-    name: "213",
-    description: "CDM for 213",
-    duration: "00:05:00",
-    events: 23,
-    status: "Actioned by: James",
-  },
-  {
-    name: "334",
-    description: "CDM for 334",
-    duration: "00:04:00",
-    events: 36,
-    status: "New Event",
-  },
-  {
-    name: "435",
-    description: "CDM for 435",
-    duration: "00:07:00",
-    events: 17,
-    status: "Actioned by: James",
-  },
-  {
-    name: "543",
-    description: "CDM for 543",
-    duration: "00:10:00",
-    events: 15,
-    status: "New Event",
-  },
-];
-
-export const fetchCDMs = async (eventId: string) => {
-  try {
-    const response = await fetch(`${API_URL}/cdm-data/by-event/${eventId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch CDMs for event");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching CDMs for event:", error);
-    throw error;
-  }
-};
 const AlertSystem = () => {
-  const [subscribedCDM, setSubscribedCDM] = useState([]);
+  const navigate = useNavigate();
 
-  const [rows, setRows] = useState(initialRows);
+  const [subscribedCDM, setSubscribedCDM] = useState([]);
+  const [watchlist, setWatchlist] = useState<WatchlistEntry[]>([]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const token = localStorage.getItem("accountToken");
+  //     if (!token) {
+  //       navigate("/login");
+  //       return;
+  //     }
+  //     try {
+  //       const user = await userdata(token);
+  //       const userId = user._id;
+  //       const data = await fetchUserWatchlist(userId);
+  //       setWatchlist(data);
+  //     } catch (error) {
+  //       console.error("Error fetching events:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  // console.log(watchlist);
+  // const [events, setEvents] = useState<Event[]>([]);
+
+  // // console.log(watchlist[0]);
+
+  // useEffect(() => {
+  //   console.log(watchlist);
+  //   const events = async () => {
+  //     const data = await fetchEvents(
+  //       watchlist[0].searchParams,
+  //       watchlist[0].tcaRange
+  //     );
+  //     setEvents(data);
+  //   };
+  //   events();
+  // }, [watchlist]);
+
+  const [events, setEvents] = useState<Event[]>([]);
+
+  const [eventsByFilter, setEventsByFilter] = useState<Record<string, Event[]>>(
+    {}
+  );
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("accountToken");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       try {
-        // Simulate fetching data
-        const result = await fetchCDMs("67bb892779e8e7f667693eeb");
-        setSubscribedCDM(result); // Update state with fetched data
-      } catch (err) {}
+        const user = await userdata(token);
+        const userId = user._id;
+
+        // Step 1: Get the saved filters
+        const filters = await fetchUserWatchlist(userId);
+        setWatchlist(filters);
+
+        // Step 2: For each filter, fetch events and associate them with filter ID
+        const eventsByFilterEntries = await Promise.all(
+          filters.map(async (filter) => {
+            try {
+              const eventData = await fetchEvents(
+                filter.searchParams,
+                filter.tcaRange
+              );
+              return [filter.createdAt, eventData]; // ✅ string key
+            } catch (err) {
+              console.error(
+                `Error fetching events for filter ${filter._id}:`,
+                err
+              );
+              return [filter._id, []];
+            }
+          })
+        );
+
+        // Step 3: Convert the array of entries into an object
+        const eventsMap = Object.fromEntries(eventsByFilterEntries);
+        console.log(eventsMap);
+        setEventsByFilter(eventsMap); // ✅ your state holding filter-wise events
+      } catch (error) {
+        console.error("Error fetching filters or events:", error);
+      }
     };
 
     fetchData();
   }, []);
 
-  console.log(subscribedCDM[0]);
-
-  const getStatusColor = (status) => {
-    return status === "New Event" ? "red" : "green";
-  };
-
-  const handleEditClick = (index) => {
-    const updatedRows = [...rows];
-    updatedRows[index].status =
-      updatedRows[index].status == "Actioned by: James"
-        ? "New Event"
-        : "Actioned by: James";
-    setRows(updatedRows);
-  };
-
-  const handleDelete = (index) => {
-    const updatedRows = [...rows];
-    const newRows = [
-      ...updatedRows.slice(0, index),
-      ...updatedRows.slice(index + 1),
-    ];
-    setRows(newRows);
-  };
-
-  const handleSort = (arr) => {
-    arr.sort((a, b) => {
-      // Convert the timestamps to Date objects
-      var dateA = new Date(a.timestamp);
-      var dateB = new Date(b.timestamp);
-
-      // Compare the dates and return either -1, 0, or 1
-      // depending on whether dateA is before, the same as,
-      // or after dateB
-      if (dateA < dateB) return -1;
-      if (dateA > dateB) return 1;
-      return 0;
-    });
-  };
-
-  const handleStatusSort = () => {
-    const updatedRows = [...rows];
-
-    const sortedByStatus = updatedRows.sort((a, b) =>
-      b.status.localeCompare(a.status)
-    );
-
-    setRows(sortedByStatus);
-  };
+  console.log(events);
 
   const style = {
     position: "absolute",
@@ -224,141 +175,82 @@ const AlertSystem = () => {
         CDM Alert Table
       </Typography>
 
-      <Grid2 container spacing={2}>
-        <Grid2>
-          <Button
-            data-testid="sort-by-events"
-            variant="outlined"
-            sx={{ padding: "5px", marginBottom: "10px", marginTop: "10px" }}
-            onClick={() => handleSort(subscribedCDM)}
+      {watchlist.map((watchlistEntry, index) => (
+        <>
+          <Typography variant="h3" sx={{ margin: 0 }}>
+            Add each specific query here
+          </Typography>
+          <TableContainer
+            key={watchlistEntry.createdAt || index}
+            component={Paper}
+            sx={{
+              backgroundColor: colors.primary[500],
+              color: colors.primary[100],
+              border: `1px solid ${colors.primary[700]}`,
+              marginBottom: 4,
+            }}
           >
-            Sort By Last Updated
-          </Button>
-        </Grid2>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong>CDM</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Primary Object Designator</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Secondary Object Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>TCA[UTC]</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody data-testid="table-list">
+                {eventsByFilter[watchlistEntry.createdAt]?.map((val: any) => (
+                  <TableRow key={val._id}>
+                    <TableCell>{val._id}</TableCell>
+                    <TableCell>{val.primaryObjectDesignator}</TableCell>
+                    <TableCell>{val.secondaryObjectDesignator}</TableCell>
+                    <TableCell>{val.tca}</TableCell>
+                  </TableRow>
+                ))}
 
-        <Grid2>
-          <Button
-            variant="outlined"
-            sx={{ padding: "5px", marginBottom: "10px", marginTop: "10px" }}
-            onClick={() => handleStatusSort()}
-          >
-            Sort By Status
-          </Button>
-        </Grid2>
-      </Grid2>
-      <TableContainer
-        component={Paper}
-        sx={{
-          backgroundColor: colors.primary[500],
-          color: colors.primary[100],
-          border: `1px solid ${colors.primary[700]}`,
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>CDM</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Last Update</strong>
-              </TableCell>
-              <TableCell>
-                <strong>CDM EVENT</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Status</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Command</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody data-testid="table-list">
-            {subscribedCDM.map((val: any, index) => (
-              <TableRow key={val._id}>
-                <TableCell>{val._id}</TableCell>
-                <TableCell>{val.creationDate}</TableCell>
-                <TableCell>{val.event}</TableCell>
-                <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <CircleIcon
-                      fontSize="small"
-                      style={{ color: getStatusColor("New Event") }}
-                    />
-                    New Event
-                  </Stack>
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1}>
-                    <Button color="info" onClick={openModal}>
-                      <Edit />
-                    </Button>
-                    <Button color="error" onClick={() => handleDelete(index)}>
-                      <Delete />
-                    </Button>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-                <Typography variant="h2">Add Rationale</Typography>
-                <TextField
-                  id="outlined-multiline-flexible"
-                  multiline
-                  maxRows={6}
-                  sx={{ width: "100%" }}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleClose}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    mt: 2,
-                  }}
+                {/* Modal should ideally not be repeated per row; pull it out if it's shared */}
+                <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
                 >
-                  Submit
-                </Button>
-              </Box>
-            </Modal>
-            {/* {rows.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.duration}</TableCell>
-                <TableCell>{row.events}</TableCell>
-                <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <CircleIcon
-                      fontSize="small"
-                      style={{ color: getStatusColor(row.status) }}
+                  <Box sx={style}>
+                    <Typography variant="h2">Add Rationale</Typography>
+                    <TextField
+                      id="outlined-multiline-flexible"
+                      multiline
+                      maxRows={6}
+                      sx={{ width: "100%" }}
                     />
-                    {row.status}
-                  </Stack>
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1}>
-                    <Button color="info" onClick={() => handleEditClick(index)}>
-                      <Edit />
+                    <Button
+                      variant="contained"
+                      onClick={handleClose}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        mt: 2,
+                      }}
+                    >
+                      Submit
                     </Button>
-                    <Button color="error" onClick={() => handleDelete(index)}>
-                      <Delete />
-                    </Button>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))} */}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  </Box>
+                </Modal>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ))}
     </div>
   );
 };
