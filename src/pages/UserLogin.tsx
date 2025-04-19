@@ -45,7 +45,7 @@ const UserLogin = () => {
     }
 
     const handleChangePassword = (event) => {
-        setPassword(event.target.value.trim());
+        setPassword(event.target.value.replace(" ", ""));
     }
 
     return (

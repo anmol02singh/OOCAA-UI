@@ -151,7 +151,7 @@ const UserSignUp = () => {
     }
 
     const handleChangeUsername = (event) => {
-        const fieldValue = event.target.value.trim();
+        const fieldValue = event.target.value.replace(" ", "");
 
         if (fieldValue.length > 150) return;
 
@@ -159,7 +159,7 @@ const UserSignUp = () => {
     }
 
     const handleChangePassword = (event) => {
-        setPassword(event.target.value.trim());
+        setPassword(event.target.value.replace(" ", ""));
     }
 
 
