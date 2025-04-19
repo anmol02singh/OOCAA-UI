@@ -34,6 +34,9 @@ type registerErrorMessage = (
 );
 
 const UserSignUp = () => {
+    const isUsernameFormat = /^[a-zA-Z0-9_.]+$/;
+    const isPasswordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+    
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
@@ -103,7 +106,7 @@ const UserSignUp = () => {
         if (username.length < 4) {
             invalidInput = true;
             setErrorMessageType('shortUsername');
-        } else if (!username.match(/^[a-zA-Z0-9_.]+$/)) {
+        } else if (!username.match(isUsernameFormat)) {
             invalidInput = true;
             setErrorMessageType('invalidUsernameFormat');
         }
@@ -118,7 +121,7 @@ const UserSignUp = () => {
         if (password.length < 8) {
             invalidInput = true;
             setErrorMessageType('shortPassword');
-        } else if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)) {
+        } else if (!password.match(isPasswordFormat)) {
             invalidInput = true;
             setErrorMessageType('invalidPasswordFormat');
         }
