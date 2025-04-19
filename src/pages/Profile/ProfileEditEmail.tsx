@@ -132,7 +132,7 @@ const ProfileEditEmail = () => {
     const handleSubmit = (event): boolean => {
         event.preventDefault();
 
-        const processedEmail = newEmail.toLowerCase();
+        const processedEmail = newEmail.toLowerCase().trim();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});

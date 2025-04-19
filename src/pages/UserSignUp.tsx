@@ -57,7 +57,7 @@ const UserSignUp = () => {
 
         const response = await register(
             name.replace(containsExtraSpaces, ' ').trim(),
-            email.toLowerCase(),
+            email.toLowerCase().trim(),
             phone,
             username,
             password
