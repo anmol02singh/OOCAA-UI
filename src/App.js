@@ -7,7 +7,7 @@ import ProfileEdit from "./pages/Profile/ProfileEdit.tsx";
 import ProfileEditName from "./pages/Profile/ProfileEditName.tsx";
 import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx";
 import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx";
-import AdminManageAccounts from "./pages/Admin/AdminManageAccounts.tsx"
+import AdminManageAccounts from "./pages/Admin/AdminManageAccounts.tsx";
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -24,6 +24,7 @@ import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
 import Directory from "./pages/Directory.tsx";
 import AlertSystem from "./pages/AlertSystem.tsx";
+import Watchlist from "./pages/Watchlist.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -42,7 +43,7 @@ function App() {
           style={{
             width: "100vw",
             height: "100vh",
-                "overflow-x": "hidden",
+            "overflow-x": "hidden",
           }}
         >
           {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
@@ -66,8 +67,9 @@ function App() {
                 <Route path="/geo" element={<Geo />} />
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/signup" element={<UserSignUp />} />
-                          <Route path="/directory" element={<Directory />} />
+                <Route path="/directory" element={<Directory />} />
                 <Route path="/alertsystem" element={<AlertSystem />} />
+                <Route path="/watchlist" element={<Watchlist />} />
                 <Route path={routes.profile} element={<Profile />} />
                 <Route path={routes.editProfile} element={<ProfileEdit />} />
                 <Route
@@ -82,7 +84,10 @@ function App() {
                   path={routes.editProfilePhone}
                   element={<ProfileEditPhone />}
                 />
-                          <Route path={routes.manageAccounts} element={<AdminManageAccounts />} />
+                <Route
+                  path={routes.manageAccounts}
+                  element={<AdminManageAccounts />}
+                />
               </Routes>
             </Box>
           </main>
