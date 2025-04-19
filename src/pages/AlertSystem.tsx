@@ -9,13 +9,9 @@ import {
   Paper,
   Typography,
   Button,
-  Stack,
-  Grid2,
   Box,
   useTheme,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
-import CircleIcon from "@mui/icons-material/Circle";
 import Heatmap from "../components/HeatMap.tsx";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
@@ -25,8 +21,6 @@ import { useNavigate } from "react-router-dom";
 import { userdata } from "../API/account.tsx";
 import { fetchUserWatchlist } from "../API/watchlist.tsx";
 import { fetchEvents } from "../API/searchEvents.tsx";
-
-const API_URL = process.env.API_URL || "http://localhost:3000";
 
 const AlertSystem = () => {
   const navigate = useNavigate();
@@ -105,10 +99,6 @@ const AlertSystem = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const openModal = () => {
-    handleOpen();
-  };
-
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h1" gutterBottom sx={{ paddingTop: "20px" }}>
@@ -139,9 +129,43 @@ const AlertSystem = () => {
 
       {watchlist.map((watchlistEntry, index) => (
         <>
-          <Typography variant="h3" sx={{ margin: 0 }}>
-            Add each specific query here
-          </Typography>
+          <Paper
+            sx={{
+              padding: 2,
+              marginBottom: 2,
+              backgroundColor: colors.primary[600],
+            }}
+          >
+            <Typography variant="h3" gutterBottom>
+              Query Parameters
+            </Typography>
+
+            {watchlistEntry.searchParams.map((param, i) => (
+              <Typography variant="body1" key={param.id}>
+                • <strong>{param.criteria}:</strong> {param.value}
+              </Typography>
+            ))}
+
+            <Typography variant="body1" sx={{ marginTop: 1 }}>
+              • <strong>Miss Distance:</strong>{" "}
+              {watchlistEntry.missDistanceOperator}{" "}
+              {watchlistEntry.missDistanceValue ?? "N/A"} km
+            </Typography>
+            <Typography variant="body1">
+              • <strong>Collision Probability:</strong>{" "}
+              {watchlistEntry.collisionProbabilityOperator}{" "}
+              {watchlistEntry.collisionProbabilityValue ?? "N/A"}
+            </Typography>
+            <Typography variant="body1">
+              • <strong>TCA Range:</strong> {watchlistEntry.tcaRange[0]} to{" "}
+              {watchlistEntry.tcaRange[1]}
+            </Typography>
+            <Typography variant="body1">
+              • <strong>Operator Organization:</strong>{" "}
+              {watchlistEntry.operatorOrganization}
+            </Typography>
+          </Paper>
+
           <TableContainer
             key={watchlistEntry.createdAt || index}
             component={Paper}
