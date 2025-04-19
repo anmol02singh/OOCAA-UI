@@ -51,6 +51,45 @@ export interface Position {
     cndot_tdot: number;
     cndot_ndot: number;
   }
+
+  export interface DragCovariance {
+    cdrg_r: number;
+    cdrg_t: number;
+    cdrg_n: number;
+    cdrg_rdot: number;
+    cdrg_tdot: number;
+    cdrg_ndot: number;
+    cdrg_drg: number;
+  }
+
+  export interface SrpCovariance {
+    csrp_r: number;
+    csrp_t: number;
+    csrp_n: number;
+    csrp_rdot: number;
+    csrp_tdot: number;
+    csrp_ndot: number;
+    csrp_drg: number;
+    csrp_srp: number;
+}
+
+  export interface RelativePosition {
+    r: number;
+    t: number;
+    n: number;
+    rUnit: string;
+    tUnit: string;
+    nUnit: string;
+  }
+
+  export interface RelativeVelocity {
+    r: number;
+    t: number;
+    n: number;
+    rUnit: string;
+    tUnit: string;
+    nUnit: string;
+  }
   
   export interface CDMObject {
     object: string;
@@ -60,26 +99,87 @@ export interface Position {
     internationalDesignator: string;
     objectType: string;
     operatorOrganization: string;
+    operatorContactPosition: string;
+    operatorPhone: string;
+    operatorEmail: string;
+    ephemerisName: string;
     covarianceMethod: string;
     maneuverable: string;
     referenceFrame: string;
+    gravityModel: string;
+    atmosphericModel: string;
+    nBodyPerturbations: string;
+    solarRadPressure: string;
+    earthTides: string;
+    inTrackThrust: string;
+    commentCovarianceScaleFactor: string;
+    commentExclusionVolumeRadius: string;
+    commentApogee: string;
+    commentPerigee: string;
+    commentInclination: string;
+    commentOperatorHardBodyRadius: string;
+    commentScreeningDataSource: string;
+    timeLastobStart: string;
+    timeLastobEnd: string;
+    recommendedOdSpan: number;
+    recommendedOdSpanUnit: string;
+    actualOdSpan: number;
+    actualOdSpanUnit: string;
+    obsAvailable: number;
+    obsUsed: number;
+    tracksAvailable: number;
+    tracksUsed: number;
+    residualsAccepted: number;
+    residualsAcceptedUnit: string;
+    weightedRms: number;
+    areaPC: number;
+    areaPCUnit: string;
+    cdAreaOverMass: number;
+    cdAreaOverMassUnit: string;
+    crAreaOverMass: number;
+    crAreaOverMassUnit: string;
+    thrustAcceleration: number;
+    thrustAccelerationUnit: string;
+    sedr: number;
+    sedrUnit: string;
     position: Position;
     velocity: Velocity;
+    commentDcpDensityForecastUncertainty: string;
+    commentDcpSensitivityVectorPosition: string;
+    commentDcpSensitivityVectorVelocity: string;
     positionCovariance: PositionCovariance;
     velocityCovariance: VelocityCovariance;
+    dragCovariance: DragCovariance;
+    srpCovariance: SrpCovariance;
   }
   
   export interface CDM {
     _id: string;
+    event: string;
+    constellation: string;
+    cdmId: string;
+    fileName: string;
+    insertEpoch: string;
     ccsdsCdmVers: string;
     creationDate: string; 
     originator: string;
+    messageFor: string;
     messageId: string;
+    commentEmergencyReportable: string;
     tca: string;
     missDistance: number;
+    missDisatnceUnit: string;
+    relativeSpeed: number;
+    relativeSpeedUnit: string;
+    relativePosition: RelativePosition;
+    relativeVelocity: RelativeVelocity;
+    commentScreeningOption: string;
     collisionProbability: number;
+    collisionProbabilityMethod: string;
+    commentEffectiveHBR: string;
     object1: CDMObject;
     object2: CDMObject;
+    gid: string;
   }
   
   export interface Event {

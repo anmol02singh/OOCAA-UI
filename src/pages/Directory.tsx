@@ -21,8 +21,7 @@ import { fetchEvents } from '../API/searchEvents.tsx';
 import { fetchTLEs } from '../API/fetchTLEs.tsx'; 
 import { fetchCDMs, fetchCounts } from '../API/fetchCDMs.tsx';
 import { getEvents } from '../API/getEvents.tsx';
-import { CDM, ObjectTypeCounts } from '../types.tsx';
-import { Event } from '../types.tsx';
+import { CDM, ObjectTypeCounts, Event, Account } from '../types.tsx';
 import EventCharts from '../components/EventCharts.tsx';
 import EventTable from '../components/EventTable.tsx';
 import EventFilters, { ExtraFilters } from '../components/EventFilters.tsx';
@@ -32,6 +31,7 @@ import { userdata } from '../API/account.tsx';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import FullCdmModal from '../components/FullCDMView.tsx';
 
 const Directory = () => {
   const navigate = useNavigate();
@@ -93,6 +93,9 @@ const Directory = () => {
 
   const [stats, setStats] = useState<ObjectTypeCounts>(initialStats);
 
+  const [user, setUser] = useState<Account | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -125,8 +128,19 @@ const Directory = () => {
         setTimeout(() => setErrMsg(null), 2900);
       });
   }, []);
-  
 
+  useEffect(() => {
+    (async () => {
+      const token = localStorage.getItem('accountToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      const u = await userdata(token);
+      setUser(u);
+    })();
+  }, []);
+  
   const handleAddSearchBar = () => {
     if (searchBars.length < 2) {
       setSearchBars([...searchBars, { id: searchBars.length + 1, criteria: 'objectName', value: '' }]);
@@ -255,6 +269,8 @@ const Directory = () => {
       setSnackbarOpen(true);
     }
   };
+  
+  const canViewFull = user?.roleNum !== undefined && user.roleNum <= 1;
 
   return (
     <Box
@@ -368,9 +384,26 @@ const Directory = () => {
     )}
 
       {/* Detailed View for Selected CDM */}
-      <Typography variant="h4" mb={3}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h4">
         {selectedCDM ? `Viewing CDM: ${selectedCDM.messageId}` : ''}
-      </Typography>
+        </Typography>
+        {selectedCDM && canViewFull && (
+          <Button
+            variant="outlined"
+            onClick={() => setModalOpen(true)}
+            sx={{ 
+              backgroundColor: colors.primary[400], 
+              color: colors.grey[100], 
+              fontWeight: 'bold',
+              padding: '0.5rem 1rem',
+            }}
+          >
+            View Full CDM
+          </Button>
+        )}
+      </Box>
+      
       {selectedCDM && (
       <Box display="flex" gap={2} mt={4}>
         
@@ -436,6 +469,15 @@ const Directory = () => {
           ))}
         </Paper>
       </Box>
+      )}
+
+      {/* full-json modal */}
+      {selectedCDM && (
+        <FullCdmModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          cdm={selectedCDM}
+        />
       )}
 
       {/* Cesium Viewer */}
