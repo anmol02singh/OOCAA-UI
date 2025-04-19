@@ -14,6 +14,7 @@ export interface Account {
 }
 
 export interface Position {
+    comment: string;
     x: number;
     y: number;
     z: number;
@@ -26,6 +27,7 @@ export interface Position {
   }
   
   export interface PositionCovariance {
+    comment: string;
     cr_r: number;
     ct_r: number;
     ct_t: number;
@@ -73,6 +75,18 @@ export interface Position {
     csrp_srp: number;
 }
 
+  export interface ThrCovariance {
+    cthr_r: number;
+    cthr_t: number;
+    cthr_n: number;
+    cthr_rdot: number;
+    cthr_tdot: number;
+    cthr_ndot: number;
+    cthr_drg: number;
+    cthr_srp: number;
+    cthr_thr: number;
+  }
+
   export interface RelativePosition {
     r: number;
     t: number;
@@ -90,8 +104,15 @@ export interface Position {
     tUnit: string;
     nUnit: string;
   }
+
+  export interface ScreenVolume {
+    x: number;
+    y: number;
+    z: number;
+  }
   
   export interface CDMObject {
+    comment: string;
     object: string;
     objectDesignator: string;
     catalogName: string;
@@ -134,6 +155,9 @@ export interface Position {
     weightedRms: number;
     areaPC: number;
     areaPCUnit: string;
+    areaDRG: number;
+    areaSRP: number;
+    mass: number;
     cdAreaOverMass: number;
     cdAreaOverMassUnit: string;
     crAreaOverMass: number;
@@ -151,6 +175,7 @@ export interface Position {
     velocityCovariance: VelocityCovariance;
     dragCovariance: DragCovariance;
     srpCovariance: SrpCovariance;
+    thrCovariance: ThrCovariance;
   }
   
   export interface CDM {
@@ -161,6 +186,7 @@ export interface Position {
     fileName: string;
     insertEpoch: string;
     ccsdsCdmVers: string;
+    comment: string;
     creationDate: string; 
     originator: string;
     messageFor: string;
@@ -173,6 +199,13 @@ export interface Position {
     relativeSpeedUnit: string;
     relativePosition: RelativePosition;
     relativeVelocity: RelativeVelocity;
+    startScreenPeriod: string;
+    stopScreenPeriod: string;
+    screenVolumeFrame: string;
+    screenVolumeShape: string;
+    screenVolume: ScreenVolume;
+    screenEntryTime: string;
+    screenExitTime: string;
     commentScreeningOption: string;
     collisionProbability: number;
     collisionProbabilityMethod: string;
