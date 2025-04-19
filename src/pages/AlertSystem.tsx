@@ -31,47 +31,7 @@ const API_URL = process.env.API_URL || "http://localhost:3000";
 const AlertSystem = () => {
   const navigate = useNavigate();
 
-  const [subscribedCDM, setSubscribedCDM] = useState([]);
   const [watchlist, setWatchlist] = useState<WatchlistEntry[]>([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const token = localStorage.getItem("accountToken");
-  //     if (!token) {
-  //       navigate("/login");
-  //       return;
-  //     }
-  //     try {
-  //       const user = await userdata(token);
-  //       const userId = user._id;
-  //       const data = await fetchUserWatchlist(userId);
-  //       setWatchlist(data);
-  //     } catch (error) {
-  //       console.error("Error fetching events:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // console.log(watchlist);
-  // const [events, setEvents] = useState<Event[]>([]);
-
-  // // console.log(watchlist[0]);
-
-  // useEffect(() => {
-  //   console.log(watchlist);
-  //   const events = async () => {
-  //     const data = await fetchEvents(
-  //       watchlist[0].searchParams,
-  //       watchlist[0].tcaRange
-  //     );
-  //     setEvents(data);
-  //   };
-  //   events();
-  // }, [watchlist]);
-
-  const [events, setEvents] = useState<Event[]>([]);
-
   const [eventsByFilter, setEventsByFilter] = useState<Record<string, Event[]>>(
     {}
   );
@@ -88,19 +48,25 @@ const AlertSystem = () => {
         const user = await userdata(token);
         const userId = user._id;
 
-        // Step 1: Get the saved filters
         const filters = await fetchUserWatchlist(userId);
         setWatchlist(filters);
 
-        // Step 2: For each filter, fetch events and associate them with filter ID
         const eventsByFilterEntries = await Promise.all(
           filters.map(async (filter) => {
             try {
               const eventData = await fetchEvents(
                 filter.searchParams,
-                filter.tcaRange
+                filter.tcaRange,
+                {
+                  missDistanceValue: filter.missDistanceValue,
+                  missDistanceOperator: filter.missDistanceOperator,
+                  collisionProbabilityValue: filter.collisionProbabilityValue,
+                  collisionProbabilityOperator:
+                    filter.collisionProbabilityOperator,
+                  operatorOrganization: filter.operatorOrganization,
+                }
               );
-              return [filter.createdAt, eventData]; // ✅ string key
+              return [filter.createdAt, eventData];
             } catch (err) {
               console.error(
                 `Error fetching events for filter ${filter._id}:`,
@@ -111,10 +77,8 @@ const AlertSystem = () => {
           })
         );
 
-        // Step 3: Convert the array of entries into an object
         const eventsMap = Object.fromEntries(eventsByFilterEntries);
-        console.log(eventsMap);
-        setEventsByFilter(eventsMap); // ✅ your state holding filter-wise events
+        setEventsByFilter(eventsMap);
       } catch (error) {
         console.error("Error fetching filters or events:", error);
       }
@@ -122,8 +86,6 @@ const AlertSystem = () => {
 
     fetchData();
   }, []);
-
-  console.log(events);
 
   const style = {
     position: "absolute",
