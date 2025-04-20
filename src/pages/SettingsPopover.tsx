@@ -159,27 +159,38 @@ const SettingsPopover = () => {
     <Box
       sx={{
         backgroundColor: theme.palette.mode,
-    color: theme.palette.mode,
-    height: "100%", 
+    color: theme.palette.mode, 
     width: "100%",
-    display: 'flex',
+    display: 'flex',       
     flexDirection: 'column',
-    overflowX: 'hidden',
-    overflowY: 'auto', 
+    overflow: 'hidden'   ,
+     height: '100%',
       }}
     >
-      <Box display="flex" sx={{ minHeight: '100%'}}>
+      <Box display="flex" sx={{
+              display: 'flex',
+              width: '100%',
+              overflow:'hidden',
+            
+          }}>
+            
         {/* Sidebar */}
         <Box
-          width="250px"
-          bgcolor={theme.palette.mode  ? colors.primary[400] : colors.primary[100]}
-          p={2}
-          display="flex"
-          flexDirection="column"
-          boxShadow={2}
-          sx={{overflowY: 'hidden', overflowX: 'hidden', height: "100%",}}
+         width="250px" 
+         bgcolor={theme.palette.mode === 'dark' ? colors.primary[400] : colors.primary[100]}
+         p={2}
+         display="flex"
+         flexDirection="column"
+         boxShadow={2}  
+         sx={{
+          height: "100vh",
+           overflowY: 'auto',
+           overflowX: 'hidden',
+           borderRight: `1px solid ${theme.palette.divider}`
+          }}
           
         >
+         
           <Typography variant="h6" gutterBottom>
             Settings
           </Typography>
@@ -219,7 +230,13 @@ const SettingsPopover = () => {
         <Box
           flex={1}
           p={4}
-          bgcolor={theme.palette.mode}        
+          bgcolor={theme.palette.mode}   
+          sx={{
+            minHeight: '100%',
+            height: '100%', 
+            overflowY: 'auto',
+            minWidth: 0, 
+         }}     
         >
           {selectedSection === "general" && (
             <>
@@ -394,7 +411,7 @@ const SettingsPopover = () => {
             required
           />
 
-          <Box display="flex" gap={1}>
+          <Box display="flex" gap={1} >
             <Button 
               type="submit" 
               variant="contained" 
@@ -444,8 +461,8 @@ const SettingsPopover = () => {
             </>
           )}
         </Box>
+        </Box>
       </Box>
-    </Box>
   );
 };
 
