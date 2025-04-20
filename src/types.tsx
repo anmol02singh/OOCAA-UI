@@ -241,6 +241,7 @@ export interface Position {
     collisionProbabilityOperator: string;
     collisionProbabilityValue?: number;
     operatorOrganization: string;
+    createdAt: string;
   }
 
   export interface SearchParams {
