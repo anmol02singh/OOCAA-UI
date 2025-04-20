@@ -32,12 +32,19 @@ export const getPageWidth = (boxRef: MutableRefObject<HTMLDivElement | null>): n
 //Reformats phone numbers.
 export const formatPhoneNumber = (number: string): {phoneNumber: string, success: boolean} => {
     if(!number) {
-        return {phoneNumber: "INVALID", success: false};
+        return {phoneNumber: "", success: false};
     }
+
     const phoneNumber: PhoneNumber | undefined = parsePhoneNumberFromString(`+${number.replace(/\D/g, '')}`);
+    
+    if(!phoneNumber || phoneNumber && `${phoneNumber}` === ""){
+        return {phoneNumber: "", success: false};
+    }
+
     if(!(phoneNumber && phoneNumber.isValid())){
         return {phoneNumber: "INVALID", success: false};
     }
+
     return {phoneNumber: phoneNumber.formatInternational(), success: true};
 };
 
@@ -253,7 +260,7 @@ export const useProfileDisplayStyling = () => {
         color: colors.grey[100],
         minWidth: '14rem',
         maxWidth: '32vw',
-        minHeight: 0,
+        minHeight: '21px',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
