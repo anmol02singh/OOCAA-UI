@@ -13,7 +13,6 @@ import {
     getPageWidth,
     useEditProfileStyling,
     useEditItemStyling,
-    containsExtraSpaces,
     preventEnterSubmit,
     isEmailFormat,
 
@@ -117,7 +116,7 @@ const ProfileEditEmail = () => {
     
         const fieldValue = event.target.value;
 
-        if(fieldValue.length>150) return
+        if(fieldValue.length>254) return
     
         setNewEmail(fieldValue);
     }
@@ -132,8 +131,8 @@ const ProfileEditEmail = () => {
 
     const handleSubmit = (event): boolean => {
         event.preventDefault();
-        
-        const processedEmail = newEmail.replace(containsExtraSpaces, ' ').trim();
+
+        const processedEmail = newEmail.toLowerCase().trim();
         
         let invalidInput = false;
         setErrorMessageElement({...errorMessageElement, type: 'none'});
