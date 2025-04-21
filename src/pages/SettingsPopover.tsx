@@ -171,7 +171,7 @@ const SettingsPopover = () => {
               display: 'flex',
               width: '100%',
               overflow:'hidden',
-              flexGrow: 1
+              flex: 1
             
           }}>
             
@@ -179,12 +179,13 @@ const SettingsPopover = () => {
         <Box
     
          bgcolor={theme.palette.mode === 'dark' ? colors.primary[400] : colors.primary[400]}
+         width="250px"
          p={2}
          display="flex"
          flexDirection="column"
          boxShadow={2}  
          sx={{
-          flexBasis: '250px', 
+           flexBasis: '250px', 
             flexShrink: 1,      
             flexGrow: 0,        
             minWidth: '180px',  
