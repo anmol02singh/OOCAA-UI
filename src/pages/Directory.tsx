@@ -504,6 +504,3 @@ const Directory = () => {
 };
 
 export default Directory;
-
-//try to get orbital paths
-//dont log into spacetrack every single time u want tles
