@@ -43,12 +43,14 @@ const Directory = () => {
   const colors = tokens(theme.palette.mode);
 
   const pageContainer: React.CSSProperties = {
-      width: '100%',
+      width: '99.8%',
       height: 'auto',
       backgroundColor: colors.primary[500],
       overflowX: 'hidden',
       overflowY: 'auto',
       padding: '2rem',
+      flexGrow: 1,
+      minWidth: 0,
   };
 
   const [searchBars, setSearchBars] = useState([{ id: 1, criteria: 'objectName', value: '' }]);

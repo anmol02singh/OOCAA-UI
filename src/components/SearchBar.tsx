@@ -47,6 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           color: textColor,
           height: '2.5rem',
           borderRadius: '4px',
+          width: '10rem',
         }}
         MenuProps={{
           PaperProps: {
