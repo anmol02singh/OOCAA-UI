@@ -171,18 +171,23 @@ const SettingsPopover = () => {
               display: 'flex',
               width: '100%',
               overflow:'hidden',
+              flexGrow: 1
             
           }}>
             
         {/* Sidebar */}
         <Box
          width="250px" 
-         bgcolor={theme.palette.mode === 'dark' ? colors.primary[400] : colors.primary[100]}
+         bgcolor={theme.palette.mode === 'dark' ? colors.primary[400] : colors.primary[400]}
          p={2}
          display="flex"
          flexDirection="column"
          boxShadow={2}  
          sx={{
+          flexBasis: '250px', 
+            flexShrink: 1,      
+            flexGrow: 0,        
+            minWidth: '180px',  
           height: "100vh",
            overflowY: 'auto',
            overflowX: 'hidden',
