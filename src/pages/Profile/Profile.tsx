@@ -12,7 +12,7 @@ import {
     useProfileDisplayStyling,
 
 } from './ProfileUtilities.tsx';
-import { userdata } from '../../API/account.tsx';
+import { userdata, deleteOwnAccount } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Account } from '../../types.tsx';
@@ -25,6 +25,12 @@ const Profile = () => {
     }
     
     const { handleEdit } = useNavigation();
+
+    async function handleDelete() {
+        await deleteOwnAccount(token);
+        localStorage.removeItem("accountToken");
+        window.location.href = "/";
+    }
    
     const {
         pageContainer,
@@ -47,6 +53,8 @@ const Profile = () => {
         regProfileFieldValue,
         regButtonContainer,
         regProfileButton,
+        regDeleteButton,
+        regDeleteButtonHover,
     } = useProfileDisplayStyling();
 
     const theme = useTheme();
@@ -156,6 +164,18 @@ const Profile = () => {
                         }}
                     >
                         Edit Profile
+                    </Button>
+
+                    <Button 
+                        onClick={handleDelete}
+                        sx={{
+                            ...regDeleteButton,
+                            '&:hover': {
+                                ...regDeleteButtonHover
+                            },
+                        }}
+                    >
+                        Delete Account
                     </Button>
                 </Grid>
             </Grid>

@@ -273,7 +273,17 @@ export const useProfileDisplayStyling = () => {
 
     const regProfileButton: React.CSSProperties = {
         ...button,
-        width: '7rem',
+        width: '9rem',
+    };
+
+    const regDeleteButton: React.CSSProperties = {
+        ...button,
+        width: '9rem',
+        background: '#ff0000',
+    };
+
+    const regDeleteButtonHover: React.CSSProperties = {
+        backgroundColor: '#ff3f3f',
     };
 
     return {
@@ -288,6 +298,8 @@ export const useProfileDisplayStyling = () => {
         regProfileFieldValue,
         regButtonContainer,
         regProfileButton,
+        regDeleteButton,
+        regDeleteButtonHover,
     };
 };
 
