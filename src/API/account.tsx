@@ -310,3 +310,63 @@ export async function removeProfileImage(token: string) {
         throw error;
     }
 }
+export async function changePassword(token: string, currentPassword: string, newPassword: string) {
+    try {
+        const response = await fetch(`${API_URL}/change-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                token: token,
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Password change failed:', error);
+        throw error;
+    }
+}
+export async function changeUsername(
+    token: string,
+    newUsername: string
+){
+    try {
+        const response = await fetch(`${API_URL}/change-username`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                token,
+                newUsername
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Username change failed');
+        }
+
+        return {
+            success: true,
+            message: data.message,
+            token: data.token
+        };
+    } catch (error) {
+        console.error('Username change failed:', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Username change failed'
+        };
+    }
+}
