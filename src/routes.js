@@ -7,6 +7,7 @@ const routes = {
     editProfileName: '/profile/edit/name',
     editProfileEmail: '/profile/edit/email',
     editProfilePhone: '/profile/edit/phone-number',
+    settings: '/settings',
     manageAccounts: '/admin/manage-accounts',
     manageRequests: '/admin/manage-requests'
 };

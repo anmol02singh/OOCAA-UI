@@ -24,12 +24,12 @@ const Topbar: FC = () => {
     
     const [activeUsername, setActiveUsername] = useState<string>('');
 
-    if (localStorage.getItem("accountToken")) {
-        userdata(localStorage.getItem("accountToken"))
+    const accountToken = localStorage.getItem("accountToken");
+    if (accountToken) {
+        userdata(accountToken)
             .then(json => json.username)
             .then(setActiveUsername);
     }
-
     function logout() {
         localStorage.removeItem("accountToken");
         window.location.reload();
@@ -50,7 +50,7 @@ const Topbar: FC = () => {
 
         {/* ICONS */}
          <Box display = "flex"> 
-            <IconButton onClick={colorMode.toggleColorMode}>
+            {/* <IconButton onClick={colorMode.toggleColorMode}>
                 {theme.palette.mode === 'dark' ? (
                    <DarkModeOutlinedIcon /> 
                 ) : (
@@ -58,15 +58,15 @@ const Topbar: FC = () => {
 
                 )}
                 
-            </IconButton>
+            </IconButton> */}
 
             <IconButton>
                 <NotificationsOutlinedIcon />
             </IconButton>
-                
-            <IconButton>
-                <SettingsOutlinedIcon />
-            </IconButton>
+             <IconButton>
+                 <SettingsOutlinedIcon onClick={() => navigate(routes.settings)}  />
+             </IconButton>
+ 
 
             {activeUsername ? (<>
                 <IconButton onClick={() => navigate(routes.profile)}>

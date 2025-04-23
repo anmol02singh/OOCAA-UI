@@ -21,6 +21,7 @@ import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
+import SettingsPopover from "./pages/SettingsPopover.tsx";
 import Directory from "./pages/Directory.tsx";
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />
                           <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
                           <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
+                          <Route path="/settings" element={<SettingsPopover/>} />
                           <Route path={routes.manageAccounts} element={<AdminManageAccounts />} />
                           <Route path={routes.manageRequests} element={<AdminRoleChangeRequests />} />
                         </Routes>
