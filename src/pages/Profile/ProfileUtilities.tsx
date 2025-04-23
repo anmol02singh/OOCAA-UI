@@ -273,7 +273,7 @@ export const useProfileDisplayStyling = () => {
 
     const regProfileButton: React.CSSProperties = {
         ...button,
-        width: '7rem',
+        width: '7.5rem',
     };
 
     return {
@@ -476,3 +476,72 @@ export const useEditItemStyling = () => {
         editPhoneDropDown,
     };
 };
+
+/*==========Role Change Request Display==========*/
+export const useRoleChangeStyling = () => {
+
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+
+    const requestDialogContainer = (pageWidth: number): React.CSSProperties => ({
+        padding:
+            pageWidth >= mdWindowWidth ? '3rem'
+                : pageWidth < mdWindowWidth && pageWidth >= smWindowWidth ? '2rem 3rem'
+                    : '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '50vw',
+        minWidth: '22rem',
+        maxWidth: '30rem',
+        backgroundColor: colors.primary[400],
+        borderRadius: '9px',
+        backgroundImage: 'none',
+        gap: '1rem',
+        overflow: 'auto',
+    });
+
+    const requestHeader: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        minWidth: '13.1rem',
+    };
+
+    const requestContainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        textAlign: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+    };
+
+    const requestButtonContainer: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+    };
+
+    const requestButton: React.CSSProperties = {
+        padding: '0.8rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '1rem',
+        margin: '0.5rem',
+        width: '6rem',
+    };
+
+    return {
+        requestDialogContainer,
+        requestHeader,
+        requestContainer,
+        requestButtonContainer,
+        requestButton,
+    };
+}

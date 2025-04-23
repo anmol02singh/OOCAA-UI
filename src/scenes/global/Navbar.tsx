@@ -11,6 +11,7 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SatelliteAltOutlinedIcon from '@mui/icons-material/SatelliteAltOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
@@ -161,6 +162,7 @@ const Navbar: FC = () => {
                   Admin
                 </Typography>
                 <Item title="Manage Accounts" to={routes.manageAccounts} icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
+                <Item title="Role Requests" to={routes.manageRequests} icon={<AssignmentIndIcon />} selected={selected} setSelected={setSelected} />
               </>
             )}
           </Box>

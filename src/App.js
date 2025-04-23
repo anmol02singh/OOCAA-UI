@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import About from "./pages/About.tsx";
-import Contact from "./pages/Contact.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
 import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
 import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
 import ProfileEditEmail from "./pages/Profile/ProfileEditEmail.tsx"
 import ProfileEditPhone from "./pages/Profile/ProfileEditPhone.tsx"
 import AdminManageAccounts from "./pages/Admin/AdminManageAccounts.tsx"
+import AdminRoleChangeRequests from "./pages/Admin/AdminRoleChangeRequests.tsx"
 import Navbar from "./scenes/global/Navbar.tsx";
 import { ColorModeContext, useMode } from "./theme.tsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -65,6 +64,7 @@ function App() {
                           <Route path={routes.editProfileEmail} element={<ProfileEditEmail />} />
                           <Route path={routes.editProfilePhone} element={<ProfileEditPhone />} />
                           <Route path={routes.manageAccounts} element={<AdminManageAccounts />} />
+                          <Route path={routes.manageRequests} element={<AdminRoleChangeRequests />} />
                         </Routes>
                     </Box>
                   </main>
