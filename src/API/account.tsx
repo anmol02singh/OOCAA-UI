@@ -54,12 +54,12 @@ export async function userdata(token: string) {
     }
 }
 
-export async function login(username: string, password: string) {
+export async function login(usernameOrEmail: string, password: string) {
     try {
         const response = await fetch(`${API_URL}/login`, {
             method: "POST",
             body: JSON.stringify({
-                username: username,
+                usernameOrEmail: usernameOrEmail,
                 password: password
             }),
             headers: {

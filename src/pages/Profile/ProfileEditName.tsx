@@ -116,7 +116,7 @@ const ProfileEditName = () => {
     
         const fieldValue = event.target.value;
 
-        if(fieldValue.length>100) return
+        if(fieldValue.length>150) return
     
         setNewName(fieldValue);
     }
