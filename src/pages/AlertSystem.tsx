@@ -5,30 +5,43 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Paper,
   Typography,
-  Button,
-  Box,
   useTheme,
 } from "@mui/material";
 import Heatmap from "../components/HeatMap.tsx";
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import { tokens } from "../theme.tsx";
 import { WatchlistEntry } from "../types.tsx";
 import { useNavigate } from "react-router-dom";
 import { userdata } from "../API/account.tsx";
 import { fetchUserWatchlist } from "../API/watchlist.tsx";
-import { fetchEvents } from "../API/searchEvents.tsx";
+import { fetchLimitedEvents } from "../API/searchEvents.tsx";
+import { Event } from "../types.tsx";
 
 const AlertSystem = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   const [watchlist, setWatchlist] = useState<WatchlistEntry[]>([]);
   const [eventsByFilter, setEventsByFilter] = useState<Record<string, Event[]>>(
     {}
   );
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +61,7 @@ const AlertSystem = () => {
         const eventsByFilterEntries = await Promise.all(
           filters.map(async (filter) => {
             try {
-              const eventData = await fetchEvents(
+              const eventData = await fetchLimitedEvents(
                 filter.searchParams,
                 filter.tcaRange,
                 {
@@ -79,25 +92,7 @@ const AlertSystem = () => {
     };
 
     fetchData();
-  }, []);
-
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
-
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
+  }, [navigate]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -127,25 +122,26 @@ const AlertSystem = () => {
         CDM Alert Table
       </Typography>
 
-      {watchlist.map((watchlistEntry, index) => (
-        <>
+      {watchlist.map((watchlistEntry, index) => {
+        const events = eventsByFilter[watchlistEntry.createdAt] || [];
+        return (
           <Paper
+            key={watchlistEntry.createdAt || index}
             sx={{
               padding: 2,
-              marginBottom: 2,
+              marginBottom: 4,
               backgroundColor: colors.primary[600],
+              borderRadius: 2,
             }}
           >
             <Typography variant="h3" gutterBottom>
               Query Parameters
             </Typography>
-
-            {watchlistEntry.searchParams.map((param, i) => (
+            {watchlistEntry.searchParams.map((param) => (
               <Typography variant="body1" key={param.id}>
                 • <strong>{param.criteria}:</strong> {param.value}
               </Typography>
             ))}
-
             <Typography variant="body1" sx={{ marginTop: 1 }}>
               • <strong>Miss Distance:</strong>{" "}
               {watchlistEntry.missDistanceOperator}{" "}
@@ -164,79 +160,67 @@ const AlertSystem = () => {
               • <strong>Operator Organization:</strong>{" "}
               {watchlistEntry.operatorOrganization}
             </Typography>
-          </Paper>
 
-          <TableContainer
-            key={watchlistEntry.createdAt || index}
-            component={Paper}
-            sx={{
-              backgroundColor: colors.primary[500],
-              color: colors.primary[100],
-              border: `1px solid ${colors.primary[700]}`,
-              marginBottom: 4,
-            }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>CDM</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Primary Object Designator</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Secondary Object Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>TCA[UTC]</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody data-testid="table-list">
-                {eventsByFilter[watchlistEntry.createdAt]?.map((val: any) => (
-                  <TableRow key={val._id}>
-                    <TableCell>{val._id}</TableCell>
-                    <TableCell>{val.primaryObjectDesignator}</TableCell>
-                    <TableCell>{val.secondaryObjectDesignator}</TableCell>
-                    <TableCell>{val.tca}</TableCell>
+            <TableContainer
+              sx={{
+                backgroundColor: colors.primary[500],
+                borderRadius: 2,
+                border: `1px solid ${colors.primary[700]}`,
+                mt: 2,
+              }}
+            >
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: colors.primary[700] }}>
+                    <TableCell sx={{ color: "white" }}>
+                      <strong>CDM</strong>
+                    </TableCell>
+                    <TableCell sx={{ color: "white" }}>
+                      <strong>Primary Object Designator</strong>
+                    </TableCell>
+                    <TableCell sx={{ color: "white" }}>
+                      <strong>Secondary Object Name</strong>
+                    </TableCell>
+                    <TableCell sx={{ color: "white" }}>
+                      <strong>TCA[UTC]</strong>
+                    </TableCell>
                   </TableRow>
-                ))}
-
-                {/* Modal should ideally not be repeated per row; pull it out if it's shared */}
-                <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <Box sx={style}>
-                    <Typography variant="h2">Add Rationale</Typography>
-                    <TextField
-                      id="outlined-multiline-flexible"
-                      multiline
-                      maxRows={6}
-                      sx={{ width: "100%" }}
-                    />
-                    <Button
-                      variant="contained"
-                      onClick={handleClose}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        mt: 2,
-                      }}
-                    >
-                      Submit
-                    </Button>
-                  </Box>
-                </Modal>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      ))}
+                </TableHead>
+                <TableBody data-testid="table-list">
+                  {events
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((val, rowIndex) => (
+                      <TableRow
+                        key={val._id}
+                        sx={{
+                          backgroundColor:
+                            rowIndex % 2 === 0
+                              ? colors.primary[600]
+                              : colors.primary[500],
+                        }}
+                      >
+                        <TableCell>{val._id}</TableCell>
+                        <TableCell>{val.primaryObjectDesignator}</TableCell>
+                        <TableCell>{val.secondaryObjectDesignator}</TableCell>
+                        <TableCell>{val.tca}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={events.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                sx={{ color: "white" }}
+              />
+            </TableContainer>
+          </Paper>
+        );
+      })}
     </div>
   );
 };
