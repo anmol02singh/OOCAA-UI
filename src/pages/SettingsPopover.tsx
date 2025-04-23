@@ -162,33 +162,25 @@ const SettingsPopover = () => {
     color: theme.palette.mode, 
     width: "100%",
     display: 'flex',       
-    flexDirection: 'column',
+    flexDirection: 'row',
+    justifyContent:"flex-start",
+    alignItems:"flex-start",
     overflow: 'hidden'   ,
-   height: '100vh',
+   height: '100%',
       }}
     >
-      <Box display="flex" sx={{
-              display: 'flex',
-              width: '100%',
-              overflow:'hidden',
-              flex: 1
-            
-          }}>
             
         {/* Sidebar */}
         <Box
     
          bgcolor={theme.palette.mode === 'dark' ? colors.primary[400] : colors.primary[400]}
-         width="250px"
          p={2}
          display="flex"
          flexDirection="column"
          boxShadow={2}  
          sx={{
-           flexBasis: '250px', 
-            flexShrink: 1,      
-            flexGrow: 0,        
-            minWidth: '180px',  
+          maxWidth:'250px',
+          width:'15vw',
           height: "100%",
            overflowY: 'auto',
            overflowX: 'hidden',
@@ -234,14 +226,18 @@ const SettingsPopover = () => {
 
         {/* Settings Content */}
         <Box
-          flex={1}
           p={4}
           bgcolor={theme.palette.mode}   
           sx={{
-            minHeight: '100%',
+            display:'flex',
+            flexDirection:'column',
+            justifyContent:"flex-start",
+            alignItems:"flex-start",
             height: '100%', 
+            width:'60%',
             overflowY: 'auto',
-            minWidth: 0, 
+            overflowX:'hidden',
+            minWidth: '261px', 
          }}     
         >
           {selectedSection === "general" && (
@@ -249,7 +245,7 @@ const SettingsPopover = () => {
               <Typography variant="h5" gutterBottom>
                 General Settings
               </Typography>
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={{ my: 1 ,width:'100%'}} />
               <Typography>Text Size</Typography>
               <Slider
                 value={textSize}
@@ -275,12 +271,13 @@ const SettingsPopover = () => {
         <Typography variant="h5" gutterBottom sx={{mb:1}}>
           Account Preferences
         </Typography>
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 2 ,width:'100%'}} />
         {usernameError && (
       <Alert 
         severity="error" 
         sx={{ 
           mb: 1,
+          width:'100%',
           maxWidth: '600px',
           whiteSpace: 'nowrap',
          mt: 1 
@@ -295,6 +292,7 @@ const SettingsPopover = () => {
         severity="success" 
         sx={{ 
           mb: 1,
+          width:'100%',
           maxWidth: '600px',
           whiteSpace: 'nowrap',
          mt: 1 
@@ -308,6 +306,7 @@ const SettingsPopover = () => {
         severity="error" 
         sx={{ 
           mb: 1,
+          width:'100%',
           maxWidth: '600px',
           whiteSpace: 'nowrap',
           mt: 1 
@@ -322,6 +321,7 @@ const SettingsPopover = () => {
         severity="success" 
         sx={{ 
           mb: 1,
+          width:'100%',
           maxWidth: '600px',
           whiteSpace: 'nowrap',
           mt: 1 
@@ -330,7 +330,7 @@ const SettingsPopover = () => {
         {success}
       </Alert>
     )} 
-        <Box mb={2}>
+        <Box mb={2} width='100%'>
           {!showUsernameField ? (
             <Button
               variant="contained"
@@ -376,7 +376,7 @@ const SettingsPopover = () => {
           )}
         </Box>
 
-        <Box mb={2}>
+        <Box mb={2} width='100%'>
       {!showPasswordField ? (
         <Button
           variant="contained"
@@ -451,7 +451,7 @@ const SettingsPopover = () => {
               <Typography variant="h5" gutterBottom>
                 Notification Choice
               </Typography>
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={{ my: 1,width:'100%' }} />
               <Box display="flex" gap={1}>
                 {["SMS", "Email"].map((channel) => (
                   <Button
@@ -468,7 +468,7 @@ const SettingsPopover = () => {
           )}
         </Box>
         </Box>
-      </Box>
+     
   );
 };
 
