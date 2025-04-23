@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import {
@@ -26,6 +31,7 @@ const Profile = () => {
     
     const { handleEdit } = useNavigation();
 
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     async function handleDelete() {
         await deleteOwnAccount(token);
         localStorage.removeItem("accountToken");
@@ -167,7 +173,7 @@ const Profile = () => {
                     </Button>
 
                     <Button 
-                        onClick={handleDelete}
+                        onClick={() => setDeleteDialogOpen(true)}
                         sx={{
                             ...regDeleteButton,
                             '&:hover': {
@@ -239,6 +245,22 @@ const Profile = () => {
                 </Box>
                 {pageWidth < mdWindowWidth ? regProfileInfoElements : undefined}
             </Box>
+
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                <DialogTitle>Account Deletion Confirmation</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you would like to delete your account?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)} color="secondary" autoFocus>Cancel</Button>
+                    <Button onClick={() => {
+                      setDeleteDialogOpen(false);
+                      handleDelete();
+                    }} color="secondary">Delete Account</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
