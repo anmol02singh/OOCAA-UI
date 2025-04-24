@@ -97,13 +97,13 @@ export const getRoleChangeRequests = async (
     }
 }
 
-export const deleteRoleChangeRequest = async (token: string, id: string) => {
+export const deleteRoleChangeRequest = async (token: string, _id: string) => {
     try {
         const response = await fetch(`${API_URL}/delete-role-change-request`, {
             method: "DELETE",
             body: JSON.stringify({
                 token: token,
-                id: id
+                _id: _id
             }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
