@@ -69,6 +69,7 @@ function App() {
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/signup" element={<UserSignUp />} />
                 <Route path="/directory" element={<Directory />} />
+                <Route path="/alertsystem" element={<AlertSystem />} />
                 <Route path={routes.profile} element={<Profile />} />
                 <Route path={routes.editProfile} element={<ProfileEdit />} />
                 <Route
