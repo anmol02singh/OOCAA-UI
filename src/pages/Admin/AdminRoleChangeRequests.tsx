@@ -67,7 +67,7 @@ const AdminRoleChangeRequests = () => {
     const [submitSearch, setSubmitSearch] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
     const [submitAccept, setSubmitAccept] = useState<boolean>(false);
-    const [submitDelete, setSubmitDelete] = useState<boolean>(false);
+    const [submitDeny, setSubmitDeny] = useState<boolean>(false);
     const [submitReset, setSubmitReset] = useState<boolean>(false);
 
     return (
@@ -94,7 +94,7 @@ const AdminRoleChangeRequests = () => {
                     setSubmitSearch={setSubmitSearch}
                     setSubmitFilter={setSubmitFilter}
                     setSubmitEdit={setSubmitAccept}
-                    setSubmitDelete={setSubmitDelete}
+                    setSubmitDelete={setSubmitDeny}
                     setSubmitReset={setSubmitReset}
                 />
 
@@ -114,8 +114,8 @@ const AdminRoleChangeRequests = () => {
                     setSubmitFilter={setSubmitFilter}
                     submitAccept={submitAccept}
                     setSubmitAccept={setSubmitAccept}
-                    submitDelete={submitDelete}
-                    setSubmitDelete={setSubmitDelete}
+                    submitDeny={submitDeny}
+                    setSubmitDeny={setSubmitDeny}
                     submitReset={submitReset}
                     setSubmitReset={setSubmitReset}
                 />

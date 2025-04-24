@@ -13,6 +13,13 @@ export interface Account {
     },
 }
 
+export interface RoleChangeRequest {
+    id: number,
+    accountId: string,
+    creationTime: string,
+    newRoleNum: number,
+}
+
 export interface Position {
     x: number;
     y: number;

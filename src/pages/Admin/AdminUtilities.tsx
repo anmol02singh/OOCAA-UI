@@ -492,3 +492,37 @@ export const useDeleteItemStyling = () => {
         cancelDeleteButton,
     };
 }
+
+export const useRoleChangeRequestsStyling = () => {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+    
+    const acceptButton: React.CSSProperties = {
+        padding: '0.3rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '0.95rem',
+        margin: '0.25rem',
+        width: '5rem',
+    };
+
+    const denyButton: React.CSSProperties = {
+        padding: '0.3rem',
+        cursor: 'pointer',
+        borderRadius: '6px',
+        color: colors.grey[100],
+        backgroundColor: colors.primary[500],
+        textTransform: 'none',
+        fontSize: '0.95rem',
+        margin: '0.25rem',
+        width: '4rem',
+    };
+
+    return {
+        acceptButton,
+        denyButton,
+    };
+}

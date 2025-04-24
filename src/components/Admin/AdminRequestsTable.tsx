@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
+    Button,
     useTheme,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId, GridSortItem } from '@mui/x-data-grid';
 import { tokens } from '../../theme.tsx';
 import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../../API/account.tsx';
 import { Account } from '../../types.tsx';
-import { useGeneralStyling } from '../../pages/Admin/AdminUtilities.tsx';
+import { useGeneralStyling, useRoleChangeRequestsStyling } from '../../pages/Admin/AdminUtilities.tsx';
 
 interface AccountTableProps {
     token: string | null;
@@ -33,8 +34,8 @@ interface AccountTableProps {
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
     submitAccept: boolean;
     setSubmitAccept: React.Dispatch<React.SetStateAction<boolean>>;
-    submitDelete: boolean;
-    setSubmitDelete: React.Dispatch<React.SetStateAction<boolean>>;
+    submitDeny: boolean;
+    setSubmitDeny: React.Dispatch<React.SetStateAction<boolean>>;
     submitReset: boolean;
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -54,8 +55,8 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     setSubmitFilter,
     submitAccept,
     setSubmitAccept,
-    submitDelete,
-    setSubmitDelete,
+    submitDeny,
+    setSubmitDeny,
     submitReset,
     setSubmitReset,
 }) => {
@@ -63,7 +64,13 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     const {
         accountsDataGridContainer,
         accountsTableContainer,
+        button_hover
     } = useGeneralStyling();
+
+    const {
+        acceptButton,
+        denyButton,
+    } = useRoleChangeRequestsStyling();
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -91,7 +98,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
 
     useEffect(() => {
         updateButtons(selectedRows);
-        setSelectedAccountsAmount(getSelectedAccounts().length);
+        // setSelectedAccountsAmount(getSelectedAccounts().length);
         //eslint-disable-next-line
     }, [selectedRows]);
 
@@ -111,9 +118,9 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     }, [submitAccept]);
 
     useEffect(() => {
-        handleDelete();
+        handleDeny();
         //eslint-disable-next-line
-    }, [submitDelete]);
+    }, [submitDeny]);
 
     useEffect(() => {
         handleReset();
@@ -152,49 +159,49 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         }
     }
 
-    const handleSelect = (newSelection) => {
-        if (filteredAccounts.length - selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
-        setSelectedRows(newSelection as string[]);
-    }
+    // const handleSelect = (newSelection) => {
+    //     if (filteredAccounts.length - selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
+    //     setSelectedRows(newSelection as string[]);
+    // }
 
-    const getSelectedAccounts = (): string[] => {
-        return selectedRows.filter(username => filteredAccounts.map(account => {
-            if (!account || !account.username) return false;
-            return account.username.includes(username);
-        }));
-    }
+    // const getSelectedAccounts = (): string[] => {
+    //     return selectedRows.filter(username => filteredAccounts.map(account => {
+    //         if (!account || !account.username) return false;
+    //         return account.username.includes(username);
+    //     }));
+    // }
 
     const handleAccept = () => {
-        if (submitAccept) {
-            if (token) {
-                updateAccountsRole(
-                    token,
-                    getSelectedAccounts(),
-                    newRole
-                )
-                    .then(result => {
-                        if (!result) return;
-                        setSubmitReset(true);
-                    });
-            }
-            setSubmitAccept(false);
-        }
+        // if (submitAccept) {
+        //     if (token) {
+        //         updateAccountsRole(
+        //             token,
+        //             getSelectedAccounts(),
+        //             newRole
+        //         )
+        //             .then(result => {
+        //                 if (!result) return;
+        //                 setSubmitReset(true);
+        //             });
+        //     }
+        //     setSubmitAccept(false);
+        // }
     }
 
-    const handleDelete = () => {
-        if (submitDelete) {
-            if (token) {
-                deleteAccounts(
-                    token,
-                    getSelectedAccounts()
-                )
-                    .then(result => {
-                        if (!result) return;
-                        setSubmitReset(true);
-                    });
-            }
-            setSubmitDelete(false);
-        }
+    const handleDeny = () => {
+        // if (submitDelete) {
+        //     if (token) {
+        //         deleteAccounts(
+        //             token,
+        //             getSelectedAccounts()
+        //         )
+        //             .then(result => {
+        //                 if (!result) return;
+        //                 setSubmitReset(true);
+        //             });
+        //     }
+        //     setSubmitDelete(false);
+        // }
     }
 
     const handleReset = () => {
@@ -255,6 +262,15 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
 
     const columns: GridColDef[] = [
         {
+            field: 'creationTime',
+            headerName: 'Created (UTC)',
+            headerClassName: 'creationTime',
+            flex: 1,
+            minWidth: 150,
+            resizable: false,
+            filterable: false,
+        },
+        {
             field: 'username',
             headerName: 'Username',
             headerClassName: 'username',
@@ -283,28 +299,63 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             filterable: false,
         },
         {
+            field: 'newRole',
+            headerName: 'Requested Role',
+            headerClassName: 'newRole',
+            flex: 1,
+            minWidth: 130,
+            resizable: false,
+            filterable: false,
+        },
+        {
             field: 'accept',
             headerName: '',
             headerClassName: 'accept',
             flex: 1,
-            minWidth: 150,
+            minWidth: 100,
             sortable: false,
             resizable: false,
             filterable: false,
             hideable: false,
             disableColumnMenu: true,
+            renderCell: () => (
+                <Button
+                    onClick={handleAccept}
+                    sx={{
+                        ...acceptButton,
+                        '&:hover': {
+                            ...button_hover
+                        },
+                    }}
+                >
+                    Accept
+                </Button>
+            ),
         },
         {
             field: 'delete',
             headerName: '',
             headerClassName: 'delete',
-            minWidth: 130,
+            minWidth: 92,
             flex: 1,
             sortable: false,
             resizable: false,
             filterable: false,
             hideable: false,
             disableColumnMenu: true,
+            renderCell: () => (
+                <Button
+                    onClick={handleAccept}
+                    sx={{
+                        ...denyButton,
+                        '&:hover': {
+                            ...button_hover
+                        },
+                    }}
+                >
+                    Deny
+                </Button>
+            ),
         },
     ];
 
@@ -320,8 +371,10 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                 rows={filteredAccounts}
                 getRowId={getRowId}
                 columns={columns}
-                rowSelectionModel={selectedRows}
-                onRowSelectionModelChange={handleSelect}
+                // rowSelectionModel={selectedRows}
+                // onRowSelectionModelChange={handleSelect}
+                disableRowSelectionOnClick
+                isRowSelectable={() => false}
                 sortModel={sortedColumns}
                 onSortModelChange={(newSortedColumns) =>
                     setSortedColumns(newSortedColumns as GridSortItem[])}
@@ -426,20 +479,8 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                         '&.currentUser': {
                             color: '#f44336',
                         },
-                        '&.Mui-selected': {
-                            backgroundColor: colors.primary[500],
-                            '&:hover': {
-                                backgroundColor: colors.primary[500],
-                            },
-                        },
                         '&:hover': {
-                            backgroundColor: colors.primary[500],
-                        },
-                    },
-                    '& .MuiDataGrid-checkboxInput': {
-                        color: colors.grey[100],
-                        '&.Mui-checked': {
-                            color: colors.greenAccent[500],
+                            backgroundColor: "inherit",
                         },
                     },
                     '& .MuiDataGrid-cell': {

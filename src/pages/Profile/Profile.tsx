@@ -189,7 +189,7 @@ const Profile = () => {
                     { isDisabled ?
                         <>
                             <Tooltip
-                                title="See Manage Accounts to manage account roles."
+                                title="See Manage Accounts to change account roles."
                                 arrow
                                 enterDelay={1000}
                                 enterNextDelay={1000}
