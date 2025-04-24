@@ -5,7 +5,7 @@ import { tokens } from "./../theme.tsx";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { SettingsOutlined as SettingsOutlinedIcon } from "@mui/icons-material";
+import { SettingsOutlined as SettingsOutlinedIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import { userdata, changePassword, changeUsername } from "../API/account.tsx";
@@ -41,6 +41,7 @@ const SettingsPopover = () => {
     // Password update states
     const [showPasswordField, setShowPasswordField] = useState(false);
     const [curPassword, setCurPassword] = useState("");
+    const [showPassword, setShowPassword] = useState<boolean[]>([false, false, false]);
     const [newPass, setNewPass] = useState("");
     const [confirmNewPass, setConfirmNewPass] = useState("");
     const [notificationEnabled, setNotificationEnabled] = useState(true);
@@ -151,6 +152,7 @@ const SettingsPopover = () => {
                     setCurPassword("");
                     setNewPass("");
                     setConfirmNewPass("");
+                    setShowPassword([false, false, false])
                 }, MESSAGE_DISPLAY_DURATION,);
             }
         } catch (error) {
@@ -402,32 +404,86 @@ const SettingsPopover = () => {
                                 <Box component="form" onSubmit={handlePasswordUpdate} sx={{ maxWidth: 600 }}>
                                     <TextField
                                         label="Current Password"
-                                        type="password"
+                                        type={showPassword[0] ? "text" : "password"}
                                         value={curPassword}
                                         onChange={(e) => setCurPassword(e.target.value)}
                                         fullWidth
                                         sx={{ mb: 1 }}
                                         required
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: (
+                                                    <IconButton
+                                                        aria-label={
+                                                            showPassword[0] ? 'hide password' : 'display password'
+                                                        }
+                                                        onClick={() => setShowPassword(prev => [!prev[0], prev[1], prev[2]])}
+                                                        edge="end"
+                                                        sx={{
+                                                            color: colors.grey[200],
+                                                        }}
+                                                    >
+                                                        {showPassword[0] ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                )
+                                            }
+                                        }}
                                     />
 
                                     <TextField
                                         label="New Password"
-                                        type="password"
+                                        type={showPassword[1] ? "text" : "password"}
                                         value={newPass}
                                         onChange={(e) => setNewPass(e.target.value)}
                                         fullWidth
                                         sx={{ mb: 1 }}
                                         required
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: (
+                                                    <IconButton
+                                                        aria-label={
+                                                            showPassword[1] ? 'hide password' : 'display password'
+                                                        }
+                                                        onClick={() => setShowPassword(prev => [prev[0], !prev[1], prev[2]])}
+                                                        edge="end"
+                                                        sx={{
+                                                            color: colors.grey[200],
+                                                        }}
+                                                    >
+                                                        {showPassword[1] ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                )
+                                            }
+                                        }}
                                     />
 
                                     <TextField
                                         label="Confirm New Password"
-                                        type="password"
+                                        type={showPassword[2] ? "text" : "password"}
                                         value={confirmNewPass}
                                         onChange={(e) => setConfirmNewPass(e.target.value)}
                                         fullWidth
                                         sx={{ mb: 1 }}
                                         required
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: (
+                                                    <IconButton
+                                                        aria-label={
+                                                            showPassword[2] ? 'hide password' : 'display password'
+                                                        }
+                                                        onClick={() => setShowPassword(prev => [prev[0], prev[1], !prev[2]])}
+                                                        edge="end"
+                                                        sx={{
+                                                            color: colors.grey[200],
+                                                        }}
+                                                    >
+                                                        {showPassword[2] ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                )
+                                            }
+                                        }}
                                     />
 
                                     <Box display="flex" gap={1} >
@@ -447,6 +503,7 @@ const SettingsPopover = () => {
                                                 setCurPassword("");
                                                 setNewPass("");
                                                 setConfirmNewPass("");
+                                                setShowPassword([false, false, false])
                                             }}
                                             sx={{ ml: 1 }}
                                             disabled={isUpdatingPassword}
