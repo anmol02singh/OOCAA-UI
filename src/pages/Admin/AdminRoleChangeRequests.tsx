@@ -5,11 +5,11 @@ import {
     getPageWidth,
     useGeneralStyling,
 } from './AdminUtilities.tsx';
-import AdminAccountsSearchBar from '../../components/Admin/AdminAccountsSearchBar.tsx';
 import { userdata } from '../../API/account.tsx';
 import { Typography, useTheme } from '@mui/material';
 import { tokens } from '../../theme.tsx';
 import AdminRequestsTable from '../../components/Admin/AdminRequestsTable.tsx';
+import AdminRequestsSearchBar from '../../components/Admin/AdminRequestsSearchBar.tsx';
 
 const AdminRoleChangeRequests = () => {
     const navigate = useNavigate();
@@ -28,6 +28,11 @@ const AdminRoleChangeRequests = () => {
     } = useGeneralStyling();
 
     const [filterRole, setFilterRole] = useState<{ min: number | '', max: number | '' }>({
+        min: '',
+        max: '',
+    });
+
+    const [newFilterRole, setNewFilterRole] = useState<{ min: number | '', max: number | '' }>({
         min: '',
         max: '',
     });
@@ -61,13 +66,8 @@ const AdminRoleChangeRequests = () => {
     }, [pageWidth]);
 
     const [searchBar, setSearchBar] = useState({ criterion: 'username', value: '' });
-    const [disabled, setDisabled] = useState<boolean>(true);
-    const [newRole, setNewRole] = useState<number>(-1);
-    const [selectedAccountsAmount, setSelectedAccountsAmount] = useState<number>(0);
     const [submitSearch, setSubmitSearch] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
-    const [submitAccept, setSubmitAccept] = useState<boolean>(false);
-    const [submitDeny, setSubmitDeny] = useState<boolean>(false);
     const [submitReset, setSubmitReset] = useState<boolean>(false);
 
     return (
@@ -81,20 +81,16 @@ const AdminRoleChangeRequests = () => {
                 </Box>
                 
                 {/* Search Bar */}
-                <AdminAccountsSearchBar
+                <AdminRequestsSearchBar
                     pageWidth={pageWidth}
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
+                    newFilterRole={newFilterRole}
+                    setNewFilterRole={setNewFilterRole}
                     searchBar={searchBar}
-                    disabled={disabled}
-                    newRole={newRole}
-                    selectedAccountsAmount={selectedAccountsAmount}
-                    setNewRole={setNewRole}
                     setSearchBar={setSearchBar}
                     setSubmitSearch={setSubmitSearch}
                     setSubmitFilter={setSubmitFilter}
-                    setSubmitEdit={setSubmitAccept}
-                    setSubmitDelete={setSubmitDeny}
                     setSubmitReset={setSubmitReset}
                 />
 
@@ -104,18 +100,13 @@ const AdminRoleChangeRequests = () => {
                     pageWidth={pageWidth}
                     filterRole={filterRole}
                     setFilterRole={setFilterRole}
+                    newFilterRole={newFilterRole}
+                    setNewFilterRole={setNewFilterRole}
                     searchBar={searchBar}
-                    setDisabled={setDisabled}
-                    newRole={newRole}
-                    setSelectedAccountsAmount={setSelectedAccountsAmount}
                     submitSearch={submitSearch}
                     setSubmitSearch={setSubmitSearch}
                     submitFilter={submitFilter}
                     setSubmitFilter={setSubmitFilter}
-                    submitAccept={submitAccept}
-                    setSubmitAccept={setSubmitAccept}
-                    submitDeny={submitDeny}
-                    setSubmitDeny={setSubmitDeny}
                     submitReset={submitReset}
                     setSubmitReset={setSubmitReset}
                 />

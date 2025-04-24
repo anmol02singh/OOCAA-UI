@@ -22,21 +22,22 @@ interface AccountTableProps {
         min: number | '';
         max: number | '';
     }>>;
+    newFilterRole: {
+        min: number | '',
+        max: number | '',
+    };
+    setNewFilterRole: React.Dispatch<React.SetStateAction<{
+        min: number | '';
+        max: number | '';
+    }>>;
     searchBar: {
         criterion: string;
         value: string;
     };
-    setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
-    newRole: number;
-    setSelectedAccountsAmount: React.Dispatch<React.SetStateAction<number>>;
     submitSearch: boolean;
     setSubmitSearch: React.Dispatch<React.SetStateAction<boolean>>;
     submitFilter: boolean;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
-    submitAccept: boolean;
-    setSubmitAccept: React.Dispatch<React.SetStateAction<boolean>>;
-    submitDeny: boolean;
-    setSubmitDeny: React.Dispatch<React.SetStateAction<boolean>>;
     submitReset: boolean;
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -58,18 +59,13 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     pageWidth,
     filterRole,
     setFilterRole,
+    newFilterRole,
+    setNewFilterRole,
     searchBar,
-    setDisabled,
-    newRole,
-    setSelectedAccountsAmount,
     submitSearch,
     setSubmitSearch,
     submitFilter,
     setSubmitFilter,
-    submitAccept,
-    setSubmitAccept,
-    submitDeny,
-    setSubmitDeny,
     submitReset,
     setSubmitReset,
 }) => {
