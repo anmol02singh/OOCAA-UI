@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, LinearScale, Tooltip, PointElement } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import "chartjs-plugin-datalabels";
 import { Box } from "@mui/material";
+import moment from "moment";
 
 ChartJS.register(LinearScale, PointElement, Tooltip);
 
@@ -12,33 +13,73 @@ type HeatMapData = {
   value: number;
 };
 
-const generateHeatmapData = () => {
-  const data: HeatMapData[] = [];
-  const rows = 24;
-  const cols = 7;
-  for (let x = 1; x <= cols; x++) {
-    for (let y = 1; y <= rows; y++) {
-      data.push({
-        x,
-        y,
-        value: Math.floor(Math.random() * 50), // Random value between 0 and 50
-      });
-    }
-  }
-  return data;
+type HeatmapProps = {
+  foundCDMs: any[];
 };
 
-const Heatmap = () => {
-  const data = generateHeatmapData();
+const Heatmap = ({ foundCDMs }: HeatmapProps) => {
+  const data: any = [];
+
+  const now = moment();
+
+  const weekBegin = now.clone().startOf("week");
+
+  const weekend = now.clone().add(1, "week").startOf("week");
+
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  const hourDict = {};
+
+  for (let i = 0; i <= 24; i++) {
+    const hourKey = i.toString().padStart(2, "0") + ":00";
+    hourDict[hourKey] = 0;
+  }
+
+  const heatMapData = {};
+
+  daysOfWeek.map((day) => {
+    heatMapData[day] = hourDict;
+  });
+
+  foundCDMs.forEach((tcaVal) => {
+    const dayOfWeek = moment(tcaVal).format("dddd");
+    const roundedHour = moment(tcaVal).startOf("hour").format("HH:mm");
+
+    heatMapData[dayOfWeek][roundedHour] += 1;
+  });
+
+  Object.keys(heatMapData).forEach((key) => {
+    let dayVal = 1;
+    if (key === "Monday") dayVal = 1;
+    else if (key === "Tuesday") dayVal = 2;
+    else if (key === "Wednesday") dayVal = 3;
+    else if (key === "Thursday") dayVal = 4;
+    else if (key === "Friday") dayVal = 5;
+    else if (key === "Saturday") dayVal = 6;
+    else if (key === "Sunday") dayVal = 7;
+
+    Object.keys(heatMapData[key]).forEach((keys) => {
+      const formattedTime = parseInt(keys.replace(":00", ""), 10);
+      data.push({ x: dayVal, y: formattedTime, value: heatMapData[key][keys] });
+    });
+  });
 
   const chartData = {
     datasets: [
       {
         label: "Heatmap",
-        data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })), // Scale radius based on values
+        data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })),
         backgroundColor: data.map(
           ({ value }) =>
-            `rgba(255, ${255 - value * 5}, ${255 - value * 5}, 0.8)`
+            `rgba(255, ${255 - value * 20}, ${255 - value * 20}, 0.8)`
         ),
         borderWidth: 1,
         borderColor: "rgba(0, 0, 0, 0.1)",
@@ -55,7 +96,7 @@ const Heatmap = () => {
         position: "bottom",
         ticks: {
           stepSize: 1,
-          color: "#fff", // Darker text color
+          color: "#fff",
           callback: (value: number) => {
             const daysOfWeek = [
               "Mon",
@@ -78,9 +119,9 @@ const Heatmap = () => {
         type: "linear",
         ticks: {
           stepSize: 1,
-          color: "#fff", // Darker text color
+          color: "#fff",
           callback: (value: number) => {
-            return `${String(value - 1).padStart(2, "0")}:00`;
+            return `${String(value).padStart(2, "0")}:00`;
           },
         },
         grid: {
@@ -103,7 +144,7 @@ const Heatmap = () => {
               "Sun",
             ];
             const day = daysOfWeek[context.raw.x - 1];
-            const time = `${String(context.raw.y - 1).padStart(2, "0")}:00`;
+            const time = `${String(context.raw.y).padStart(2, "0")}:00`;
             const value = context.raw.r * 2;
             return `Day: ${day}, Time: ${time}, Value: ${value}`;
           },

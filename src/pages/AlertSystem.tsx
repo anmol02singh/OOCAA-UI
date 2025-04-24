@@ -94,6 +94,28 @@ const AlertSystem = () => {
     fetchData();
   }, [navigate]);
 
+  const [foundCDMs, setFoundCDMs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchHeatMapData = async () => {
+      try {
+        const data = await fetchLimitedEvents(
+          [],
+          [1728086400000, 1745449630441],
+          {}
+        );
+
+        const tcaArray = data.map((entry) => entry.tca);
+
+        setFoundCDMs(tcaArray);
+      } catch (error) {
+        console.error("Error fetching filters or events:", error);
+      }
+    };
+
+    fetchHeatMapData();
+  }, []);
+
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h1" gutterBottom sx={{ paddingTop: "20px" }}>
@@ -113,7 +135,7 @@ const AlertSystem = () => {
       <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
         Heatmap
       </Typography>
-      <Heatmap />
+      <Heatmap foundCDMs={foundCDMs} />
 
       <Typography
         variant="h2"

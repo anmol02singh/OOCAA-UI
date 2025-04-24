@@ -182,9 +182,6 @@ const Directory = () => {
   const handleSearch = async () => {
     try {
       const data = await fetchEvents(searchBars, tcaRange, extraFilters);
-      console.log(searchBars);
-      console.log(tcaRange);
-      console.log(extraFilters);
       if (data.length == 0) {
         setErrMsg("No search results found");
         setTimeout(() => setErrMsg(null), 2900);
