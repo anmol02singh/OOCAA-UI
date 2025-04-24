@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, IconButton, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -14,7 +19,7 @@ import {
     useEditProfileStyling,
 
 } from './ProfileUtilities.tsx';
-import { userdata } from '../../API/account.tsx';
+import { userdata, deleteOwnAccount } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import routes from '../../routes.js';
 import ProfileImageEditor from '../../components/ProfileImageEditor.tsx';
@@ -30,6 +35,13 @@ const ProfileEdit = () => {
 
     const { handleCancel } = useNavigation();
 
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+    async function handleDelete() {
+        await deleteOwnAccount(token);
+        localStorage.removeItem("accountToken");
+        window.location.href = "/";
+    }
+   
     const {
         pageContainer,
         profileElements,
@@ -46,6 +58,8 @@ const ProfileEdit = () => {
         profileFieldButton,
         profileFieldButtonText,
         editImageContainer,
+        regDeleteButton,
+        regDeleteButtonHover,
     } = useEditProfileStyling();
 
     const theme = useTheme();
@@ -295,6 +309,18 @@ const ProfileEdit = () => {
                                 {userData.phoneNumber}
                             </Typography>
                         </Button>
+
+                        <Button 
+                            onClick={() => setDeleteDialogOpen(true)}
+                            sx={{
+                                ...regDeleteButton,
+                                '&:hover': {
+                                    ...regDeleteButtonHover
+                                },
+                            }}
+                        >
+                            Delete Account
+                        </Button>
                     </Grid>
                 </Grid>
                 <ProfileImageEditor
@@ -304,6 +330,22 @@ const ProfileEdit = () => {
                     profileImage={userData.profileImage}
                 />
             </Box>
+
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                <DialogTitle>Account Deletion Confirmation</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you would like to delete your account?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)} color="secondary" autoFocus>Cancel</Button>
+                    <Button onClick={() => {
+                      setDeleteDialogOpen(false);
+                      handleDelete();
+                    }} color="secondary">Delete Account</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

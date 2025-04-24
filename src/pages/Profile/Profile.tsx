@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import {
@@ -17,7 +12,7 @@ import {
     useProfileDisplayStyling,
 
 } from './ProfileUtilities.tsx';
-import { userdata, deleteOwnAccount } from '../../API/account.tsx';
+import { userdata } from '../../API/account.tsx';
 import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Account } from '../../types.tsx';
@@ -31,13 +26,6 @@ const Profile = () => {
     
     const { handleEdit } = useNavigation();
 
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-    async function handleDelete() {
-        await deleteOwnAccount(token);
-        localStorage.removeItem("accountToken");
-        window.location.href = "/";
-    }
-   
     const {
         pageContainer,
         profileElements,
@@ -59,8 +47,6 @@ const Profile = () => {
         regProfileFieldValue,
         regButtonContainer,
         regProfileButton,
-        regDeleteButton,
-        regDeleteButtonHover,
     } = useProfileDisplayStyling();
 
     const theme = useTheme();
@@ -171,18 +157,6 @@ const Profile = () => {
                     >
                         Edit Profile
                     </Button>
-
-                    <Button 
-                        onClick={() => setDeleteDialogOpen(true)}
-                        sx={{
-                            ...regDeleteButton,
-                            '&:hover': {
-                                ...regDeleteButtonHover
-                            },
-                        }}
-                    >
-                        Delete Account
-                    </Button>
                 </Grid>
             </Grid>
         </Box>
@@ -246,21 +220,6 @@ const Profile = () => {
                 {pageWidth < mdWindowWidth ? regProfileInfoElements : undefined}
             </Box>
 
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                <DialogTitle>Account Deletion Confirmation</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you would like to delete your account?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)} color="secondary" autoFocus>Cancel</Button>
-                    <Button onClick={() => {
-                      setDeleteDialogOpen(false);
-                      handleDelete();
-                    }} color="secondary">Delete Account</Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 }
