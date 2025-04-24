@@ -57,7 +57,7 @@ const Dashboard = () => {
                     <SimpleStatBox title = {getEventCount} subtitle = "Number of events" icon={<LayersIcon sx = {{color: colors.greenAccent[600], fontSize: "26px"}}/>} />
                 </Box> 
                 <Box gridColumn= "span 3" sx = {{backgroundColor: colors.primary[400], display: "flex", alignItems: "center",justifyContent: "center" }}>
-                    <IndividualStatBox title = {closestMissDistance} subtitle = "Closest Miss Distance" individual={closestMissCDM} icon={<RulerIcon sx = {{color: colors.greenAccent[600], fontSize: "26px"}}/>} />
+                    <IndividualStatBox title = {closestMissDistance} subtitle = "Closest Miss Distance (m)" individual={closestMissCDM} icon={<RulerIcon sx = {{color: colors.greenAccent[600], fontSize: "26px"}}/>} />
                 </Box> 
                 <Box gridColumn= "span 3" sx = {{backgroundColor: colors.primary[400], display: "flex", alignItems: "center",justifyContent: "center" }}>
                     <IndividualStatBox title = {largestCollisionProbabilityP} subtitle = "Largest Collision Probability" individual={largestCollisionProbabilityCDM} icon={<DieIcon sx = {{color: colors.greenAccent[600], fontSize: "26px"}}/>} />
