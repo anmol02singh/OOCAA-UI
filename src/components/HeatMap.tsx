@@ -21,9 +21,9 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
   const data: any = [];
 
   const now = moment();
+  const currentDay = now.format("dddd"); // Get the current day of the week
 
   const weekBegin = now.clone().startOf("week");
-
   const weekend = now.clone().add(1, "week").startOf("week");
 
   const daysOfWeek = [
@@ -38,7 +38,7 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
 
   const hourDict = {};
 
-  for (let i = 0; i <= 24; i++) {
+  for (let i = 0; i < 24; i++) {
     const hourKey = i.toString().padStart(2, "0") + ":00";
     hourDict[hourKey] = 0;
   }
@@ -52,6 +52,8 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
   foundCDMs.forEach((tcaVal) => {
     const dayOfWeek = moment(tcaVal).format("dddd");
     const roundedHour = moment(tcaVal).startOf("hour").format("HH:mm");
+
+    console.log([dayOfWeek, roundedHour]);
 
     heatMapData[dayOfWeek][roundedHour] += 1;
   });
@@ -77,10 +79,14 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
       {
         label: "Heatmap",
         data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })),
-        backgroundColor: data.map(
-          ({ value }) =>
-            `rgba(255, ${255 - value * 20}, ${255 - value * 20}, 0.8)`
-        ),
+        backgroundColor: data.map(({ x, value }) => {
+          const isCurrentDay = daysOfWeek[x - 1] === currentDay; // Check if it's the current day
+          if (isCurrentDay) {
+            return `rgba(0, 255, 0, 0.8)`; // Green for the current day
+          } else {
+            return `rgba(255, ${255 - value * 20}, ${255 - value * 20}, 0.8)`; // Normal color for other days
+          }
+        }),
         borderWidth: 1,
         borderColor: "rgba(0, 0, 0, 0.1)",
       },

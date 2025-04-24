@@ -101,7 +101,7 @@ const AlertSystem = () => {
       try {
         const data = await fetchLimitedEvents(
           [],
-          [1728086400000, 1745449630441],
+          [1728086400000, 1745425212310],
           {}
         );
 
@@ -187,13 +187,13 @@ const AlertSystem = () => {
               sx={{
                 backgroundColor: colors.primary[500],
                 borderRadius: 2,
-                border: `1px solid ${colors.primary[700]}`,
+                border: `1px solid ${colors.primary[600]}`,
                 mt: 2,
               }}
             >
               <Table>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: colors.primary[700] }}>
+                  <TableRow sx={{ backgroundColor: colors.primary[600] }}>
                     <TableCell sx={{ color: "white" }}>
                       <strong>CDM</strong>
                     </TableCell>
@@ -201,10 +201,10 @@ const AlertSystem = () => {
                       <strong>Primary Object Designator</strong>
                     </TableCell>
                     <TableCell sx={{ color: "white" }}>
-                      <strong>Secondary Object Name</strong>
+                      <strong>Secondary Object Designator</strong>
                     </TableCell>
                     <TableCell sx={{ color: "white" }}>
-                      <strong>TCA[UTC]</strong>
+                      <strong>TCA [UTC]</strong>
                     </TableCell>
                   </TableRow>
                 </TableHead>
