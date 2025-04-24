@@ -70,6 +70,7 @@ export const useGeneralStyling = () => {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: pageWidth >= smWindowWidth ? 'flex-start' : 'center',
+        textAlign: pageWidth >= smWindowWidth ? 'left' : 'center',
         alignItems: 'center',
         width: '100%',
     }); 
@@ -287,6 +288,41 @@ export const useFilterStyling = () => {
             0px 3px 14px 2px rgba(0,0,0,0.12)`,
     }
 
+    const reqFilterPopperContentSubcontainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1rem',
+    }
+
+    const reqFilterSectionContainer: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        gap: '0.5rem',
+    }
+
+    const reqFilterInputContainer: React.CSSProperties = {
+        display: 'flex',
+        flex: '0 1 0',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: '0.5rem',
+    }
+
+    const reqFilterButtonContainer: React.CSSProperties = {
+        display: 'flex',
+        flex: '0 1 0',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        width: '100%',
+        gap: '0.25rem',
+    }
+
     const filterTextField: React.CSSProperties = {
         width: '6rem',
         height: '2.5rem',
@@ -318,6 +354,10 @@ export const useFilterStyling = () => {
     return {
         filterContainer,
         filterPopperContentContainer,
+        reqFilterPopperContentSubcontainer,
+        reqFilterSectionContainer,
+        reqFilterInputContainer,
+        reqFilterButtonContainer,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,

@@ -325,7 +325,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             filterable: false,
         },
         {
-            field: 'accept',
+            field: 'Accept',
             headerName: '',
             headerClassName: 'accept',
             flex: 1,
@@ -350,9 +350,9 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             ),
         },
         {
-            field: 'delete',
+            field: 'Deny',
             headerName: '',
-            headerClassName: 'delete',
+            headerClassName: 'deny',
             minWidth: 92,
             flex: 1,
             sortable: false,
@@ -388,8 +388,6 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                 rows={filteredRows}
                 getRowId={getRowId}
                 columns={columns}
-                // rowSelectionModel={selectedRows}
-                // onRowSelectionModelChange={handleSelect}
                 disableRowSelectionOnClick
                 isRowSelectable={() => false}
                 sortModel={sortedColumns}

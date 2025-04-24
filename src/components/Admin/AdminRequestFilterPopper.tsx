@@ -42,6 +42,10 @@ const AdminRequestFilterPopper: React.FC<FilterPopperProps> = ({
 
     const {
         filterPopperContentContainer,
+        reqFilterPopperContentSubcontainer,
+        reqFilterSectionContainer,
+        reqFilterInputContainer,
+        reqFilterButtonContainer,
         filterTextField,
         fixFilterTextField,
         filterTextField_input,
@@ -109,35 +113,16 @@ const AdminRequestFilterPopper: React.FC<FilterPopperProps> = ({
             >
                 <ClickAwayListener onClickAway={handleToggleFilter}>
                     <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '1rem',
-                        }}
+                        sx={reqFilterPopperContentSubcontainer}
                     >
                         <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'flex-start',
-                                gap: '0.5rem',
-                            }}
+                            sx={reqFilterSectionContainer}
                         >
                             <Typography variant='h6' sx={fieldLabel}>
                                 Current Role
                             </Typography>
                             <Box
-                                sx={{
-                                    display: 'flex',
-                                    flex: '0 1 0',
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                }}
+                                sx={reqFilterInputContainer}
                             >
                                 <TextField
                                     name='min'
@@ -216,26 +201,13 @@ const AdminRequestFilterPopper: React.FC<FilterPopperProps> = ({
                             </Box>
                         </Box>
                         <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'flex-start',
-                                gap: '0.5rem',
-                            }}
+                            sx={reqFilterSectionContainer}
                         >
                             <Typography variant='h6' sx={fieldLabel}>
                                 New Role
                             </Typography>
                             <Box
-                                sx={{
-                                    display: 'flex',
-                                    flex: '0 1 0',
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                }}
+                                sx={reqFilterInputContainer}
                             >
                                 <TextField
                                     name='min'
@@ -314,15 +286,7 @@ const AdminRequestFilterPopper: React.FC<FilterPopperProps> = ({
                             </Box>
                         </Box>
                         <Box
-                            sx={{
-                                display: 'flex',
-                                flex: '0 1 0',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                                alignItems: 'center',
-                                width: '100%',
-                                gap: '0.25rem',
-                            }}
+                            sx={reqFilterButtonContainer}
                         >
                             <Tooltip
                                 title="Save Filters"
