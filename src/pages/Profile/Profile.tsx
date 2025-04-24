@@ -17,6 +17,7 @@ import { tokens } from '../../theme.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Account } from '../../types.tsx';
 import RoleChangeRequestDialog from '../../components/RoleChangeRequestDialog.tsx';
+import { createRoleChangeRequest } from '../../API/roleChangeRequest.tsx';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -120,9 +121,14 @@ const Profile = () => {
     }, [submitRequest]);
 
     const handleSubmitRequest = () => {
-        if(submitRequest){
-            setSubmitRequest(false);
-        }
+        if (!submitRequest) return;
+        if (!token) return;
+        if (!userData) return;
+        if (!userData.roleNum) return;
+        if (isDisabled) return;
+
+        createRoleChangeRequest(token, new Date().toISOString(), userData.roleNum - 1)
+        setSubmitRequest(false);
     }
 
     const changeRoleButton = (
@@ -186,7 +192,7 @@ const Profile = () => {
                 </Grid>
 
                 <Grid size={12} sx={regButtonContainer}>
-                    { isDisabled ?
+                    {isDisabled ?
                         <>
                             <Tooltip
                                 title="See Manage Accounts to change account roles."

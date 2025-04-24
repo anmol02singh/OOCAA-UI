@@ -7,8 +7,9 @@ import {
 import { DataGrid, GridColDef, GridRowId, GridSortItem } from '@mui/x-data-grid';
 import { tokens } from '../../theme.tsx';
 import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../../API/account.tsx';
-import { Account } from '../../types.tsx';
+import { Account, RoleChangeRequest } from '../../types.tsx';
 import { useGeneralStyling, useRoleChangeRequestsStyling } from '../../pages/Admin/AdminUtilities.tsx';
+import { deleteRoleChangeRequest, getRoleChangeRequests } from '../../API/roleChangeRequest.tsx';
 
 interface AccountTableProps {
     token: string | null;
@@ -38,6 +39,18 @@ interface AccountTableProps {
     setSubmitDeny: React.Dispatch<React.SetStateAction<boolean>>;
     submitReset: boolean;
     setSubmitReset: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface RCRTableRow {
+    _id: string,
+    accountId: string,
+    creationTime: string,
+    username: string,
+    name: string,
+    role: string,
+    roleNum: number,
+    newRole: string,
+    newRoleNum: number,
 }
 
 const AdminRequestsTable: React.FC<AccountTableProps> = ({
@@ -75,32 +88,48 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
-    const [searchedAccounts, setSearchedAccounts] = useState<Account[]>([]);
-    const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
-    const [selectedRows, setSelectedRows] = useState<string[]>([]);
+    const [searchedRows, setSearchedRows] = useState<RCRTableRow[]>([]);
+    const [filteredRows, setFilteredRows] = useState<RCRTableRow[]>([]);
     const [sortedColumns, setSortedColumns] = useState<GridSortItem[]>([]);
-    const [currentUser, setCurrentUser] = useState<Account>();
+
+    const getAllRCRRows = async () => {
+        if (!token) return;
+
+        const roleReqs = await getRoleChangeRequests(token);
+        const rows: RCRTableRow[] = [];
+
+        const promises = roleReqs.map(async (roleReq) => {
+            if (!roleReq) return;
+
+            const accounts = await getAccounts(token, roleReq.accountId);
+            for (const account of accounts) {
+                if (!account) continue;
+
+                const row: RCRTableRow = {
+                    _id: roleReq._id,
+                    accountId: roleReq.accountId,
+                    creationTime: roleReq.creationTime,
+                    username: account.username ?? "",
+                    name: account.name ?? "",
+                    role: account.role ?? "",
+                    roleNum: account.roleNum ?? -1,
+                    newRole: roleReq.newRole,
+                    newRoleNum: roleReq.newRoleNum,
+                };
+
+                rows.push(row);
+            }
+        });
+
+        await Promise.all(promises);
+        setSearchedRows(rows);
+        setFilteredRows(rows);
+    };
 
     useEffect(() => {
-        if (token) {
-            userdata(token)
-                .then(account => {
-                    setCurrentUser(account);
-                });
-            getAccounts(token)
-                .then(accounts => {
-                    setSearchedAccounts(accounts);
-                    setFilteredAccounts(accounts);
-                });
-        }
+        getAllRCRRows();
         //eslint-disable-next-line
     }, []);
-
-    useEffect(() => {
-        updateButtons(selectedRows);
-        // setSelectedAccountsAmount(getSelectedAccounts().length);
-        //eslint-disable-next-line
-    }, [selectedRows]);
 
     useEffect(() => {
         handleSearch();
@@ -113,27 +142,9 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     }, [submitFilter]);
 
     useEffect(() => {
-        handleAccept();
-        //eslint-disable-next-line
-    }, [submitAccept]);
-
-    useEffect(() => {
-        handleDeny();
-        //eslint-disable-next-line
-    }, [submitDeny]);
-
-    useEffect(() => {
         handleReset();
         //eslint-disable-next-line
     }, [submitReset]);
-
-    const updateButtons = (selectedRows) => {
-        if (selectedRows.length > 0) {
-            setDisabled(false);
-        } else {
-            setDisabled(true);
-        }
-    }
 
     const handleSearch = () => {
         if (submitSearch) {
@@ -141,7 +152,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             setFilterRole({ min: '', max: '' });
 
             //Set accounts to those that match the search.
-            getSearchedAccounts().then((accounts) => {
+            getSearchedRows().then((accounts) => {
                 setSearchedAccounts(accounts);
                 setFilteredAccounts(accounts);
             });
@@ -159,72 +170,50 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         }
     }
 
-    // const handleSelect = (newSelection) => {
-    //     if (filteredAccounts.length - selectedRows.length > 1 && newSelection.length === filteredAccounts.length) return;
-    //     setSelectedRows(newSelection as string[]);
-    // }
+    const handleAccept = async (params) => {
+        if (!token) return;
 
-    // const getSelectedAccounts = (): string[] => {
-    //     return selectedRows.filter(username => filteredAccounts.map(account => {
-    //         if (!account || !account.username) return false;
-    //         return account.username.includes(username);
-    //     }));
-    // }
+        const row = params.row;
 
-    const handleAccept = () => {
-        // if (submitAccept) {
-        //     if (token) {
-        //         updateAccountsRole(
-        //             token,
-        //             getSelectedAccounts(),
-        //             newRole
-        //         )
-        //             .then(result => {
-        //                 if (!result) return;
-        //                 setSubmitReset(true);
-        //             });
-        //     }
-        //     setSubmitAccept(false);
-        // }
+        updateAccountsRole(
+            token,
+            [row.username],
+            row.newRoleNum,
+        )
+            .then(updateResult => {
+                if (!updateResult) return;
+                deleteRoleChangeRequest(token, row._id)
+                    .then(deleteResult => {
+                        if (!deleteResult) return;
+                        setSubmitReset(true);
+                    });
+            });
     }
 
-    const handleDeny = () => {
-        // if (submitDelete) {
-        //     if (token) {
-        //         deleteAccounts(
-        //             token,
-        //             getSelectedAccounts()
-        //         )
-        //             .then(result => {
-        //                 if (!result) return;
-        //                 setSubmitReset(true);
-        //             });
-        //     }
-        //     setSubmitDelete(false);
-        // }
+    const handleDeny = (params) => {
+        if (!token) return;
+
+        const row = params.row;
+        deleteRoleChangeRequest(token, row._id)
+            .then(deleteResult => {
+                if (!deleteResult) return;
+                setSubmitReset(true);
+            });
     }
 
     const handleReset = () => {
-        if (submitReset) {
-            if (token) {
-                getAccounts(token)
-                    .then(accounts => {
-                        setSearchedAccounts(accounts);
-                        setFilteredAccounts(accounts);
-                    });
-            }
-            setSelectedRows([]);
-            setSortedColumns([]);
-            setFilterRole({ min: '', max: '' });
-            setSubmitReset(false);
-        }
+        if (!submitReset) return;
+        getAllRCRRows()
+        setSortedColumns([]);
+        setFilterRole({ min: '', max: '' });
+        setSubmitReset(false);
     }
 
-    const getSearchedAccounts = async (): Promise<Account[]> => {
-        if (!token) return searchedAccounts;
+    const getSearchedRows = async (): Promise<RCRTableRow[]> => {
+        if (!token) return searchedRows;
 
         const value = searchBar.value.toLowerCase().trim();
-        if (searchBar.criterion === '') return searchedAccounts;
+        if (searchBar.criterion === '') return searchedRows;
 
         const params: {
             name?: string,
@@ -243,10 +232,39 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             params.phoneNumber = searchBar.criterion === 'phoneNumber' ? value : undefined;
         }
 
-        return await getAccounts(token, ...Object.values(params))
-            .then(accounts => {
-                return accounts;
-            });
+        // return await getAccounts(token, ...Object.values(params))
+        //     .then(accounts => {
+        //         return accounts;
+        //     });
+
+        const roleReqs = await getRoleChangeRequests(token);
+        const rows: RCRTableRow[] = [];
+
+        const promises = roleReqs.map(async (roleReq) => {
+            if (!roleReq) return;
+
+            const accounts = await getAccounts(token, roleReq.accountId);
+            for (const account of accounts) {
+                if (!account) continue;
+
+                const row: RCRTableRow = {
+                    _id: roleReq._id,
+                    accountId: roleReq.accountId,
+                    creationTime: roleReq.creationTime,
+                    username: account.username ?? "",
+                    name: account.name ?? "",
+                    role: account.role ?? "",
+                    roleNum: account.roleNum ?? -1,
+                    newRole: roleReq.newRole,
+                    newRoleNum: roleReq.NewRoleNum,
+                };
+
+                rows.push(row);
+            }
+        });
+
+        await Promise.all(promises);
+        return rows;
     };
 
     const getFilteredAccounts = (prevAccounts?: Account[]) => {
@@ -318,9 +336,9 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             filterable: false,
             hideable: false,
             disableColumnMenu: true,
-            renderCell: () => (
+            renderCell: (params) => (
                 <Button
-                    onClick={handleAccept}
+                    onClick={() => handleAccept(params)}
                     sx={{
                         ...acceptButton,
                         '&:hover': {
@@ -343,9 +361,9 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             filterable: false,
             hideable: false,
             disableColumnMenu: true,
-            renderCell: () => (
+            renderCell: (params) => (
                 <Button
-                    onClick={handleAccept}
+                    onClick={() => handleDeny(params)}
                     sx={{
                         ...denyButton,
                         '&:hover': {
@@ -359,8 +377,8 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         },
     ];
 
-    const getRowId = (row: Account): GridRowId => {
-        return (row && row.username) ? row.username : filteredAccounts.indexOf(row);
+    const getRowId = (row: RCRTableRow): GridRowId => {
+        return (row && row.username) ? row.username : filteredRows.indexOf(row);
     }
 
     return (
@@ -368,7 +386,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
             sx={accountsDataGridContainer}
         >
             <DataGrid
-                rows={filteredAccounts}
+                rows={filteredRows}
                 getRowId={getRowId}
                 columns={columns}
                 // rowSelectionModel={selectedRows}
@@ -378,11 +396,6 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                 sortModel={sortedColumns}
                 onSortModelChange={(newSortedColumns) =>
                     setSortedColumns(newSortedColumns as GridSortItem[])}
-                getRowClassName={(params) =>
-                    currentUser !== undefined && params.row.username === currentUser.username
-                        ? 'currentUser'
-                        : ''
-                }
                 pageSizeOptions={[5, 10, 25, 50, 100]}
                 initialState={{
                     pagination: {
@@ -476,9 +489,6 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                     },
                     '& .MuiDataGrid-row': {
                         cursor: 'pointer',
-                        '&.currentUser': {
-                            color: '#f44336',
-                        },
                         '&:hover': {
                             backgroundColor: "inherit",
                         },

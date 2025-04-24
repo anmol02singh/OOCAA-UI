@@ -104,6 +104,7 @@ export async function register(name: string, email: string, phone: string, usern
 
 export async function getAccounts(
     token: string,
+    _id?: string,
     name?: string,
     username?: string,
     role?: number,
@@ -115,6 +116,7 @@ export async function getAccounts(
             method: "POST",
             body: JSON.stringify({
                 token: token,
+                _id: _id,
                 name: name,
                 username: username,
                 role: role,
@@ -222,8 +224,8 @@ export async function updateAccountsRole(
         });
         if (response.status === 403) {
             window.location.href = '/';
-        } else if (response.status === 500) {
-            window.location.href = '/login';
+        // } else if (response.status === 500) {
+        //     window.location.href = '/login';
         } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }

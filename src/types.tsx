@@ -14,10 +14,11 @@ export interface Account {
 }
 
 export interface RoleChangeRequest {
-    id: number,
+    _id?: string,
     accountId: string,
     creationTime: string,
     newRoleNum: number,
+    newRole: string,
 }
 
 export interface Position {
