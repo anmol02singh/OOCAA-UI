@@ -22,6 +22,7 @@ import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
+import SettingsPopover from "./pages/SettingsPopover.tsx";
 import Directory from "./pages/Directory.tsx";
 import AlertSystem from "./pages/AlertSystem.tsx";
 import Watchlist from "./pages/Watchlist.tsx";
@@ -68,8 +69,6 @@ function App() {
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/signup" element={<UserSignUp />} />
                 <Route path="/directory" element={<Directory />} />
-                <Route path="/alertsystem" element={<AlertSystem />} />
-                <Route path="/watchlist" element={<Watchlist />} />
                 <Route path={routes.profile} element={<Profile />} />
                 <Route path={routes.editProfile} element={<ProfileEdit />} />
                 <Route
@@ -84,6 +83,7 @@ function App() {
                   path={routes.editProfilePhone}
                   element={<ProfileEditPhone />}
                 />
+                <Route path="/settings" element={<SettingsPopover />} />
                 <Route
                   path={routes.manageAccounts}
                   element={<AdminManageAccounts />}
