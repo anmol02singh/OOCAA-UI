@@ -5,8 +5,8 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { tokens } from '../../theme.tsx';
 import { useFilterStyling, useGeneralStyling, useSearchStyling } from '../../pages/Admin/AdminUtilities.tsx';
-import AdminFilterPopper from './AdminFilterPopper.tsx';
 import { smWindowWidth } from '../../pages/Profile/ProfileUtilities.tsx';
+import AdminRequestFilterPopper from './AdminRequestFilterPopper.tsx';
 
 interface SearchBarProps {
     pageWidth: number;
@@ -119,8 +119,7 @@ const AdminRequestsSearchBar: React.FC<SearchBarProps> = ({
         >
             <MenuItem value='username'>Username</MenuItem>
             <MenuItem value='name'>Name</MenuItem>
-            <MenuItem value='email'>Email</MenuItem>
-            <MenuItem value='phoneNumber'>Phone Number</MenuItem>
+            <MenuItem value='creationTime'>Created (UTC)</MenuItem>
         </Select>
     );
 
@@ -174,7 +173,7 @@ const AdminRequestsSearchBar: React.FC<SearchBarProps> = ({
             </Box>
             <Box sx={filterContainer(pageWidth)}>
                 <Tooltip
-                    title="Filter Accounts"
+                    title="Filter Requests"
                     arrow
                     enterDelay={1000}
                     enterNextDelay={1000}
@@ -209,7 +208,7 @@ const AdminRequestsSearchBar: React.FC<SearchBarProps> = ({
                         <FilterListIcon sx={{ color: colors.grey[100] }} />
                     </Button>
                 </Tooltip>
-                <AdminFilterPopper
+                <AdminRequestFilterPopper
                     pageWidth={pageWidth}
                     handleToggleFilter={handleToggleFilter}
                     open={open}

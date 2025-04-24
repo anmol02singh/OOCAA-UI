@@ -6,8 +6,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowId, GridSortItem } from '@mui/x-data-grid';
 import { tokens } from '../../theme.tsx';
-import { getAccounts, deleteAccounts, updateAccountsRole, userdata } from '../../API/account.tsx';
-import { Account, RoleChangeRequest } from '../../types.tsx';
+import { getAccounts, updateAccountsRole } from '../../API/account.tsx';
 import { useGeneralStyling, useRoleChangeRequestsStyling } from '../../pages/Admin/AdminUtilities.tsx';
 import { deleteRoleChangeRequest, getRoleChangeRequests } from '../../API/roleChangeRequest.tsx';
 
@@ -143,27 +142,28 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
     }, [submitReset]);
 
     const handleSearch = () => {
-        if (submitSearch) {
-            //Reset filtering
-            setFilterRole({ min: '', max: '' });
+        if (!submitSearch) return;
 
-            //Set accounts to those that match the search.
-            getSearchedRows().then((accounts) => {
-                setSearchedAccounts(accounts);
-                setFilteredAccounts(accounts);
-            });
+        //Reset filtering
+        setFilterRole({ min: '', max: '' });
+        setNewFilterRole({ min: '', max: '' });
 
-            //Disable submit flag.
-            setSubmitSearch(false);
-        }
+        //Set requests to those that match the search.
+        getSearchedRows().then((roleReqs) => {
+            setSearchedRows(roleReqs);
+            setFilteredRows(roleReqs);
+        });
+
+        //Disable submit flag.
+        setSubmitSearch(false);
     }
 
     const handleFilter = () => {
-        if (submitFilter) {
-            //Filter current account list and disable submit flag.
-            setFilteredAccounts(getFilteredAccounts(searchedAccounts));
-            setSubmitFilter(false);
-        }
+        if (!submitFilter) return;
+
+        //Filter current account list and disable submit flag.
+        setFilteredRows(getFilteredRows(searchedRows));
+        setSubmitFilter(false);
     }
 
     const handleAccept = async (params) => {
@@ -202,6 +202,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         getAllRCRRows()
         setSortedColumns([]);
         setFilterRole({ min: '', max: '' });
+        setNewFilterRole({ min: '', max: '' });
         setSubmitReset(false);
     }
 
@@ -212,28 +213,22 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         if (searchBar.criterion === '') return searchedRows;
 
         const params: {
-            name?: string,
+            creationTime?: string,
             username?: string,
+            name?: string,
             role?: undefined,
-            email?: string,
-            phoneNumber?: string,
+            newRole?: undefined,
         } = {}
         if (!(value === undefined
-            || ((searchBar.criterion !== 'name' && searchBar.criterion !== 'phoneNumber')
-                && value === ''))) {
-            params.name = searchBar.criterion === 'name' ? value : undefined;
+            || ((searchBar.criterion !== 'name') && value === ''))) {
+            params.creationTime = searchBar.criterion === 'creationTime' ? value : undefined;
             params.username = searchBar.criterion === 'username' ? value : undefined;
+            params.name = searchBar.criterion === 'name' ? value : undefined;
             params.role = undefined;
-            params.email = searchBar.criterion === 'email' ? value : undefined;
-            params.phoneNumber = searchBar.criterion === 'phoneNumber' ? value : undefined;
+            params.newRole = undefined;
         }
 
-        // return await getAccounts(token, ...Object.values(params))
-        //     .then(accounts => {
-        //         return accounts;
-        //     });
-
-        const roleReqs = await getRoleChangeRequests(token);
+        const roleReqs = await getRoleChangeRequests(token, ...Object.values(params));
         const rows: RCRTableRow[] = [];
 
         const promises = roleReqs.map(async (roleReq) => {
@@ -252,7 +247,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
                     role: account.role ?? "",
                     roleNum: account.roleNum ?? -1,
                     newRole: roleReq.newRole,
-                    newRoleNum: roleReq.NewRoleNum,
+                    newRoleNum: roleReq.newRoleNum,
                 };
 
                 rows.push(row);
@@ -263,13 +258,21 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         return rows;
     };
 
-    const getFilteredAccounts = (prevAccounts?: Account[]) => {
-        const newAccounts = prevAccounts ? prevAccounts : filteredAccounts;
-        if (filterRole.min === '' && filterRole.max === '') return newAccounts;
-        return newAccounts.filter(account => {
-            if (!account || account.roleNum === undefined) return false;
-            if (filterRole.min !== '' && account.roleNum < filterRole.min) return false;
-            if (filterRole.max !== '' && account.roleNum > filterRole.max) return false;
+    const getFilteredRows = (prevRows?: RCRTableRow[]) => {
+        const newRows = prevRows ? prevRows : filteredRows;
+
+        if (filterRole.min === ''
+            && filterRole.max === ''
+            && newFilterRole.min === ''
+            && newFilterRole.max === ''
+        ) return newRows;
+
+        return newRows.filter(row => {
+            if (!row || row.roleNum === undefined || row.newRoleNum === undefined) return false;
+            if (filterRole.min !== '' && row.roleNum < filterRole.min) return false;
+            if (filterRole.max !== '' && row.roleNum > filterRole.max) return false;
+            if (newFilterRole.min !== '' && row.newRoleNum < newFilterRole.min) return false;
+            if (newFilterRole.max !== '' && row.newRoleNum > newFilterRole.max) return false;
             return true;
         });
     };
@@ -314,7 +317,7 @@ const AdminRequestsTable: React.FC<AccountTableProps> = ({
         },
         {
             field: 'newRole',
-            headerName: 'Requested Role',
+            headerName: 'New Role',
             headerClassName: 'newRole',
             flex: 1,
             minWidth: 130,

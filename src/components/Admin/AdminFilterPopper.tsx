@@ -18,14 +18,6 @@ interface FilterPopperProps {
         min: number | "";
         max: number | "";
     }>>;
-    newFilterRole: {
-        min: number | '',
-        max: number | '',
-    };
-    setNewFilterRole: React.Dispatch<React.SetStateAction<{
-        min: number | '';
-        max: number | '';
-    }>>;
     setSubmitFilter: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -35,8 +27,6 @@ const AdminFilterPopper: React.FC<FilterPopperProps> = ({
     anchorEl,
     filterRole,
     setFilterRole,
-    newFilterRole,
-    setNewFilterRole,
     setSubmitFilter,
 }) => {
 
