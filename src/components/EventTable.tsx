@@ -11,6 +11,10 @@ import {
   Paper,
   TableSortLabel,
   useTheme,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { Event } from '../types';
@@ -49,6 +53,20 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
     setPage(newPage);
   };
 
+  const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+      <Tooltip {...props} arrow classes={{ popper: className }} />
+    ))(({ theme }) => ({
+      [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: colors.primary[400],
+        color: 'white',
+        fontSize: '0.75rem',
+        padding: '0.7rem',
+      },
+      [`& .${tooltipClasses.arrow}`]: {
+        color: colors.primary[400],
+      },
+    }));
+
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -72,11 +90,26 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
           >
             <TableRow>
               <TableCell>Event Name</TableCell>
+              
+              <CustomTooltip title="Spacecraft name for the first object">
               <TableCell>Primary Object Name</TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip title="International designator for the first object">
               <TableCell>Primary Object Designator</TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip title="Spacecraft name for the second object">
               <TableCell>Secondary Object Name</TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip title="International designator for the second object">
               <TableCell>Secondary Object Designator</TableCell>
+              </CustomTooltip>
+              
               <TableCell>
+                <CustomTooltip  title="The date and time in UTC of the closest approach 
+                between the two objects.">
                 <TableSortLabel
                   active
                   direction={order}
@@ -84,6 +117,7 @@ const EventTable: React.FC<EventTableProps> = ({ events, onEventClick, selectedE
                 >
                   TCA [UTC]
                 </TableSortLabel>
+                </CustomTooltip>
               </TableCell>
               <TableCell></TableCell>
             </TableRow>

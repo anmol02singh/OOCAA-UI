@@ -249,7 +249,7 @@ const Watchlist: React.FC = () => {
     <Box 
       sx={{
         padding: isMobile ? "10px" : "20px",
-        width: "100%",
+        width: "99%",
         height: "100%",
         overflow: "auto",
         position: "relative",

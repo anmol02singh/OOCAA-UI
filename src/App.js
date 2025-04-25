@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
 import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
@@ -25,6 +24,7 @@ import routes from "./routes.js";
 import SettingsPopover from "./pages/SettingsPopover.tsx";
 import Directory from "./pages/Directory.tsx";
 import Watchlist from "./pages/Watchlist.tsx";
+import About from "./pages/About.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -62,6 +62,7 @@ function App() {
                           <Route path="/signup" element={<UserSignUp />} />
                           <Route path="/directory" element={<Directory />} />
                           <Route path="/watchlist" element={<Watchlist />} />
+                          <Route path="/about" element={<About />} />
                           <Route path={routes.profile} element={<Profile />} />
                           <Route path={routes.editProfile} element={<ProfileEdit />} />
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />
