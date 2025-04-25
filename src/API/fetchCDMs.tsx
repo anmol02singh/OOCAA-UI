@@ -19,3 +19,23 @@ export const fetchCDMs = async (eventId: string) => {
         throw error;
     }
 };
+
+export const fetchCounts = async () => {
+    try {
+        const response = await fetch(`${API_URL}/cdm-data/getCounts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch counts');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching counts:', error);
+        throw error;
+    }
+}

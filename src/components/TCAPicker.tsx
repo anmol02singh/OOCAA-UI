@@ -1,5 +1,14 @@
 import React from 'react';
-import { Box, Typography, useTheme, Button } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  useTheme, 
+  Button, 
+  Tooltip, 
+  styled, 
+  tooltipClasses, 
+  TooltipProps 
+} from '@mui/material';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
@@ -12,12 +21,26 @@ interface TcaPickerProps {
   tcaRange: [number, number]; 
   onTcaChange: (newRange: [number, number]) => void;
   onSearch: () => void;
+  onSubscribe: () => void;
 }
 
-const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange, onSearch }) => {
+const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange, onSearch, onSubscribe }) => {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: colors.primary[400],
+      color: 'white',
+      fontSize: '0.75rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: colors.primary[400],
+    },
+  }));
 
   const handleStartChange = (newValue: Dayjs | null) => {
     if (newValue) {
@@ -108,6 +131,21 @@ const TcaPicker: React.FC<TcaPickerProps> = ({ tcaRange, onTcaChange, onSearch }
                 >
                   Search
                 </Button>
+                <CustomTooltip title="Add these filters to your watchlist">
+                  <Button
+                    variant="contained"
+                    sx={{
+                      height: '3.3rem',
+                      backgroundColor: colors.primary[400],
+                      color: colors.grey[100],
+                      boxShadow: 'none',
+                      width: '15%',
+                    }}
+                    onClick={onSubscribe}
+                  >
+                    Subscribe
+                  </Button>
+                </CustomTooltip>
             </Box>
         </Box>
     </LocalizationProvider>
