@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import About from "./pages/About.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
 import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
 import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
@@ -17,7 +16,6 @@ import Bar from "./scenes/Bar/index.tsx";
 import Pie from "./scenes/Pie/index.tsx";
 import Line from "./scenes/Line/index.tsx";
 import Geo from "./scenes/Geo/index.tsx";
-import Dashboard from "./scenes/dashboard/index.tsx";
 import UserLogin from "./pages/UserLogin.tsx";
 import { useLocation } from "react-router-dom";
 import UserSignUp from "./pages/UserSignUp.tsx";
