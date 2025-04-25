@@ -82,10 +82,13 @@ const Navbar: FC = () => {
   return (
     <Box
       sx={{
-        height: "auto",
+        height: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
-          height: "100%",
+          minHeight: "100%",
         },
         "& .pro-icon-wrapper": { backgroundColor: "transparent !important" },
         "& .pro-inner-item": { padding: "5px 35px 5px 20px !important" },
