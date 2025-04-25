@@ -25,7 +25,6 @@ import routes from "./routes.js";
 import SettingsPopover from "./pages/SettingsPopover.tsx";
 import Directory from "./pages/Directory.tsx";
 import AlertSystem from "./pages/AlertSystem.tsx";
-import Watchlist from "./pages/Watchlist.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -39,45 +38,20 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-
         <div
+          className="app"
           style={{
-            display: "flex",
             width: "100vw",
             height: "100vh",
-            overflow: "hidden",
+            "overflow-x": "hidden",
           }}
         >
-          {!(isLoginPage || isSignupPage) && (
-            <div
-              style={{
-                width: "250px",
-                height: "100vh",
-                position: "fixed",
-                top: 0,
-                left: 0,
-                zIndex: 1000,
-                overflowY: "hidden",
-                overflowX: "hidden",
-                backgroundColor: theme.palette.background.default,
-              }}
-            >
-              <Navbar isNavbar={isNavbar} />
-            </div>
-          )}
-
-          <main
-            className="content"
-            style={{
-              marginLeft: !(isLoginPage || isSignupPage) ? "250px" : "0",
-              flex: 1,
-              height: "100vh",
-              overflowY: "auto",
-            }}
-          >
+          {!(isLoginPage || isSignupPage) && <Navbar isNavbar={isNavbar} />}
+          <main className="content">
             <Box
               sx={{
                 width: "100%",
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
               }}
@@ -85,7 +59,6 @@ function App() {
               {!(isLoginPage || isSignupPage) && (
                 <Topbar setIsNavbar={setIsNavbar} />
               )}
-
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/bar" element={<Bar />} />

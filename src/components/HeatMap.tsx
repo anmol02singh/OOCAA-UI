@@ -15,13 +15,14 @@ type HeatMapData = {
 
 type HeatmapProps = {
   foundCDMs: any[];
+  colors: any;
 };
 
-const Heatmap = ({ foundCDMs }: HeatmapProps) => {
+const Heatmap = ({ foundCDMs, colors }: HeatmapProps) => {
   const data: any = [];
 
   const now = moment();
-  const currentDay = now.format("dddd"); // Get the current day of the week
+  const currentDay = now.format("dddd");
 
   const weekBegin = now.clone().startOf("week");
   const weekend = now.clone().add(1, "week").startOf("week");
@@ -36,6 +37,8 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
     "Sunday",
   ];
 
+  console.log(foundCDMs);
+
   const hourDict = {};
 
   for (let i = 0; i < 24; i++) {
@@ -46,14 +49,12 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
   const heatMapData = {};
 
   daysOfWeek.map((day) => {
-    heatMapData[day] = hourDict;
+    heatMapData[day] = { ...hourDict };
   });
 
   foundCDMs.forEach((tcaVal) => {
-    const dayOfWeek = moment(tcaVal).format("dddd");
-    const roundedHour = moment(tcaVal).startOf("hour").format("HH:mm");
-
-    console.log([dayOfWeek, roundedHour]);
+    const dayOfWeek = moment(tcaVal).utc().format("dddd");
+    const roundedHour = moment(tcaVal).utc().startOf("hour").format("HH:mm");
 
     heatMapData[dayOfWeek][roundedHour] += 1;
   });
@@ -80,12 +81,7 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
         label: "Heatmap",
         data: data.map(({ x, y, value }) => ({ x, y, r: value / 2 })),
         backgroundColor: data.map(({ x, value }) => {
-          const isCurrentDay = daysOfWeek[x - 1] === currentDay; // Check if it's the current day
-          if (isCurrentDay) {
-            return `rgba(0, 255, 0, 0.8)`; // Green for the current day
-          } else {
-            return `rgba(255, ${255 - value * 20}, ${255 - value * 20}, 0.8)`; // Normal color for other days
-          }
+          return `rgba(255, ${255 - value * 40}, ${255 - value * 40}, 0.8)`;
         }),
         borderWidth: 1,
         borderColor: "rgba(0, 0, 0, 0.1)",
@@ -102,18 +98,24 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
         position: "bottom",
         ticks: {
           stepSize: 1,
-          color: "#fff",
+          color: colors.grey[100],
           callback: (value: number) => {
             const daysOfWeek = [
-              "Mon",
-              "Tue",
-              "Wed",
-              "Thu",
-              "Fri",
-              "Sat",
-              "Sun",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
             ];
-            return daysOfWeek[value - 1] || "";
+            const dayLabel = daysOfWeek[value - 1];
+
+            if (dayLabel === currentDay) {
+              return `${currentDay} (Current)`;
+            }
+
+            return dayLabel || "";
           },
         },
         grid: {
@@ -125,7 +127,7 @@ const Heatmap = ({ foundCDMs }: HeatmapProps) => {
         type: "linear",
         ticks: {
           stepSize: 1,
-          color: "#fff",
+          color: colors.grey[100],
           callback: (value: number) => {
             return `${String(value).padStart(2, "0")}:00`;
           },

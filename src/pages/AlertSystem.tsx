@@ -101,7 +101,7 @@ const AlertSystem = () => {
       try {
         const data = await fetchLimitedEvents(
           [],
-          [1728086400000, 1745425212310],
+          [1737331200000, 1737772640214],
           {}
         );
 
@@ -135,7 +135,7 @@ const AlertSystem = () => {
       <Typography variant="h2" sx={{ paddingBottom: "20px" }}>
         Heatmap
       </Typography>
-      <Heatmap foundCDMs={foundCDMs} />
+      <Heatmap foundCDMs={foundCDMs} colors={colors} />
 
       <Typography
         variant="h2"
@@ -194,16 +194,16 @@ const AlertSystem = () => {
               <Table>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: colors.primary[600] }}>
-                    <TableCell sx={{ color: "white" }}>
+                    <TableCell sx={{ color: colors.grey[100] }}>
                       <strong>CDM</strong>
                     </TableCell>
-                    <TableCell sx={{ color: "white" }}>
+                    <TableCell sx={{ color: colors.grey[100] }}>
                       <strong>Primary Object Designator</strong>
                     </TableCell>
-                    <TableCell sx={{ color: "white" }}>
+                    <TableCell sx={{ color: colors.grey[100] }}>
                       <strong>Secondary Object Designator</strong>
                     </TableCell>
-                    <TableCell sx={{ color: "white" }}>
+                    <TableCell sx={{ color: colors.grey[100] }}>
                       <strong>TCA [UTC]</strong>
                     </TableCell>
                   </TableRow>
