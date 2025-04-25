@@ -178,16 +178,16 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
 
   return (
     <Box display="flex" flexDirection="column" gap={3}>
-      <Box display="flex" gap={2} justifyContent="center">
+      <Box display="flex" gap={2} justifyContent="center" sx={{ minWidth: 0 }}>
 
-        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+        <Box flex="1 1 40rem" maxWidth="50rem" sx={{ minWidth: 0 }} bgcolor={colors.primary[400]} p={2}>
           <Typography variant="h6" gutterBottom>
             {`TCA (seconds since first TCA): ${tcas[0]}`}
           </Typography>
           <Line data={tcaChartData} options={tcaChartOptions} />
         </Box>
   
-        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2}>
+        <Box flex="1 1 40rem" maxWidth="50rem" sx={{ minWidth: 0 }} bgcolor={colors.primary[400]} p={2}>
           <Typography variant="h6" gutterBottom>
             Miss Distance Progression
           </Typography>
@@ -195,8 +195,8 @@ const EventCharts: React.FC<EventChartsProps> = ({ cdms }) => {
         </Box>
       </Box>
   
-      <Box display="flex" justifyContent="center">
-        <Box flex="1 1 40rem" maxWidth="50rem" bgcolor={colors.primary[400]} p={2} mb={4}>
+      <Box display="flex" justifyContent="center" sx={{ minWidth: 0 }}>
+        <Box flex="1 1 40rem" maxWidth="50rem" sx={{ minWidth: 0 }} bgcolor={colors.primary[400]} p={2} mb={4}>
           <Typography variant="h6" gutterBottom>
             Collision Probability Progression
           </Typography>

@@ -11,6 +11,10 @@ import {
   Paper,
   TableSortLabel,
   useTheme,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
 } from '@mui/material';
 import { tokens } from '../theme.tsx';
 import { CDM } from '../types';
@@ -66,6 +70,20 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
     setPage(newPage);
   };
 
+  const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+      <Tooltip {...props} arrow classes={{ popper: className }} />
+    ))(({ theme }) => ({
+      [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: colors.primary[400],
+        color: 'white',
+        fontSize: '0.75rem',
+        padding: '0.7rem',
+      },
+      [`& .${tooltipClasses.arrow}`]: {
+        color: colors.primary[400],
+      },
+    }));
+
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -88,6 +106,8 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
           >
             <TableRow>
               <TableCell>Message ID</TableCell>
+
+              <CustomTooltip title="Message creation date/time in UTC">
               <TableCell>
                 <TableSortLabel
                   active={orderBy === 'creationDate'}
@@ -97,6 +117,10 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
                   Creation Date [UTC]
                 </TableSortLabel>
               </TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip  title="The date and time in UTC of the closest approach 
+                between the two objects">
               <TableCell>
                 <TableSortLabel
                   active={orderBy === 'tca'}
@@ -106,6 +130,9 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
                   TCA [UTC]
                 </TableSortLabel>
               </TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip title="The norm of the relative position vector. It indicates how close the two objects are at TCA">
               <TableCell>
                 <TableSortLabel
                   active={orderBy === 'missDistance'}
@@ -115,6 +142,9 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
                   Miss Distance [m]
                 </TableSortLabel>
               </TableCell>
+              </CustomTooltip>
+
+              <CustomTooltip title="The probability (denoted ‘p’ where 0.0<=p<=1.0), that Object1 and Object2 will collide"> 
               <TableCell>
                 <TableSortLabel
                   active={orderBy === 'collisionProbability'}
@@ -124,6 +154,8 @@ const CDMTable: React.FC<CDMTableProps> = ({ cdms, onRowClick, selectedCDM }) =>
                   Collision Probability
                 </TableSortLabel>
               </TableCell>
+              </CustomTooltip>
+
             </TableRow>
           </TableHead>
           <TableBody

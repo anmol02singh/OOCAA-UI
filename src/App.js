@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import About from "./pages/About.tsx";
 import Profile from "./pages/Profile/Profile.tsx";
 import ProfileEdit from "./pages/Profile/ProfileEdit.tsx"
 import ProfileEditName from "./pages/Profile/ProfileEditName.tsx"
@@ -23,6 +24,8 @@ import UserSignUp from "./pages/UserSignUp.tsx";
 import routes from "./routes.js";
 import SettingsPopover from "./pages/SettingsPopover.tsx";
 import Directory from "./pages/Directory.tsx";
+import Watchlist from "./pages/Watchlist.tsx";
+import About from "./pages/About.tsx";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -51,14 +54,15 @@ function App() {
                     }}>
                       {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
                         <Routes>
-                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/" element={<Directory />} />
                           <Route path="/bar" element={<Bar />} />
                           <Route path="/pie" element={<Pie />} />
                           <Route path="/line" element={<Line />} />
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
-                          <Route path="/directory" element={<Directory />} />
+                          <Route path="/watchlist" element={<Watchlist />} />
+                          <Route path="/about" element={<About />} />
                           <Route path={routes.profile} element={<Profile />} />
                           <Route path={routes.editProfile} element={<ProfileEdit />} />
                           <Route path={routes.editProfileName} element={<ProfileEditName />} />
