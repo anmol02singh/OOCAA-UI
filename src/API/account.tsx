@@ -237,6 +237,26 @@ export async function updateAccountsRole(
     }
 }
 
+export async function deleteOwnAccount(
+    token: string,
+) {
+    try {
+        const response = await fetch(`${API_URL}/deleteOwnAccount`, {
+            method: "DELETE",
+            body: JSON.stringify({ token: token }),
+            headers: { "Content-type": "application/json; charset=UTF-8" }
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting own account:', error);
+        throw error;
+    }
+}
+
 export async function deleteAccounts(
     token: string,
     usernames: string[],

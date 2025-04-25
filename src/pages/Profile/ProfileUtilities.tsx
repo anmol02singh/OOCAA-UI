@@ -384,6 +384,16 @@ export const useEditProfileStyling = () => {
         
     };
 
+    const regDeleteButton: React.CSSProperties = {
+        ...button,
+        width: '9rem',
+        background: '#ff0000',
+    };
+
+    const regDeleteButtonHover: React.CSSProperties = {
+        backgroundColor: '#ff3f3f',
+    };
+
     return {
         editProfileContainer,
         editProfileHeader,
@@ -393,6 +403,8 @@ export const useEditProfileStyling = () => {
         profileImageEditor,
         profilePictureContainer,
         uploadImagebutton,
+        regDeleteButton,
+        regDeleteButtonHover,
     };
 };
 
