@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Typography, Slider, IconButton, Button, List, ListItemText, Divider, TextField, Alert, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from "@mui/material";
+import { Box, Typography, Slider, IconButton, Button, List, ListItemText, Divider, TextField, Alert, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Grid2 as Grid } from "@mui/material";
 import { ColorModeContext } from "./../theme.tsx";
 import { tokens } from "./../theme.tsx";
+import CloseIcon from '@mui/icons-material/Close';
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -10,8 +11,22 @@ import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import { changePassword, changeUsername, deleteOwnAccount } from "../API/account.tsx";
 import { useNavigate } from "react-router-dom";
+import { useGeneralStyling, useDeleteItemStyling } from "./Admin/AdminUtilities.tsx";
 
 const SettingsPopover = () => {
+
+    const {
+        adminElements,
+        button_hover
+    } = useGeneralStyling();
+
+    const {
+        deleteItemHeader,
+        deleteItemContainer,
+        deleteItemButtonContainer,
+        deleteItemConfirmButton,
+        cancelDeleteButton,
+    } = useDeleteItemStyling();
 
     const { textSize, setTextSize, toggleColorMode } = useContext(ColorModeContext);
     const [selectedSection, setSelectedSection] = useState("general");
@@ -463,32 +478,95 @@ const SettingsPopover = () => {
                                 </Box>
                             )}
                         </Box>
+                        <Box mb={2} width='100%'>
+                            <Button
+                                variant="contained"
+                                onClick={() => setDeleteDialogOpen(true)}
+                                color="secondary"
+                                sx={{
+                                    marginTop: "2rem",
+                                    padding: "0.6rem 0.8rem",
+                                    backgroundColor: colors.redAccent[500],
+                                }}
+                            >
+                                Delete Account
+                            </Button>
+                        </Box>
 
-                        <Button
-                            variant="contained"
-                            onClick={() => setDeleteDialogOpen(true)}
+                        <Dialog
+                            open={deleteDialogOpen}
+                            onClose={() => setDeleteDialogOpen(false)}
+                            keepMounted
                             sx={{
-                                backgroundColor: colors.redAccent[500],
-                                color: colors.grey[100],
+                                '& .MuiPaper-root': {
+                                    padding: '2rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'center',
+                                    width: '50vw',
+                                    minWidth: '22rem',
+                                    maxWidth: '29rem',
+                                    backgroundColor: colors.primary[400],
+                                    borderRadius: '9px',
+                                    backgroundImage: 'none',
+                                    gap: '1rem',
+                                    overflow: 'auto',
+                                },
+                                '& .css-kw13he-MuiDialogContent-root': {
+                                    padding: 0,
+                                },
                             }}
                         >
-                            Delete Account
-                        </Button>
+                            <Grid container sx={adminElements} rowSpacing={3} columnSpacing={2}>
+                                <Grid size={2}>
+                                    <IconButton onClick={() => setDeleteDialogOpen(false)}>
+                                        <CloseIcon sx={{ fontSize: '1.8rem' }} />
+                                    </IconButton>
+                                </Grid>
+                                <Grid size={8} sx={deleteItemHeader}>
+                                    <Typography variant='h3' sx={{ color: colors.redAccent[400] }}>
+                                        Delete Account?
+                                    </Typography>
+                                </Grid>
 
-                        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                            <DialogTitle>Account Deletion Confirmation</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you would like to delete your account?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setDeleteDialogOpen(false)} color="secondary" autoFocus>Cancel</Button>
-                                <Button onClick={() => {
-                                    setDeleteDialogOpen(false);
-                                    handleDelete();
-                                }} color="secondary">Delete Account</Button>
-                            </DialogActions>
+                                <Grid size={12} sx={deleteItemContainer}>
+                                    <Typography variant='h4' sx={{ color: colors.grey[100] }}>
+                                        Are you sure you want to delete your account?
+                                    </Typography>
+                                </Grid>
+
+                                <Grid size={12} sx={deleteItemButtonContainer}>
+                                    <Button
+                                        type='submit'
+                                        onClick={() => setDeleteDialogOpen(false)}
+                                        sx={{
+                                            ...cancelDeleteButton,
+                                            '&:hover': {
+                                                ...button_hover
+                                            },
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type='submit'
+                                        onClick={() => {
+                                            setDeleteDialogOpen(false);
+                                            handleDelete();
+                                        }}
+                                        sx={{
+                                            ...deleteItemConfirmButton,
+                                            '&:hover': {
+                                                ...button_hover,
+                                                color: '#f44336',
+                                            },
+                                        }}
+                                    >
+                                        Delete Account
+                                    </Button>
+                                </Grid>
+                            </Grid>
                         </Dialog>
                     </>
                 )}
@@ -513,9 +591,10 @@ const SettingsPopover = () => {
                     </>
                 )}
             </Box>
-        </Box>
+        </Box >
 
     );
 };
 
 export default SettingsPopover;
+
