@@ -10,6 +10,7 @@ import {
   Paper,
   Typography,
   useTheme,
+  Box,
 } from "@mui/material";
 import Heatmap from "../components/HeatMap.tsx";
 import { tokens } from "../theme.tsx";
@@ -31,6 +32,15 @@ const AlertSystem = () => {
   );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const pageContainer: React.CSSProperties = {
+    width: "100%",
+    height: "auto",
+    backgroundColor: colors.primary[500],
+    overflowX: "hidden",
+    overflowY: "auto",
+    padding: "2rem",
+  };
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -117,7 +127,7 @@ const AlertSystem = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <Box sx={pageContainer}>
       <Typography variant="h1" gutterBottom sx={{ paddingTop: "20px" }}>
         Alert System
       </Typography>
@@ -237,13 +247,13 @@ const AlertSystem = () => {
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                sx={{ color: "white" }}
+                sx={{ color: colors.grey[100] }}
               />
             </TableContainer>
           </Paper>
         );
       })}
-    </div>
+    </Box>
   );
 };
 
