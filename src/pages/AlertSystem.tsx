@@ -127,6 +127,7 @@ const AlertSystem = () => {
   }, []);
 
   return (
+    
     <Box sx={pageContainer}>
       <Typography variant="h1" gutterBottom sx={{ paddingTop: "20px" }}>
         Alert System
@@ -149,7 +150,7 @@ const AlertSystem = () => {
 
       <Typography
         variant="h2"
-        sx={{ paddingTop: "20px", paddingBottom: "10px" }}
+        sx={{ paddingTop: "20px", paddingBottom: "10px", marginTop: "20px" }}
       >
         CDM Alert Table
       </Typography>
@@ -166,31 +167,31 @@ const AlertSystem = () => {
               borderRadius: 2,
             }}
           >
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h3" gutterBottom mb={2}>
               Query Parameters
             </Typography>
             {watchlistEntry.searchParams.map((param) => (
-              <Typography variant="body1" key={param.id}>
-                • <strong>{param.criteria}:</strong> {param.value}
+              <Typography variant="body1" sx={{marginBottom: 1}} key={param.id}>
+               <strong>{param.criteria}:</strong> {(param.value).toUpperCase() || "N/A"}
               </Typography>
             ))}
-            <Typography variant="body1" sx={{ marginTop: 1 }}>
-              • <strong>Miss Distance:</strong>{" "}
-              {watchlistEntry.missDistanceOperator}{" "}
+            <Typography variant="body1" sx={{ marginTop: 1, marginBottom: 1 }}>
+              <strong>Miss Distance:</strong>{" "}
+              {watchlistEntry.missDistanceOperator === "gte" ? "≥ " : "≤ "}
               {watchlistEntry.missDistanceValue ?? "N/A"} km
             </Typography>
-            <Typography variant="body1">
-              • <strong>Collision Probability:</strong>{" "}
-              {watchlistEntry.collisionProbabilityOperator}{" "}
+            <Typography variant="body1" sx={{marginBottom: 1}}>
+              <strong>Collision Probability:</strong>{" "}
+              {watchlistEntry.collisionProbabilityOperator === "gte" ? "≥ " : "≤ "}
               {watchlistEntry.collisionProbabilityValue ?? "N/A"}
             </Typography>
-            <Typography variant="body1">
-              • <strong>TCA Range:</strong> {watchlistEntry.tcaRange[0]} to{" "}
-              {watchlistEntry.tcaRange[1]}
+            <Typography variant="body1" sx={{marginBottom: 1}}>
+              <strong>TCA Range:</strong> {new Date(watchlistEntry.tcaRange[0]).toISOString()} to{" "}
+              {new Date(watchlistEntry.tcaRange[1]).toISOString()}
             </Typography>
             <Typography variant="body1">
-              • <strong>Operator Organization:</strong>{" "}
-              {watchlistEntry.operatorOrganization}
+              <strong>Operator Organization:</strong>{" "}
+              {watchlistEntry.operatorOrganization || "N/A"}
             </Typography>
 
             <TableContainer
