@@ -34,7 +34,7 @@ const AlertSystem = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const pageContainer: React.CSSProperties = {
-    width: "100%",
+    width: "99.7%",
     height: "auto",
     backgroundColor: colors.primary[500],
     overflowX: "hidden",

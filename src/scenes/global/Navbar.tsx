@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from "react";
-import { useState } from "react";
-import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+import React, { FC, useEffect } from 'react';
+import { useState } from 'react';
+import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import "react-pro-sidebar/dist/css/styles.css";
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
@@ -51,14 +51,14 @@ const Navbar: FC = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string>("Dashboard");
+  const [selected, setSelected] = useState<string>('Dashboard');
 
   const [userData, setUserData] = useState<Account>({
-    username: "",
-    role: "",
+    username: '',
+    role: '',
     roleNum: 1,
     profileImage: {
-      publicId: "",
+      publicId: '',
       url: undefined,
     },
   });
@@ -67,34 +67,28 @@ const Navbar: FC = () => {
 
   useEffect(() => {
     if (token) {
-      userdata(token).then((json) => {
-        setUserData({
-          ...userData,
-          username: json.username,
-          role: json.role,
-          roleNum: json.roleNum,
-          profileImage: json.profileImage,
+      userdata(token)
+        .then(json => {
+          setUserData({
+            ...userData,
+            username: json.username,
+            role: json.role,
+            roleNum: json.roleNum,
+            profileImage: json.profileImage,
+          });
         });
-      });
     }
     //eslint-disable-next-line
   }, []);
 
   return (
     <Box
-      sx={{
-        height: "100%",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        "& .pro-sidebar-inner": {
-          background: `${colors.primary[400]} !important`,
-          minHeight: "100%",
-        },
-        "& .pro-icon-wrapper": { backgroundColor: "transparent !important" },
-        "& .pro-inner-item": { padding: "5px 35px 5px 20px !important" },
-        "& .pro-inner-item:hover": { color: "#868dfb !important" },
-        "& .pro-menu-item.active": { color: "#6870fa !important" },
+      sx={{height: "auto",
+        '& .pro-sidebar-inner': { background: `${colors.primary[400]} !important`, height:"100%" },
+        '& .pro-icon-wrapper': { backgroundColor: 'transparent !important' },
+        '& .pro-inner-item': { padding: '5px 35px 5px 20px !important' },
+        '& .pro-inner-item:hover': { color: '#868dfb !important' },
+        '& .pro-menu-item.active': { color: '#6870fa !important' },
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
@@ -102,20 +96,11 @@ const Navbar: FC = () => {
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-            style={{ margin: "10px 0 20px 0", color: colors.grey[100] }}
+            style={{ margin: '10px 0 20px 0', color: colors.grey[100] }}
           >
             {!isCollapsed && (
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                ml="15px"
-              >
-                <Typography
-                  variant="h3"
-                  fontWeight="bold"
-                  color={colors.grey[100]}
-                >
+              <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
+                <Typography variant="h3" fontWeight="bold" color={colors.grey[100]}>
                   OOCAA
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -139,17 +124,12 @@ const Navbar: FC = () => {
                 )}
               </Box>
               <Box textAlign="center">
-                <Typography
-                  variant="h2"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ m: "10px 0 0 0 0" }}
-                >
+                <Typography variant="h2" color={colors.grey[100]} fontWeight="bold" sx={{ m: "10px 0 0 0 0" }}>
                   {userData.username || "Not logged in"}
                 </Typography>
                 {userData.username && (
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    {userData.role?.toUpperCase() ?? ""}
+                    {userData.role?.toUpperCase() ?? ''}
                   </Typography>
                 )}
               </Box>
@@ -161,25 +141,15 @@ const Navbar: FC = () => {
             </Typography>
             <Item title="Directory" to="/" icon={<SatelliteAltOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Watchlist" to="/watchlist" icon={<ReceiptOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="CDM Alerts" to="/alerts" icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Pages
             </Typography>
             <Item title="Profile Form" to="/profile" icon={<PersonOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="FAQ Page" to="/faq" icon={<HelpOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
-              Charts
-            </Typography>
-            <Item title="Bar Chart" to="/bar" icon={<BarChartOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Pie Chart" to="/pie" icon={<PieChartOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Line Chart" to="/line" icon={<TimelineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Geo Chart" to="/geo" icon={<MapOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="About OOCAA" to="/about" icon={<HelpOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
             {userData.roleNum !== undefined && userData.roleNum < 1 && (
               <>
-                <Typography
-                  variant="h6"
-                  color={colors.grey[300]}
-                  sx={{ m: "15px 0 5px 20px" }}
-                >
+                <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
                   Admin
                 </Typography>
                 <Item title="Manage Accounts" to={routes.manageAccounts} icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
