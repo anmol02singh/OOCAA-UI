@@ -50,7 +50,7 @@ const About: React.FC = () => {
 
   const team = [
     { name: 'Natalie Dean',    email: 'natalierdean1@gmail.com' },
-    { name: 'Sanchit Duggal',  email: 'san249@my.yorku.ca' },
+    { name: 'Sanchit Duggal',  email: 'saniac249@gmail.com' },
     { name: 'Adrien Hopkins',  email: 'adrien.p.hopkins@gmail.com' },
     { name: 'Yaqub Ibrahim',   email: 'yaqub399@my.yorku.ca' },
     { name: 'Taha Shahid',     email: 'taha.shahid70@gmail.com' },
