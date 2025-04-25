@@ -29,7 +29,7 @@ const ProfileEdit = () => {
     }
 
     const { handleCancel } = useNavigation();
-
+   
     const {
         pageContainer,
         profileElements,
@@ -113,9 +113,6 @@ const ProfileEdit = () => {
             case 'editName':
                 navigate(routes.editProfileName);
                 break;
-            // case 'editUsername':
-            //     navigate('/profile/edit/username')
-            //     break;
             case 'editEmail':
                 navigate(routes.editProfileEmail);
                 break;
@@ -221,30 +218,6 @@ const ProfileEdit = () => {
                         </Button>
                     </Grid>
 
-                    {/* <Grid size={12}>
-                        <Typography variant='h6' sx={fieldLabel}>
-                            Username
-                        </Typography>
-                        <Button
-                            fullWidth
-                            name="editUsername"
-                            onClick={()=>handleEditItem(states.editUsername)}
-                            sx={{
-                                ...profileFieldButton,
-                                '&:hover': {
-                                    ...button_hover
-                                },
-                                '&:active': {
-                                    ...button_click
-                                },
-                            }}
-                        >
-                            <Typography sx={profileFieldButtonText}>
-                                {userData.username}
-                            </Typography>
-                        </Button>
-                    </Grid>                   */}
-
                     <Grid size={12}>
                         <Typography variant='h6' sx={fieldLabel}>
                             Email
@@ -295,6 +268,8 @@ const ProfileEdit = () => {
                                 {userData.phoneNumber}
                             </Typography>
                         </Button>
+
+                        
                     </Grid>
                 </Grid>
                 <ProfileImageEditor

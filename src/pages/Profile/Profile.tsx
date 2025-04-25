@@ -25,7 +25,7 @@ const Profile = () => {
     }
     
     const { handleEdit } = useNavigation();
-   
+
     const {
         pageContainer,
         profileElements,
