@@ -135,26 +135,16 @@ const Navbar: FC = () => {
             </Box>
           )}
           <Box paddingLeft={isCollapsed ? undefined : '10%'}>
-            <Item title="Dashboard" to="/" icon={<HomeOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Data
             </Typography>
-            <Item title="Manage Team" to="/team" icon={<PeopleOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Contacts Information" to="/contacts" icon={<ContactsOutlinedIcon />} selected={selected} setSelected={setSelected} />
+            <Item title="Directory" to="/" icon={<SatelliteAltOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="Watchlist" to="/watchlist" icon={<ReceiptOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Directory" to="/directory" icon={<SatelliteAltOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
               Pages
             </Typography>
             <Item title="Profile Form" to="/profile" icon={<PersonOutlinedIcon />} selected={selected} setSelected={setSelected} />
             <Item title="About OOCAA" to="/about" icon={<HelpOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>
-              Charts
-            </Typography>
-            <Item title="Bar Chart" to="/bar" icon={<BarChartOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Pie Chart" to="/pie" icon={<PieChartOutlineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Line Chart" to="/line" icon={<TimelineOutlinedIcon />} selected={selected} setSelected={setSelected} />
-            <Item title="Geo Chart" to="/geo" icon={<MapOutlinedIcon />} selected={selected} setSelected={setSelected} />
             {userData.roleNum !== undefined && userData.roleNum < 1 && (
               <>
                 <Typography variant="h6" color={colors.grey[300]} sx={{ m: '15px 0 5px 20px' }}>

@@ -53,14 +53,13 @@ function App() {
                     }}>
                       {!(isLoginPage || isSignupPage) && <Topbar setIsNavbar={setIsNavbar} />}
                         <Routes>
-                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/" element={<Directory />} />
                           <Route path="/bar" element={<Bar />} />
                           <Route path="/pie" element={<Pie />} />
                           <Route path="/line" element={<Line />} />
                           <Route path="/geo" element={<Geo />} />
                           <Route path="/login" element={<UserLogin />} />
                           <Route path="/signup" element={<UserSignUp />} />
-                          <Route path="/directory" element={<Directory />} />
                           <Route path="/watchlist" element={<Watchlist />} />
                           <Route path="/about" element={<About />} />
                           <Route path={routes.profile} element={<Profile />} />
