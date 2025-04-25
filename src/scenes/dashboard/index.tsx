@@ -18,9 +18,6 @@ const Dashboard = () => {
 
     const navigate = useNavigate();
     const token = localStorage.getItem("accountToken");
-    if (!token) {
-        navigate('/login')
-    }
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -38,7 +35,7 @@ const Dashboard = () => {
         if (didRun.current) return;
         didRun.current = true;
 
-        if (!token) return;
+        if (!token) navigate('/login');
 
         fetchAllCDMs().then(data => {
             cdmCount(data).then(setCdmCount);
