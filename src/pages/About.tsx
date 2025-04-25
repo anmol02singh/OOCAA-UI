@@ -52,7 +52,7 @@ const About: React.FC = () => {
     { name: 'Natalie Dean',    email: 'natalierdean1@gmail.com' },
     { name: 'Sanchit Duggal',  email: 'saniac249@gmail.com' },
     { name: 'Adrien Hopkins',  email: 'adrien.p.hopkins@gmail.com' },
-    { name: 'Yaqub Ibrahim',   email: 'yaqub399@my.yorku.ca' },
+    { name: 'Yaqub Ibrahim',   email: 'yaqubibrahim399@gmail.com' },
     { name: 'Taha Shahid',     email: 'taha.shahid70@gmail.com' },
     { name: 'Anmol Singh',     email: 'anmolsingh5487@gmail.com' },
   ];
