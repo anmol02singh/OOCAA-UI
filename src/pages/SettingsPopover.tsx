@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Typography, Slider, IconButton, Button, List, ListItemText, Divider, TextField, Alert, useTheme } from "@mui/material";
+import { Box, Typography, Slider, IconButton, Button, List, ListItemText, Divider, TextField, Alert, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from "@mui/material";
 import { ColorModeContext } from "./../theme.tsx";
 import { tokens } from "./../theme.tsx";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -8,7 +8,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { SettingsOutlined as SettingsOutlinedIcon } from "@mui/icons-material";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import { userdata, changePassword, changeUsername } from "../API/account.tsx";
+import { changePassword, changeUsername, deleteOwnAccount } from "../API/account.tsx";
 import { useNavigate } from "react-router-dom";
 
 const SettingsPopover = () => {
@@ -43,8 +43,8 @@ const SettingsPopover = () => {
     const [curPassword, setCurPassword] = useState("");
     const [newPass, setNewPass] = useState("");
     const [confirmNewPass, setConfirmNewPass] = useState("");
-    const [notificationEnabled, setNotificationEnabled] = useState(true);
     const [notificationChannels, setNotificationChannels] = useState(["SMS", "Email"]);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
     const token = localStorage.getItem("accountToken");
@@ -159,6 +159,12 @@ const SettingsPopover = () => {
             setIsUpdatingPassword(false);
         }
     };
+
+    const handleDelete = async () => {
+        await deleteOwnAccount(token ?? "");
+        localStorage.removeItem("accountToken");
+        window.location.href = "/";
+    }
 
     const toggleNotificationChannel = (channel: string) => {
         if (notificationChannels.includes(channel)) {
@@ -457,6 +463,33 @@ const SettingsPopover = () => {
                                 </Box>
                             )}
                         </Box>
+
+                        <Button
+                            variant="contained"
+                            onClick={() => setDeleteDialogOpen(true)}
+                            sx={{
+                                backgroundColor: colors.redAccent[500],
+                                color: colors.grey[100],
+                            }}
+                        >
+                            Delete Account
+                        </Button>
+
+                        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                            <DialogTitle>Account Deletion Confirmation</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Are you sure you would like to delete your account?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => setDeleteDialogOpen(false)} color="secondary" autoFocus>Cancel</Button>
+                                <Button onClick={() => {
+                                    setDeleteDialogOpen(false);
+                                    handleDelete();
+                                }} color="secondary">Delete Account</Button>
+                            </DialogActions>
+                        </Dialog>
                     </>
                 )}
                 {selectedSection === "privacy" && (

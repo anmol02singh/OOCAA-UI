@@ -219,7 +219,6 @@ const Profile = () => {
                 </Box>
                 {pageWidth < mdWindowWidth ? regProfileInfoElements : undefined}
             </Box>
-
         </Box>
     );
 }
