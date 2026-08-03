@@ -1,6 +1,6 @@
 import { SearchParams } from "../types.tsx";
 
-const API_URL = process.env.API_URL || 'http://localhost:3000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 export type TcaRange = [number, number];
 
