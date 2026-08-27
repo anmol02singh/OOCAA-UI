@@ -4,14 +4,22 @@ import { Account } from "../types.tsx";
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 export async function userdata(token: string) {
+    if (!token) {
+        window.location.href = '/login';
+        return null;
+    }    
     try {
         const response = await fetch(`${API_URL}/userdata`, {
             method: "POST",
             body: JSON.stringify({ token: token }),
             headers: { "Content-type": "application/json; charset=UTF-8" }
         });
-        if (response.status === 500) {
-            window.location.href = '/login';
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+            return null;
         } else if (!response.ok) {
             throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
